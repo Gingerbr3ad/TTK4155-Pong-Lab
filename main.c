@@ -1,5 +1,5 @@
  
-#include <stdint.h>
+#include <util/delay.h>
 #include <unistd.h>
 #include <avr/io.h>
 
@@ -16,8 +16,8 @@ int main(void) {
     
     while(1) {
         set_bit(PORTB, WAVE_PIN);
-        sleep(1);
+        _delay_ms(500);
         clear_bit(PORTB, WAVE_PIN);
-        sleep(1);
+        _delay_ms(500);
     }
 }
