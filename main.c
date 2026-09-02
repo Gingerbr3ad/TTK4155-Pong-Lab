@@ -1,4 +1,5 @@
- 
+#include "system_definitions.h"
+
 #include <util/delay.h>
 #include <avr/io.h>
 #include <stdio.h>
@@ -11,10 +12,8 @@
 #define test_bit(reg, bit) (reg & (1 << bit))
 
 #define WAVE_PIN PB1
-#define F_CPU 1000000UL
-#define UBRR 31
 
-static FILE uartstdout = FDEV_SETUP_STREAM(uart_putchar, NULL, _FDEV_SETUP_WRITE);
+static FILE uartstdout = FDEV_SETUP_STREAM(uart_putchar, uart_getchar, _FDEV_SETUP_RW);
 
 int main(void) {    
     /*
@@ -28,8 +27,11 @@ int main(void) {
     }
     */
 
-  uart_init(UBRR);
-  stdout = &uartstdout;
-  printf("Hello, world!\n");
+  uart_init();
+  stdout = stdin = &uartstdout; // Replace the defualt stdout/in stream with the custom uart one
+
+  while(1) { 
+    char c = getchar();
+    printf("Hello, PC! You've sent me this: %c\n", c); }
   return 0;
 }
