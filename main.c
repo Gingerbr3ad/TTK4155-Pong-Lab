@@ -31,8 +31,11 @@ int main(void) {
 
     uart_init();
     stdout = stdin = &uartstdout; // Replace the defualt stdout/in stream with the custom uart one
-    set_bit(PORTB, ERROR_LED);
+    
     while(1) { 
+        if(feof(stdin) || ferror(stdin)) {
+            set_bit(PORTB, ERROR_LED);
+        }
         char c = getchar();
         printf("Hello, PC! You've sent me this: %c\n", c); }
     
