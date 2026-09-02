@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <avr/io.h>
 
-#include <uart_driver.h>
+#include "uart_driver.h"
 
 
 #define set_bit(reg, bit) (reg |= (1 << bit))
