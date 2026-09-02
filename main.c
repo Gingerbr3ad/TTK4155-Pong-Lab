@@ -33,10 +33,12 @@ int main(void) {
     stdout = stdin = &uartstdout; // Replace the defualt stdout/in stream with the custom uart one
     
     while(1) { 
+        // Turns on the error led if there is an end of file detected (never should happen with this implementation) or a stean error detected
         if(feof(stdin) || ferror(stdin)) {
             set_bit(PORTB, ERROR_LED);
         }
-        char c = getchar();
+
+        char c = getchar(); // Waits until it gets a character on the stdin stream
         printf("Hello, PC! You've sent me this: %c\n", c); }
     
     return 0;

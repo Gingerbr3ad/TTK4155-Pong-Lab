@@ -25,7 +25,7 @@ int uart_putchar(char c, FILE *stream) {
     uart_putchar('\r', stream);
   }
   loop_until_bit_is_set(UCSR0A, UDRE0);
-  UDR0 = c; //UDR is the character buffer terminal for the USART device
+  UDR0 = c; // UDR is the character buffer terminal for the USART device
   return 0;
 }
 
