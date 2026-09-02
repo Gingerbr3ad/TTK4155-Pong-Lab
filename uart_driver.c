@@ -13,7 +13,7 @@ void uart_init(unsigned int ubrr) {
     UCSR0C = (1<<URSEL0)|(1<<USBS0)|(3<<UCSZ00);
 }  
 
-static int uart_putchar(char c, FILE *stream) {
+int uart_putchar(char c, FILE *stream) {
   if (c == '\n') {
     uart_putchar('\r', stream);
   }
