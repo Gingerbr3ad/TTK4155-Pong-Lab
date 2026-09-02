@@ -12,10 +12,12 @@
 #define test_bit(reg, bit) (reg & (1 << bit))
 
 #define WAVE_PIN PB1
+#define ERROR_LED PB0
 
 static FILE uartstdout = FDEV_SETUP_STREAM(uart_putchar, uart_getchar, _FDEV_SETUP_RW);
 
 int main(void) {    
+    set_bit(DDRB, ERROR_LED);
     /*
     set_bit(DDRB, WAVE_PIN);
 
@@ -27,11 +29,12 @@ int main(void) {
     }
     */
 
-  uart_init();
-  stdout = stdin = &uartstdout; // Replace the defualt stdout/in stream with the custom uart one
-
-  while(1) { 
-    char c = getchar();
-    printf("Hello, PC! You've sent me this: %c\n", c); }
-  return 0;
+    uart_init();
+    stdout = stdin = &uartstdout; // Replace the defualt stdout/in stream with the custom uart one
+    set_bit(PORTB, ERROR_LED);
+    while(1) { 
+        char c = getchar();
+        printf("Hello, PC! You've sent me this: %c\n", c); }
+    
+    return 0;
 }

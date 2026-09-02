@@ -6,6 +6,6 @@ this way we just need to include this file.
 */
 
 
-#define F_CPU 1000000UL // I think this is correct? Dont reallt understand this well
+#define F_CPU 4915200UL // The CPU clock speed in Hz, for us this is 4.9152 MHz since that is teh frequency of the osicialtor we use as the clock
 #define BAUD 9600
-// #define UBRR 31 // Calculated with an online baud rate caluculater for 9600 baudrate with 4.915 mHz oscilator REPLACED WITH THE SETBAUD MACRO
+// #define UBRR 31 // Calculated with an online baud rate caluculater for 9600 baudrate with 4.915 MHz oscilator REPLACED WITH THE SETBAUD MACRO
