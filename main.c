@@ -31,7 +31,7 @@ int main(void) {
     external_memory_init();
     
     while(1) { 
-        unsigned char *p = 0x1000;
+        unsigned char *p = (unsigned char *) 0xf0;
         *p = 0xaa;
 
         char c = getchar(); // Waits until it gets a character on the stdin stream
