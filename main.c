@@ -5,11 +5,7 @@
 #include <stdio.h>
 
 #include "uart_driver.h"
-
-
-#define set_bit(reg, bit) (reg |= (1 << bit))
-#define clear_bit(reg, bit) (reg &= ~(1 << bit ))
-#define test_bit(reg, bit) (reg & (1 << bit))
+#include "external_memory_driver.h"
 
 #define WAVE_PIN PB1
 #define ERROR_LED PB0
@@ -31,12 +27,12 @@ int main(void) {
 
     uart_init();
     stdout = stdin = &uartstdout; // Replace the defualt stdout/in stream with the custom uart one
+
+    external_memory_init();
     
     while(1) { 
-        // Turns on the error led if there is an end of file detected (never should happen with this implementation) or a stean error detected
-        if(feof(stdin) || ferror(stdin)) {
-            set_bit(PORTB, ERROR_LED);
-        }
+        unsigned char *p = 0x1000;
+        *p = 0xaa;
 
         char c = getchar(); // Waits until it gets a character on the stdin stream
         printf("Hello, PC! You've sent me this: %c\n", c); }
