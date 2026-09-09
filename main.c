@@ -31,11 +31,14 @@ int main(void) {
     external_memory_init();
     
     while(1) { 
+        int address = 4096;
+        while(address < 4351) {
+            unsigned char *p = (unsigned char *) address;
+            *p = 0xaa;
+            ++address;
+            _delay_ms(80);
+        }
         
-        unsigned char *p = (unsigned char *) 0x100f;
-        _delay_ms(1000);
-        *p = 0x10f0;
-        _delay_ms(1000);
 
         //char c = getchar(); // Waits until it gets a character on the stdin stream
         //printf("Hello, PC! You've sent me this: %c\n", c); 
