@@ -12,8 +12,14 @@
 
 static FILE uartstdout = FDEV_SETUP_STREAM(uart_putchar, uart_getchar, _FDEV_SETUP_RW);
 
-int main(void) {    
-    set_bit(DDRB, ERROR_LED);
+void system_init() {
+    uart_init();
+    stdout = stdin = &uartstdout; // Replace the defualt stdout/in stream with the custom uart one
+    external_memory_init();
+}
+
+int main(void) {
+    system_init();
     /*
     set_bit(DDRB, WAVE_PIN);
 
@@ -25,15 +31,24 @@ int main(void) {
     }
     */
 
-    uart_init();
-    stdout = stdin = &uartstdout; // Replace the defualt stdout/in stream with the custom uart one
-
-    external_memory_init();
-    
     while(1) { 
-        xmem_write(0xaa, 0x1000);
+        volatile char * a = (char *) 0x13ff; //0001 0011 1111 1111
+        *a = 0xaa;
         _delay_ms(500);
-        xmem_write(0xaa, 0x1400);
+        volatile char * b = (char *) 0x17ff; //0001 0011 1111 1111
+        *b = 0xaa;
+        _delay_ms(500);
+        *a = 0xab;
+        _delay_ms(500);
+        volatile char * c = (char *) 0x1800; //0001 1000 0000 0000
+        *c = 0xaa;
+        _delay_ms(500);
+        *a = 0xac;
+        _delay_ms(500);
+        volatile char * d = (char *) 0xc00; //0001 1100 0000 0000
+        *d = 0xaa;
+        _delay_ms(500);
+        *a = 0xad;
         _delay_ms(500);
 
         //char c = getchar(); // Waits until it gets a character on the stdin stream
