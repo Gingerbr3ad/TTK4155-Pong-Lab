@@ -9,6 +9,7 @@ this way we just need to include this file.
 #define F_CPU 4915200UL // The CPU clock speed in Hz, for us this is 4.9152 MHz since that is teh frequency of the osicialtor we use as the clock
 #define BAUD 9600
 // #define UBRR 31 // Calculated with an online baud rate caluculater for 9600 baudrate with 4.915 MHz oscilator REPLACED WITH THE SETBAUD MACRO
+#define XMEM_OFFSET 0x1000
 
 #define set_bit(reg, bit) (reg |= (1 << bit))
 #define clear_bit(reg, bit) (reg &= ~(1 << bit ))
