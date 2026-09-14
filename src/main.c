@@ -19,7 +19,7 @@ void system_init() {
 
 int main(void) {
     system_init();
-    /*
+    /*s
     set_bit(DDRB, WAVE_PIN);
 
     while(1) {
