@@ -4,7 +4,7 @@ Without it calues like F_CPU would need to be defined in each file using it sepa
 this way we just need to include this file. 
 !!!MAKE SURE THAT THIS IS THE 1ST FILE INCLUDED!!!
 */
-
+#include <avr/io.h>
 
 #define F_CPU 4915200UL // The CPU clock speed in Hz, for us this is 4.9152 MHz since that is teh frequency of the osicialtor we use as the clock
 #define BAUD 9600

@@ -1,7 +1,4 @@
-#include "system_definitions.h"
-
-#include <avr/io.h>
-
+#include "../../include/system_definitions.h"
 
 void external_memory_init();
 

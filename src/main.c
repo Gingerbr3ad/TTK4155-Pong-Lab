@@ -1,11 +1,10 @@
-#include "system_definitions.h"
+#include "include/system_definitions.h"
 
 #include <util/delay.h>
-#include <avr/io.h>
 #include <stdio.h>
 
-#include "uart_driver.h"
-#include "external_memory_driver.h"
+#include "drivers/include/uart_driver.h"
+#include "drivers/include/external_memory_driver.h"
 
 #define WAVE_PIN PB1
 #define ERROR_LED PB0
