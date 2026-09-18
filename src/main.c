@@ -5,6 +5,7 @@
 
 #include "drivers/uart_driver.h"
 #include "drivers/external_memory_driver.h"
+#include "drivers/adc_driver.h"
 
 #define WAVE_PIN PB1
 #define ERROR_LED PB0
@@ -15,6 +16,7 @@ void system_init() {
     uart_init();
     stdout = stdin = &uartstdout; // Replace the defualt stdout/in stream with the custom uart one
     external_memory_init();
+    adc_init();
 }
 
 int main(void) {
