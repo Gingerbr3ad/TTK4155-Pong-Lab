@@ -1,4 +1,4 @@
-#include "../../include/system_definitions.h"
+#include "system_definitions.h"
 
 #include <stdio.h>
 #include <util/setbaud.h>

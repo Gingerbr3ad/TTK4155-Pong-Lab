@@ -1,10 +1,10 @@
-#include "include/system_definitions.h"
+#include "system_definitions.h"
 
 #include <util/delay.h>
 #include <stdio.h>
 
-#include "drivers/include/uart_driver.h"
-#include "drivers/include/external_memory_driver.h"
+#include "drivers/uart_driver.h"
+#include "drivers/external_memory_driver.h"
 
 #define WAVE_PIN PB1
 #define ERROR_LED PB0
@@ -50,8 +50,8 @@ int main(void) {
         *a = 0xad;
         _delay_ms(500);
 
-        //char c = getchar(); // Waits until it gets a character on the stdin stream
-        //printf("Hello, PC! You've sent me this: %c\n", c); 
+        char ch = getchar(); // Waits until it gets a character on the stdin stream
+        printf("Hello, PC! You've sent me this: %c\n", ch); 
     }
     
     return 0;

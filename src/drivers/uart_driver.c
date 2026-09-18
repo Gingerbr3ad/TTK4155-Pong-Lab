@@ -1,4 +1,4 @@
-#include "include/uart_driver.h"
+#include "drivers/uart_driver.h"
 
 /* This uart driver implementation is based on the code examples from the offical Atmel AVR ATmega162 documentation and the AVR Libc documentation  */
 
@@ -30,8 +30,9 @@ int uart_putchar(char c, FILE *stream) {
 }
 
 int uart_getchar(FILE *stream) {
-/* Wait for data to be received */
-while (!(UCSR0A & (1<<RXC0)));
-/* Get and return received data from buffer */
-return UDR0;
+  stream = stream; // Avoid unused parameter warining
+  /* Wait for data to be received */
+  while (!(UCSR0A & (1<<RXC0)));
+  /* Get and return received data from buffer */
+  return UDR0;
 }
