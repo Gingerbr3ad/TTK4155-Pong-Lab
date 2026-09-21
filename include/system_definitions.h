@@ -6,7 +6,8 @@ this way we just need to include this file.
 */
 #include <avr/io.h>
 
-#define XMEM_OFFSET 0x1000
+#define ADC_XMEM_OFFSET 0x1000
+#define SRAM_XMEM_OFFSET 0x1400
 
 #define set_bit(reg, bit) (reg |= (1 << bit))
 #define clear_bit(reg, bit) (reg &= ~(1 << bit ))
