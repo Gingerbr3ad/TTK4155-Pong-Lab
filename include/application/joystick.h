@@ -6,8 +6,8 @@
 #define JOYSTICK_DEADZONE 20
 
 typedef struct {
-    int16_t x;
-    int16_t y;
+    int x;
+    int y;
 } joystick_position_t;
 
 typedef enum {
@@ -19,14 +19,14 @@ typedef enum {
 } joystick_direction_t;
 
 typedef struct {
-    uint8_t center_x;
-    uint8_t center_y;
+    int center_x;
+    int center_y;
 
-    uint8_t min_x;
-    uint8_t max_x;
+    int min_x;
+    int max_x;
 
-    uint8_t min_y;
-    uint8_t max_y;
+    int min_y;
+    int max_y;
 
 } joystick_calibration_t;
 

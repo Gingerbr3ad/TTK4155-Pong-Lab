@@ -1,5 +1,5 @@
 #include "application/joystick.h"
-#include "driver/adc.h"
+#include "drivers/adc_driver.h"
 
 static joystick_calibration_t calibration;
 
@@ -49,7 +49,7 @@ void joystick_init() {
 }
 
 joystick_position_t joystick_read_position() {
-    int position;
+    joystick_position_t position;
 
     int raw_x;
     int raw_y;
