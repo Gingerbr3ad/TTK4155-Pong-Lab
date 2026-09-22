@@ -2,7 +2,7 @@
 #include "drivers/adc_driver.h"
 
 static joystick_calibration_t calibration;
-
+    
 static int joystick_normalize_axis(int raw, int center, int minimum, int maximum) {
     int result;
 

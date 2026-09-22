@@ -7,22 +7,31 @@
 #include "drivers/external_memory_driver.h"
 #include "drivers/adc_driver.h"
 
+#include "application/joystick.h"
+
 static FILE uartstdout = FDEV_SETUP_STREAM(uart_putchar, uart_getchar, _FDEV_SETUP_RW);
+
+static joystick_position_t joy_pos;
+static joystick_direction_t joy_dir;
 
 void system_init() {
     uart_init();
     stdout = stdin = &uartstdout; // Replace the defualt stdout/in stream with the custom uart one
     external_memory_init();
     adc_init();
+    joystick_init();
 }
 
 int main(void) {
     system_init();
-    int adc_data = 0;
+
     while(1) { 
-        adc_data = adc_read(1);
+        joy_pos = joystick_read_position();
+        joy_dir = joystick_get_direction();
+        
         //char ch = getchar(); // Waits until it gets a character on the stdin stream
-        printf("I've got this from the ADC: %i\n", adc_data);
+        printf("Joystick position: x:%i%% ; y:%i%% \n", joy_pos.x, joy_pos.y);
+        printf("Joystick direction value: %i \n", joy_dir);
         _delay_ms(1000);
     }
     
