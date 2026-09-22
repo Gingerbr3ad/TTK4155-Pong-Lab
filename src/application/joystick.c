@@ -48,6 +48,10 @@ void joystick_init() {
     calibration.max_y = y;
 }
 
+/*Calibration method was made in AI which 
+was taken from the website
+ https://dyadica.co.uk/blog/simple-bluetooth-joystick/ */
+
 joystick_position_t joystick_read_position() {
     joystick_position_t position;
 
