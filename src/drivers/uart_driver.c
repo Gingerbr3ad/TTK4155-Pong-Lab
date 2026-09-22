@@ -35,4 +35,4 @@ int uart_getchar(FILE *stream) {
   while (!(UCSR0A & (1<<RXC0)));
   /* Get and return received data from buffer */
   return UDR0;
-}
+} 
