@@ -1,17 +1,16 @@
-#ifndef JOYSTICK_H
-#define JOYSTICK_H
+#include "system_definitions.h"
 
+#define JOYSTICK_X_CHANNEL 0
+#define JOYSTICK_Y_CHANNEL 1
 
-#include <stdint.h>
+#define JOYSTICK_DEADZONE 20
 
-typedef struct
-{
+typedef struct {
     int16_t x;
     int16_t y;
 } joystick_position_t;
 
-typedef enum
-{
+typedef enum {
     JOYSTICK_NEUTRAL,
     JOYSTICK_LEFT,
     JOYSTICK_RIGHT,
@@ -19,10 +18,19 @@ typedef enum
     JOYSTICK_DOWN
 } joystick_direction_t;
 
-void joystick_init(void);
+typedef struct {
+    uint8_t center_x;
+    uint8_t center_y;
 
-joystick_position_t joystick_read_position(void);
+    uint8_t min_x;
+    uint8_t max_x;
 
-joystick_direction_t joystick_get_direction(void);
+    uint8_t min_y;
+    uint8_t max_y;
 
-#endif
+} joystick_calibration_t;
+
+void joystick_init();
+
+joystick_position_t joystick_read_position();
+joystick_direction_t joystick_get_direction();
