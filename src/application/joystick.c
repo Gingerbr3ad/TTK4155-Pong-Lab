@@ -3,7 +3,7 @@
 
 static joystick_calibration_t calibration;
     
-static int joystick_normalize_axis(int raw, int center, int minimum, int maximum) {
+static int normalize_axis(int raw, int center, int minimum, int maximum) {
     int result;
 
     if (raw >= center) {
@@ -48,6 +48,20 @@ void joystick_init() {
     calibration.max_y = y;
 }
 
+touch_position_t touch_read_position() {
+    touch_position_t position;
+
+    int raw_x;
+    int raw_y;
+
+    raw_x = adc_read(TOUCH_X_CHANNEL);
+    raw_y = adc_read(TOUCH_Y_CHANNEL);
+
+    position.x = normalize_axis(raw_x, calibration.center_x, calibration.min_x, calibration.max_x);
+    position.y = normalize_axis(raw_y, calibration.center_y, calibration.min_y, calibration.max_y);
+    return position;
+}
+
 /*Calibration method was made in AI which 
 was taken from the website
  https://dyadica.co.uk/blog/simple-bluetooth-joystick/ */
@@ -77,8 +91,8 @@ joystick_position_t joystick_read_position() {
         calibration.max_y = raw_y;
     }
 
-    position.x = joystick_normalize_axis(raw_x, calibration.center_x, calibration.min_x, calibration.max_x);
-    position.y = joystick_normalize_axis(raw_y, calibration.center_y, calibration.min_y, calibration.max_y);
+    position.x = normalize_axis(raw_x, calibration.center_x, calibration.min_x, calibration.max_x);
+    position.y = normalize_axis(raw_y, calibration.center_y, calibration.min_y, calibration.max_y);
     return position;
 }
 
