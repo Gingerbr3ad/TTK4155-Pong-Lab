@@ -6,8 +6,10 @@
 #include "drivers/uart_driver.h"
 #include "drivers/external_memory_driver.h"
 #include "drivers/adc_driver.h"
+//#include "drivers/spi_driver.h"
 
 #include "application/joystick.h"
+#include "application/oled/oled_utils.h"
 
 static FILE uartstdout = FDEV_SETUP_STREAM(uart_putchar, uart_getchar, _FDEV_SETUP_RW);
 
@@ -20,7 +22,9 @@ void system_init() {
     stdout = stdin = &uartstdout; // Replace the defualt stdout/in stream with the custom uart one
     external_memory_init();
     adc_init();
+    //spi_init();
     joystick_init();
+    oled_init();
 }
 
 int main(void) {

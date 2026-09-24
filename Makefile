@@ -1,12 +1,14 @@
 APP_SOURCES := \
     src/main.c \
     src/application/sram_test.c \
-	src/application/joystick.c 
+	src/application/joystick.c \
+	src/application/oled/oled_utils.c
 
 DRIVER_SOURCES := \
     src/drivers/adc_driver.c \
     src/drivers/external_memory_driver.c \
-    src/drivers/uart_driver.c
+    src/drivers/uart_driver.c \
+	src/drivers/spi_driver.c
 
 SOURCE_FILES := $(APP_SOURCES) $(DRIVER_SOURCES)
 
