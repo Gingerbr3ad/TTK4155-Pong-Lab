@@ -39,6 +39,8 @@ int main(void) {
         printf("Touch position: x:%i%% ; y:%i%% \n", touch_pos.x, touch_pos.y);
         printf("Joystick position: x:%i%% ; y:%i%% \n", joy_pos.x, joy_pos.y);
         printf("Joystick direction value: %i \n", joy_dir);
+
+        oled_test();
         _delay_ms(1000);
     }
     

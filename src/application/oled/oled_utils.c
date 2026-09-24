@@ -18,8 +18,15 @@ void oled_init() {
     spi_init(slaves, 1); //For testign only, should be moved to main later on
 
     char DISP_ON_COMMAND[1] = {0xAF};
-    char ENTIRLE_DISP_ON_COMMAND[1] = {0xA5};
 
     oled_command_write(DISP_ON_COMMAND, sizeof(DISP_ON_COMMAND));
+}
+
+void oled_test() {
+    char ENTIRLE_DISP_ON_COMMAND[1] = {0xA5};
+    char ENTIRLE_DISP_ON_REVERT_COMMAND[1] = {0xA4};
+
     oled_command_write(ENTIRLE_DISP_ON_COMMAND, sizeof(ENTIRLE_DISP_ON_COMMAND));
+    _delay_ms(1000);
+    oled_command_write(ENTIRLE_DISP_ON_REVERT_COMMAND, sizeof(ENTIRLE_DISP_ON_REVERT_COMMAND));
 }
