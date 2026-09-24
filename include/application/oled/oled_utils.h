@@ -2,7 +2,7 @@
 #include "drivers/spi_driver.h"
 #include <util/delay.h>
 
-#define OLED_DC 3
+#define OLED_DC 2
 
 void oled_command_write(char command[], int command_len);
 void oled_data_write(char data[], int data_len);
