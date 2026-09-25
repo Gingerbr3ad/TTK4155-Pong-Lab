@@ -16,7 +16,7 @@ static void SPI_MasterInit(void) {
 void spi_init() {
     SPI_MasterInit();
 
-    for(int i = 0; i < sizeof(slaves)/sizeof(slaves[0]); ++i) {
+    for(uint8_t i = 0; i < sizeof(slaves)/sizeof(slaves[0]); ++i) {
         set_bit(*slaves[i].port, slaves[i].bit);
         set_bit(*slaves[i].ddr, slaves[i].bit);
     }

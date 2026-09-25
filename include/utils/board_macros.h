@@ -21,7 +21,9 @@
 #define DD_SCK 7
 
 #define OLED_DC 2
+/*###################################################*/
 
+/*################## ADC CHANNELS ###################*/
 #define JOYSTICK_X_CHANNEL 3
 #define JOYSTICK_Y_CHANNEL 2
 #define TOUCH_X_CHANNEL 1

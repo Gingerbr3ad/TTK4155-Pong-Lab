@@ -31,7 +31,6 @@ typedef struct {
 
     int min_y;
     int max_y;
-
 } joystick_calibration_t;
 
 void joystick_init();
