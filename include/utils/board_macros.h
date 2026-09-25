@@ -2,20 +2,28 @@
 
 #include <avr/io.h>
 
+/*######### EXTERNAL DEVICE ADDRESS MAPPING #########*/
 #define ADC_XMEM_OFFSET 0x1000
 #define SRAM_XMEM_OFFSET 0x1400
+/*###################################################*/
 
+/*##################### MACROS ######################*/
 #define set_bit(reg, bit) (reg |= (1 << bit))
 #define clear_bit(reg, bit) (reg &= ~(1 << bit ))
 #define test_bit(reg, bit) (reg & (1 << bit))
+/*###################################################*/
 
-typedef struct {
-    volatile uint8_t *ddr;
-    volatile uint8_t *port;
-    int bit;
-} spi_ss_pin_t;
-
+/*###################### PINS #######################*/
 #define OLED_SS {&DDRB, &PORTB, PB3}
 
-extern const spi_ss_pin_t oled_ss;
-extern const spi_ss_pin_t slaves[1];
+#define DD_MOSI 5
+#define DD_MISO 6
+#define DD_SCK 7
+
+#define OLED_DC 2
+
+#define JOYSTICK_X_CHANNEL 3
+#define JOYSTICK_Y_CHANNEL 2
+#define TOUCH_X_CHANNEL 1
+#define TOUCH_Y_CHANNEL 0
+/*###################################################*/

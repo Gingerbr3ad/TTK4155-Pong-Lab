@@ -2,10 +2,15 @@
 
 #include "utils/board_macros.h"
 
-#define DD_MOSI 5
-#define DD_MISO 6
-#define DD_SCK 7
+typedef struct {
+    volatile uint8_t *ddr;
+    volatile uint8_t *port;
+    int bit;
+} spi_ss_pin_t;
 
-void spi_init(const spi_ss_pin_t slaves[], int num_slaves);
+extern const spi_ss_pin_t oled_ss;
+extern const spi_ss_pin_t slaves[1];
+
+void spi_init();
 uint8_t * spi_wr(uint8_t data[], int data_len, spi_ss_pin_t slave, uint8_t * return_buff);
 void spi_w(uint8_t data[], int data_len, spi_ss_pin_t slave);

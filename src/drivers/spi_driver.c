@@ -1,5 +1,10 @@
 #include "drivers/spi_driver.h"
 
+/*##################### SS PINS #####################*/
+const spi_ss_pin_t oled_ss = OLED_SS;
+const spi_ss_pin_t slaves[1] = {OLED_SS};
+/*###################################################*/
+
 static void SPI_MasterInit(void) {
     /* Set MOSI and SCK output, all others input */
     DDRB |= (1<<DD_MOSI)|(1<<DD_SCK)|(1 << PB4);
@@ -8,10 +13,10 @@ static void SPI_MasterInit(void) {
     SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);
 }
 
-void spi_init(const spi_ss_pin_t slaves[], int num_slaves) {
+void spi_init() {
     SPI_MasterInit();
 
-    for(int i = 0; i < num_slaves; ++i) {
+    for(int i = 0; i < sizeof(slaves)/sizeof(slaves[0]); ++i) {
         set_bit(*slaves[i].port, slaves[i].bit);
         set_bit(*slaves[i].ddr, slaves[i].bit);
     }

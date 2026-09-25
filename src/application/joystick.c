@@ -57,8 +57,8 @@ touch_position_t touch_read_position() {
     raw_x = adc_read(TOUCH_X_CHANNEL);
     raw_y = adc_read(TOUCH_Y_CHANNEL);
 
-    position.x = normalize_axis(raw_x, calibration.center_x, calibration.min_x, calibration.max_x);
-    position.y = normalize_axis(raw_y, calibration.center_y, calibration.min_y, calibration.max_y);
+    position.x = normalize_axis(raw_x, 255/2, 0, 255);
+    position.y = normalize_axis(raw_y, 255/2, 0, 255);
     return position;
 }
 
