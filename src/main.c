@@ -1,4 +1,4 @@
-#include "system_definitions.h"
+#include "utils/board_macros.h"
 
 #include <util/delay.h>
 #include <stdio.h>
@@ -22,7 +22,7 @@ void system_init() {
     stdout = stdin = &uartstdout; // Replace the defualt stdout/in stream with the custom uart one
     external_memory_init();
     adc_init();
-    //spi_init();
+    spi_init(slaves, sizeof(slaves)/sizeof(slaves[0]));
     joystick_init();
     oled_init();
 }

@@ -10,7 +10,10 @@ DRIVER_SOURCES := \
     src/drivers/uart_driver.c \
 	src/drivers/spi_driver.c
 
-SOURCE_FILES := $(APP_SOURCES) $(DRIVER_SOURCES)
+UTILS_SOURCES := \
+	src/utils/board_macros.c
+
+SOURCE_FILES := $(APP_SOURCES) $(DRIVER_SOURCES) $(UTILS_SOURCES)
 
 # Set this flag to "yes" (no quotes) to use JTAG; otherwise ISP (SPI) is used
 PROGRAM_WITH_JTAG := yes

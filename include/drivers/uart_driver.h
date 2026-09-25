@@ -1,4 +1,6 @@
-#include "system_definitions.h"
+#pragma once
+
+#include "utils/board_macros.h"
 
 #include <stdio.h>
 #include <util/setbaud.h>

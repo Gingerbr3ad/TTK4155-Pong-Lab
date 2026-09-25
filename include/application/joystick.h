@@ -1,4 +1,6 @@
-#include "system_definitions.h"
+#pragma once
+
+#include "utils/board_macros.h"
 
 #define JOYSTICK_X_CHANNEL 3
 #define JOYSTICK_Y_CHANNEL 2

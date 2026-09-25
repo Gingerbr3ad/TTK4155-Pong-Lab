@@ -1,7 +1,5 @@
 #include "drivers/spi_driver.h"
 
-//CHANGE ALL OF THIS FROM CHAR TO UNIT8
-
 static void SPI_MasterInit(void) {
     /* Set MOSI and SCK output, all others input */
     DDRB |= (1<<DD_MOSI)|(1<<DD_SCK)|(1 << PB4);
@@ -10,7 +8,7 @@ static void SPI_MasterInit(void) {
     SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);
 }
 
-void spi_init(spi_ss_pin slaves[], int num_slaves) {
+void spi_init(const spi_ss_pin_t slaves[], int num_slaves) {
     SPI_MasterInit();
 
     for(int i = 0; i < num_slaves; ++i) {
@@ -19,7 +17,7 @@ void spi_init(spi_ss_pin slaves[], int num_slaves) {
     }
 }
 
-static char SPI_MasterTransmit(char cData) {
+static uint8_t SPI_MasterTransmit(uint8_t cData) {
     /* Start transmission */
     SPDR = cData;
     /* Wait for transmission complete */
@@ -28,19 +26,19 @@ static char SPI_MasterTransmit(char cData) {
     return SPDR;
 }
 
-char * spi_wr(char data[], int data_len, spi_ss_pin slave, char * return_char_buff) {
+uint8_t * spi_wr(uint8_t data[], int data_len, spi_ss_pin_t slave, uint8_t * return_buff) {
     clear_bit(*slave.port, slave.bit);
 
     for(int i = 0; i < data_len; ++i) {
-        return_char_buff[i] = SPI_MasterTransmit(data[i]);
+        return_buff[i] = SPI_MasterTransmit(data[i]);
     }
 
     set_bit(*slave.port, slave.bit);
 
-    return return_char_buff;
+    return return_buff;
 }
 
-void spi_w(char data[], int data_len, spi_ss_pin slave) {
+void spi_w(uint8_t data[], int data_len, spi_ss_pin_t slave) {
     clear_bit(*slave.port, slave.bit);
 
     for(int i = 0; i < data_len; ++i) {
