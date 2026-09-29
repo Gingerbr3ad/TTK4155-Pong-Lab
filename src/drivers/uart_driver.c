@@ -36,7 +36,7 @@ int uart_putchar(char c, FILE *stream) {
   return 0;
 }
 /*This method was taken from ControllersTech AVR UART interrupt example, just that we 
-implemented a method to store c in a buffer until so it becomes a string '\n'. Adresses used were from the Atmega162 datasheet
+implemented a method to store c in a buffer until'\n'. Adresses used were from the Atmega162 datasheet
 and interruot function was taken from AVR library*/
 ISR(UART0_RECEIVE_INTERRUPT) {
   char received_char = UDR0; // Get the received character from the USART data register
