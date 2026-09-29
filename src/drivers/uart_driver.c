@@ -1,13 +1,18 @@
 #include "drivers/uart_driver.h"
+#include <avr/interrupt.h> 
 
+#define UART0_RECEIVE_INTERRUPT  USART_RXC_vect
+#define BufferSize 64 
 /* This uart driver implementation is based on the code examples from the offical Atmel AVR ATmega162 documentation and the AVR Libc documentation  */
-
+volatile char uart_buffer[BufferSize]; // Buffer to store received characters
+volatile uint8_t line_ready = 0; // Index for the head of the buffer
+volatile uint8_t char_count = 0; // Count of characters received
 void uart_init() {
     // Set baud rate with the values calculated by the setbaud macro
     UBRR0H = UBRRH_VALUE;
     UBRR0L = UBRRL_VALUE;
     // Enable receiver and transmitter
-    UCSR0B = (1<<RXEN0)|(1<<TXEN0);
+    UCSR0B = (1<<RXEN0)|(1<<TXEN0)|(1<<RXCIE0);
     // Set frame format: 8data, 2stop bit #TODO: CHECK if this is the format we want
     UCSR0C = (1<<URSEL0)|(1<<USBS0)|(3<<UCSZ00);
 
@@ -18,6 +23,8 @@ void uart_init() {
     #else
     UCSR0A &= ~(1 << U2X0);
     #endif
+
+    sei(); // Enable global interrupts
 }  
 
 int uart_putchar(char c, FILE *stream) {
@@ -29,10 +36,31 @@ int uart_putchar(char c, FILE *stream) {
   return 0;
 }
 
+ISR(UART0_RECEIVE_INTERRUPT) {
+  char received_char = UDR0; // Get the received character from the USART data register
+  if(received_char == '\n') {
+    
+    uart_buffer[char_count] = '\0'; // Null-terminate the string
+
+    line_ready = 1; // Set the line ready flag when a newline character is received
+  } else {
+  
+    if(char_count < BufferSize-1) {
+      uart_buffer[char_count] = received_char; // Null-terminate the string if within buffer size
+       char_count++; // Increment the character count
+    }
+  }
+}
+
+/*
 int uart_getchar(FILE *stream) {
-  stream = stream; // Avoid unused parameter warining
-  /* Wait for data to be received */
-  while (!(UCSR0A & (1<<RXC0)));
-  /* Get and return received data from buffer */
-  return UDR0;
-} 
+    stream = stream; // Avoid unused parameter warning
+
+    // Wait for data to be received
+    while (!(UCSR0A & (1 << RXC0)));
+
+    // Get and return received data from buffer
+    return UDR0;
+}
+*/
+
