@@ -74,10 +74,10 @@ void handle_uart_interrupt() {
   else if(!strcmp(recieved_string, "C_PRINT_CONTROLLS")) {
     if(print_controlls_command_flag) {
       print_controlls_command_flag = 0;
-      printf("Printing controlls vlaues \n");
+      printf("Stopping printing controlls vlaues \n");
     } else {
       print_controlls_command_flag = 1;
-      printf("Stopping printing controlls vlaues \n");
+      printf("Printing controlls vlaues \n");
     }
   }
   else {printf("I've recieved this from UART (Command not recognized): %s \n", recieved_string);}
