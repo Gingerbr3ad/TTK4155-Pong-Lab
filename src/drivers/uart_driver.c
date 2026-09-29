@@ -61,7 +61,7 @@ void handle_uart_interrupt() {
   if(!strcmp(recieved_string, "CTEST")) {
     printf("Test command recieved\n");
   }
-  else {printf("I've recieved this from UART (Command not recognized): %s", recieved_string);}
+  else {printf("I've recieved this from UART (Command not recognized): %s \n", recieved_string);}
   printf("##############################################################\n");
 
   uart_recieved_flag = 0; // Reset the uart recieved flag
