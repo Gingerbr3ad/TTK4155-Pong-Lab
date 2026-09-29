@@ -1,10 +1,8 @@
 #include "drivers/uart_driver.h"
-#include <avr/interrupt.h> 
-
 
 /* This uart driver implementation is based on the code examples from the offical Atmel AVR ATmega162 documentation and the AVR Libc documentation  */
 volatile char uart_buffer[BufferSize]; // Buffer to store received characters
-volatile uint8_t line_ready = 0; // Index for the head of the buffer
+volatile uint8_t uart_recieved_flag = 0; // Index for the head of the buffer
 volatile uint8_t char_count = 0; // Count of characters received
 
 void uart_init() {
@@ -23,8 +21,6 @@ void uart_init() {
     #else
     UCSR0A &= ~(1 << U2X0);
     #endif
-
-    sei(); // Enable global interrupts
 }  
 
 int uart_putchar(char c, FILE *stream) {
@@ -35,29 +31,40 @@ int uart_putchar(char c, FILE *stream) {
   UDR0 = c; // UDR is the character buffer terminal for the USART device
   return 0;
 }
-/*This method was taken from ControllersTech AVR UART interrupt example, just that we 
-implemented a method to store c in a buffer until'\n'. Adresses used were from the Atmega162 datasheet
-and interruot function was taken from AVR library*/
-ISR(UART0_RECEIVE_INTERRUPT) {
+
+/* This method was taken from ControllersTech AVR UART interrupt example, just that we 
+implemented a method to store c in a buffer until'\n' */
+ISR(USART0_RXC_vect) {
+  cli();
+
   char received_char = UDR0; // Get the received character from the USART data register
+
   if(received_char == '\n') {
-    
     uart_buffer[char_count] = '\0'; // Null-terminate the string
 
-    line_ready = 1; // Set the line ready flag when a newline character is received
+    uart_recieved_flag = 1; // Set the uart recieved flag when a newline character is received
+    char_count = 0; // Reset the character count for the next line
   } else {
-  
     if(char_count < BufferSize-1) {
       uart_buffer[char_count++] = received_char; // Increment the character count and store the recivied charachters in the buffer
-     
     }
   }
+
+  sei();
 }
 
 void handle_uart_interrupt() {
-  printf("I've got this from the UART: %s\n", uart_buffer);
-  line_ready = 0; // Reset the line ready flag
-  char_count = 0; // Reset the character count for the next line
+  char recieved_string[BufferSize]; // Since strcmp() can't handle a volatile string we make a copy of the character buffer
+  for (int i = 0; i < BufferSize; i++) {recieved_string[i] = uart_buffer[i];}
+  
+  printf("######################## UART RECIEVED #######################\n");
+  if(!strcmp(recieved_string, "CTEST")) {
+    printf("Test command recieved\n");
+  }
+  else {printf("I've recieved this from UART (Command not recognized): %s", recieved_string);}
+  printf("##############################################################\n");
+
+  uart_recieved_flag = 0; // Reset the uart recieved flag
 }
 
 int uart_getchar(FILE *stream) {

@@ -25,13 +25,14 @@ void system_init() {
     spi_init();
     joystick_init();
     oled_init();
+    sei(); // Enable global interrupts
 }
 
 int main(void) {
     system_init();
 
     while(1) { 
-        if(line_ready) { handle_uart_interrupt(); }
+        if(uart_recieved_flag) {handle_uart_interrupt();}
         //char ch = getchar(); // Waits until it gets a character on the stdin stream
         printf("Touch position: x:%i%% ; y:%i%% \n", touch_pos.x, touch_pos.y);
         printf("Joystick position: x:%i%% ; y:%i%% \n", joy_pos.x, joy_pos.y);

@@ -5,10 +5,9 @@
 #include <stdio.h>
 #include <util/setbaud.h>
 
-#define UART0_RECEIVE_INTERRUPT  USART_RXC_vect
 #define BufferSize 64 
 
-extern volatile uint8_t line_ready; // Index for the head of the buffer
+extern volatile uint8_t uart_recieved_flag;
 
 void uart_init();
 int uart_putchar(char c, FILE *stream);
