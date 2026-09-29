@@ -1,9 +1,13 @@
-#include "system_definitions.h"
+#pragma once
 
-#define JOYSTICK_X_CHANNEL 0
-#define JOYSTICK_Y_CHANNEL 1
+#include "utils/board_macros.h"
 
 #define JOYSTICK_DEADZONE 20
+
+typedef struct {
+    int x;
+    int y;
+} touch_position_t;
 
 typedef struct {
     int x;
@@ -27,10 +31,11 @@ typedef struct {
 
     int min_y;
     int max_y;
-
 } joystick_calibration_t;
 
 void joystick_init();
+
+touch_position_t touch_read_position();
 
 joystick_position_t joystick_read_position();
 joystick_direction_t joystick_get_direction();
