@@ -30,10 +30,12 @@ int main(void) {
 
     while(1) { 
         if(uart_recieved_flag) {handle_uart_interrupt();}
-        //char ch = getchar(); // Waits until it gets a character on the stdin stream
-        printf("Touch position: x:%i%% ; y:%i%% \n", touch_pos.x, touch_pos.y);
-        printf("Joystick position: x:%i%% ; y:%i%% \n", joy_pos.x, joy_pos.y);
-        printf("Joystick direction value: %i \n", joy_dir);
+        
+        if(print_controlls_command_flag) {
+            printf("Touch position: x:%i%% ; y:%i%% \n", touch_pos.x, touch_pos.y);
+            printf("Joystick position: x:%i%% ; y:%i%% \n", joy_pos.x, joy_pos.y);
+            printf("Joystick direction value: %i \n", joy_dir);
+        }
 
         oled_test();
         _delay_ms(1000);

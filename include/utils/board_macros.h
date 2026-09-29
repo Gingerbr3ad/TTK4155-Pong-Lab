@@ -33,3 +33,7 @@
 #define TOUCH_X_CHANNEL 1
 #define TOUCH_Y_CHANNEL 0
 /*###################################################*/
+
+/*################## COMMAND FLAGS ##################*/
+extern volatile int print_controlls_command_flag;
+/*###################################################*/

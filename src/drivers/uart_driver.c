@@ -53,20 +53,6 @@ ISR(USART0_RXC_vect) {
   sei();
 }
 
-void handle_uart_interrupt() {
-  char recieved_string[BufferSize]; // Since strcmp() can't handle a volatile string we make a copy of the character buffer
-  for (int i = 0; i < BufferSize; i++) {recieved_string[i] = uart_buffer[i];}
-  
-  printf("######################## UART RECIEVED #######################\n");
-  if(!strcmp(recieved_string, "CTEST")) {
-    printf("Test command recieved\n");
-  }
-  else {printf("I've recieved this from UART (Command not recognized): %s \n", recieved_string);}
-  printf("##############################################################\n");
-
-  uart_recieved_flag = 0; // Reset the uart recieved flag
-}
-
 int uart_getchar(FILE *stream) {
     stream = stream; // Avoid unused parameter warning
 
@@ -77,4 +63,25 @@ int uart_getchar(FILE *stream) {
     return UDR0;
 }
 
+void handle_uart_interrupt() {
+  char recieved_string[BufferSize]; // Since strcmp() can't handle a volatile string we make a copy of the character buffer
+  for (int i = 0; i < BufferSize; i++) {recieved_string[i] = uart_buffer[i];}
+  
+  printf("######################## UART RECIEVED #######################\n");
+  if(!strcmp(recieved_string, "C_TEST")) {
+    printf("Test command recieved\n");
+  } 
+  else if(!strcmp(recieved_string, "C_PRINT_CONTROLLS")) {
+    if(print_controlls_command_flag) {
+      print_controlls_command_flag = 0;
+      printf("Printing controlls vlaues \n");
+    } else {
+      print_controlls_command_flag = 1;
+      printf("Stopping printing controlls vlaues \n");
+    }
+  }
+  else {printf("I've recieved this from UART (Command not recognized): %s \n", recieved_string);}
+  printf("##############################################################\n");
 
+  uart_recieved_flag = 0; // Reset the uart recieved flag
+}
