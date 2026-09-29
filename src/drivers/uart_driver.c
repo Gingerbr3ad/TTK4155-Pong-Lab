@@ -1,12 +1,12 @@
 #include "drivers/uart_driver.h"
 #include <avr/interrupt.h> 
 
-#define UART0_RECEIVE_INTERRUPT  USART_RXC_vect
-#define BufferSize 64 
+
 /* This uart driver implementation is based on the code examples from the offical Atmel AVR ATmega162 documentation and the AVR Libc documentation  */
 volatile char uart_buffer[BufferSize]; // Buffer to store received characters
 volatile uint8_t line_ready = 0; // Index for the head of the buffer
 volatile uint8_t char_count = 0; // Count of characters received
+
 void uart_init() {
     // Set baud rate with the values calculated by the setbaud macro
     UBRR0H = UBRRH_VALUE;
@@ -54,7 +54,12 @@ ISR(UART0_RECEIVE_INTERRUPT) {
   }
 }
 
-/*
+void handle_uart_interrupt() {
+  printf("I've got this from the UART: %s\n", uart_buffer);
+  line_ready = 0; // Reset the line ready flag
+  char_count = 0; // Reset the character count for the next line
+}
+
 int uart_getchar(FILE *stream) {
     stream = stream; // Avoid unused parameter warning
 
@@ -64,5 +69,5 @@ int uart_getchar(FILE *stream) {
     // Get and return received data from buffer
     return UDR0;
 }
-*/
+
 
