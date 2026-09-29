@@ -1,7 +1,10 @@
 #pragma once
 
 #include <avr/io.h>
-#include <avr/interrupt.h> 
+#include <avr/interrupt.h>
+#include <util/delay.h>
+#include <stdio.h>
+#include <string.h>
 
 /*######### EXTERNAL DEVICE ADDRESS MAPPING #########*/
 #define ADC_XMEM_OFFSET 0x1000

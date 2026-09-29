@@ -1,8 +1,5 @@
 #include "utils/board_macros.h"
 
-#include <util/delay.h>
-#include <stdio.h>
-
 #include "drivers/uart_driver.h"
 #include "drivers/external_memory_driver.h"
 #include "drivers/adc_driver.h"
