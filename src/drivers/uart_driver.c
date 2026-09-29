@@ -35,7 +35,9 @@ int uart_putchar(char c, FILE *stream) {
   UDR0 = c; // UDR is the character buffer terminal for the USART device
   return 0;
 }
-
+/*This method was taken from ControllersTech AVR UART interrupt example, just that we 
+implemented a method to store c in a buffer until so it becomes a string '\n'. Adresses used were from the Atmega162 datasheet
+and interruot function was taken from AVR library*/
 ISR(UART0_RECEIVE_INTERRUPT) {
   char received_char = UDR0; // Get the received character from the USART data register
   if(received_char == '\n') {
@@ -46,8 +48,8 @@ ISR(UART0_RECEIVE_INTERRUPT) {
   } else {
   
     if(char_count < BufferSize-1) {
-      uart_buffer[char_count] = received_char; // Null-terminate the string if within buffer size
-       char_count++; // Increment the character count
+      uart_buffer[char_count++] = received_char; // Increment the character count and store the recivied charachters in the buffer
+     
     }
   }
 }
