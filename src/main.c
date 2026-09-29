@@ -20,6 +20,11 @@ int main(void) {
     system_init();
     int adc_data = 0;
     while(1) { 
+          if(line_ready) {
+            printf("I've got this from the UART: %s\n", uart_buffer);
+            line_ready = 0; // Reset the line ready flag
+            char_count = 0; // Reset the character count for the next line
+        }
         adc_data = adc_read(1);
         //char ch = getchar(); // Waits until it gets a character on the stdin stream
         printf("I've got this from the ADC: %i\n", adc_data);
