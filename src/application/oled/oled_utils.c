@@ -33,36 +33,22 @@ void oled_test() {
     oled_command_write(ENTIRLE_DISP_ON_REVERT_COMMAND, sizeof(ENTIRLE_DISP_ON_REVERT_COMMAND));
 }
 
-static void oled_set_full_window(void)
-{
-    oled_command_write((uint8_t[]){0x20, 0x00}, 2);       // horizontal addressing
-    oled_command_write((uint8_t[]){0x21, 0x00, 0x7F}, 3); // columns 0..127
-    oled_command_write((uint8_t[]){0x22, 0x00, 0x07}, 3); // pages 0..7
-}
 
-void oled_clear(void)
-{
+void oled_clear(void) {
     uint8_t block[16] = {0};
 
-    oled_set_full_window();
-
-    // 64 * 16 = 1024 bytes
     for (uint8_t i = 0; i < 64; i++) {
         oled_data_write(block, sizeof(block));
     }
 }
 
-void oled_checker(void)
-{
+void oled_checker(void) {
     uint8_t block[16];
 
     for (uint8_t i = 0; i < sizeof(block); i++) {
         block[i] = (i & 1) ? 0xAA : 0x55;
     }
-
-    oled_set_full_window();
-
-    // 64 * 16 = 1024 bytes
+    
     for (uint8_t i = 0; i < 64; i++) {
         oled_data_write(block, sizeof(block));
     }

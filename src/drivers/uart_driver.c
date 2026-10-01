@@ -1,4 +1,5 @@
 #include "drivers/uart_driver.h"
+#include "application/oled/oled_utils.h"
 
 /* This uart driver implementation is based on the code examples from the offical Atmel AVR ATmega162 documentation and the AVR Libc documentation  */
 volatile char uart_buffer[BufferSize]; // Buffer to store received characters
@@ -70,7 +71,15 @@ void handle_uart_interrupt() {
   printf("######################## UART RECIEVED #######################\n");
   if(!strcmp(recieved_string, "C_TEST")) {
     printf("Test command recieved\n");
-  } 
+  }
+  else if(!strcmp(recieved_string, "C_OLED_CLEAR")) {
+      oled_clear();
+      printf("Clearing the OLED screen \n");
+  }
+  else if(!strcmp(recieved_string, "C_OLED_CHECKERS")) {
+      oled_checker();
+      printf("Drawing the checker board pattern on the OLED screen \n");
+  }
   else if(!strcmp(recieved_string, "C_PRINT_CONTROLLS")) {
     if(print_controlls_command_flag) {
       print_controlls_command_flag = 0;
