@@ -15,6 +15,12 @@ void oled_init() {
 
     uint8_t DISP_ON_COMMAND[1] = {0xAF};
 
+    oled_command_write((uint8_t[]){0x20, 0x00}, 2);       // Horizontal mode
+    oled_command_write((uint8_t[]){0x21, 0x00, 0x7F}, 3); // Col 0-127
+    oled_command_write((uint8_t[]){0x22, 0x00, 0x07}, 3); // Page 0-7
+
+    oled_command_write((uint8_t[]){0xA4}, 1); // Follow GDDRAM
+
     oled_command_write(DISP_ON_COMMAND, sizeof(DISP_ON_COMMAND));
 }
 
