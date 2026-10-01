@@ -1,8 +1,5 @@
 #include "utils/board_macros.h"
 
-#include <util/delay.h>
-#include <stdio.h>
-
 #include "drivers/uart_driver.h"
 #include "drivers/external_memory_driver.h"
 #include "drivers/adc_driver.h"
@@ -25,20 +22,20 @@ void system_init() {
     spi_init();
     joystick_init();
     oled_init();
+    sei(); // Enable global interrupts
 }
 
 int main(void) {
     system_init();
 
     while(1) { 
-        touch_pos = touch_read_position();
-        joy_pos = joystick_read_position();
-        joy_dir = joystick_get_direction();
+        if(uart_recieved_flag) {handle_uart_interrupt();}
         
-        //char ch = getchar(); // Waits until it gets a character on the stdin stream
-        printf("Touch position: x:%i%% ; y:%i%% \n", touch_pos.x, touch_pos.y);
-        printf("Joystick position: x:%i%% ; y:%i%% \n", joy_pos.x, joy_pos.y);
-        printf("Joystick direction value: %i \n", joy_dir);
+        if(print_controlls_command_flag) {
+            printf("Touch position: x:%i%% ; y:%i%% \n", touch_pos.x, touch_pos.y);
+            printf("Joystick position: x:%i%% ; y:%i%% \n", joy_pos.x, joy_pos.y);
+            printf("Joystick direction value: %i \n", joy_dir);
+        }
 
         oled_test();
         _delay_ms(1000);
