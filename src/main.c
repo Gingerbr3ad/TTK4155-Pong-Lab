@@ -37,7 +37,10 @@ int main(void) {
             printf("Joystick direction value: %i \n", joy_dir);
         }
 
-        oled_test();
+        //oled_test();
+        oled_clear();
+        _delay_ms(1000);
+        oled_checker();
         _delay_ms(1000);
     }
     

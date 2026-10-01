@@ -10,3 +10,4 @@ void oled_init();
 
 void oled_test();
 void oled_clear();
+void oled_checker();
