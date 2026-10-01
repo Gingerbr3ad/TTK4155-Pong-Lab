@@ -9,3 +9,4 @@ void oled_data_write(uint8_t data[], int data_len);
 void oled_init();
 
 void oled_test();
+void oled_clear();

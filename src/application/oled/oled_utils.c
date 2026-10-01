@@ -26,3 +26,11 @@ void oled_test() {
     _delay_ms(1000);
     oled_command_write(ENTIRLE_DISP_ON_REVERT_COMMAND, sizeof(ENTIRLE_DISP_ON_REVERT_COMMAND));
 }
+
+void oled_clear() {oled_data_write((uint8_t[1024]){0}, 1024);}
+
+void oled_checker() {
+    uint8_t framebuffer[1024];
+    for (int i = 0; i < 1024; i++) {framebuffer[i] = (i & 1) ? 0xAA : 0x55;}
+    oled_data_write(framebuffer, 1024);
+}
