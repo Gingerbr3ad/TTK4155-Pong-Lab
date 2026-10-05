@@ -32,7 +32,7 @@ int main(void) {
     while(1) { 
         if(uart_recieved_flag) {handle_uart_interrupt();}
         if(display_update_flag) {
-            shutters();
+            expanding_rectangles();
             oled_flush();
         }
         
