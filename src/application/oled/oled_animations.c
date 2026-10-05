@@ -85,149 +85,238 @@ void expanding_rectangles(void)
 
 void bouncing_ball_animation(void)
 {
-    #define SCREEN_WIDTH   128
-    #define SCREEN_HEIGHT   64
-    #define BALL_RADIUS      2
-    #define ANIMATION_FRAMES (24 * 5)
+    enum {
+        SCREEN_WIDTH     = 128,
+        SCREEN_HEIGHT    = 64,
+        BALL_RADIUS      = 3,
+        ANIMATION_FRAMES = 24 * 5,
 
-    static int16_t x = SCREEN_WIDTH / 2;
-    static int16_t y = SCREEN_HEIGHT / 2;
+        // Q8.8 fixed-point: 256 units = 1 pixel
+        FP_SHIFT         = 8,
+        FP_ONE           = 1 << FP_SHIFT,
 
-    static int8_t vx = 1;
-    static int8_t vy = 1;
+        // Velocity multiplied by 252/256 every frame (~1.6% drag)
+        DRAG             = 252,
+
+        // Retain ~90% velocity after a collision
+        BOUNCE_LOSS      = 230
+    };
+
+    // Position in Q8.8 fixed-point
+    static int32_t x = (SCREEN_WIDTH / 2) * FP_ONE;
+    static int32_t y = (SCREEN_HEIGHT / 2) * FP_ONE;
+
+    // Velocity in Q8.8 pixels/frame
+    static int16_t vx = 0;
+    static int16_t vy = 0;
 
     static uint8_t frame = 0;
-
-    // State for a small pseudo-random generator
     static uint16_t random_state = 0xACE1u;
 
+
     /*
-     * Every 5 seconds:
-     * - put ball back in centre
-     * - generate new random velocity
+     * Every 5 seconds, create a new ball trajectory.
      */
     if (frame == 0)
     {
-        x = SCREEN_WIDTH / 2;
-        y = SCREEN_HEIGHT / 2;
+        x = (SCREEN_WIDTH / 2) * FP_ONE;
+        y = (SCREEN_HEIGHT / 2) * FP_ONE;
 
-        // Generate next pseudo-random value
+        /*
+         * Generate pseudo-random value.
+         */
         random_state ^= random_state << 7;
         random_state ^= random_state >> 9;
         random_state ^= random_state << 8;
 
         /*
-         * Random horizontal velocity:
-         *
-         * magnitude = 1 or 2
-         * direction = left or right
+         * Horizontal speed:
+         * 2.0 - 4.0 pixels/frame
          */
-        vx = (random_state & 0x01) ? 1 : 2;
+        uint8_t speed_x = 2 + (random_state & 0x03);
 
-        if (random_state & 0x02)
-        {
+        vx = speed_x * FP_ONE;
+
+        if (random_state & 0x08)
             vx = -vx;
-        }
 
-        // Generate another value for vertical velocity
+
+        /*
+         * Generate another pseudo-random value.
+         */
         random_state ^= random_state << 7;
         random_state ^= random_state >> 9;
         random_state ^= random_state << 8;
 
         /*
-         * Random vertical velocity:
-         *
-         * magnitude = 1 or 2
-         * direction = up or down
+         * Vertical speed:
+         * 1.0 - 3.0 pixels/frame
          */
-        vy = (random_state & 0x01) ? 1 : 2;
+        uint8_t speed_y = 1 + (random_state & 0x03);
 
-        if (random_state & 0x02)
-        {
+        vy = speed_y * FP_ONE;
+
+        if (random_state & 0x08)
             vy = -vy;
-        }
     }
 
+
     /*
-     * Clear previous frame.
+     * Clear old frame.
      */
     memset(FRAMEBUFFER, 0x00, FRAMEBUFFER_SIZE);
 
+
     /*
-     * Draw a small circular ball.
-     *
-     * This produces roughly:
-     *
-     *   XXX
-     *  XXXXX
-     *  XXXXX
-     *  XXXXX
-     *   XXX
+     * Convert fixed-point position to pixel coordinates.
      */
-    for (int8_t dy = -BALL_RADIUS; dy <= BALL_RADIUS; dy++)
+    int16_t ball_x = x >> FP_SHIFT;
+    int16_t ball_y = y >> FP_SHIFT;
+
+
+    /*
+     * Draw circular ball.
+     *
+     * Radius 3 gives approximately a 7x7 pixel ball.
+     */
+    for (int8_t dy = -BALL_RADIUS;
+         dy <= BALL_RADIUS;
+         dy++)
     {
-        for (int8_t dx = -BALL_RADIUS; dx <= BALL_RADIUS; dx++)
+        for (int8_t dx = -BALL_RADIUS;
+             dx <= BALL_RADIUS;
+             dx++)
         {
-            // Only draw pixels approximately inside a circle
             if ((dx * dx + dy * dy) <=
                 (BALL_RADIUS * BALL_RADIUS))
             {
-                uint8_t px = (uint8_t)(x + dx);
-                uint8_t py = (uint8_t)(y + dy);
+                int16_t px = ball_x + dx;
+                int16_t py = ball_y + dy;
 
-                uint16_t index =
-                    px +
-                    ((uint16_t)(py >> 3) * SCREEN_WIDTH);
+                if (px >= 0 &&
+                    px < SCREEN_WIDTH &&
+                    py >= 0 &&
+                    py < SCREEN_HEIGHT)
+                {
+                    uint16_t index =
+                        (uint16_t)px +
+                        ((uint16_t)(py >> 3) *
+                         SCREEN_WIDTH);
 
-                FRAMEBUFFER[index] |=
-                    (1 << (py & 0x07));
+                    FRAMEBUFFER[index] |=
+                        (1 << (py & 0x07));
+                }
             }
         }
     }
 
+
     /*
-     * Move ball.
+     * Move according to current velocity.
      */
     x += vx;
     y += vy;
 
+
     /*
-     * Left/right collision.
+     * Apply air resistance / drag.
+     *
+     * vx *= 252 / 256
+     * vy *= 252 / 256
+     *
+     * Using int32_t for the intermediate calculation
+     * prevents overflow.
      */
-    if (x <= BALL_RADIUS)
+    vx = ((int32_t)vx * DRAG) >> 8;
+    vy = ((int32_t)vy * DRAG) >> 8;
+
+
+    /*
+     * Screen boundaries, expressed in fixed point.
+     */
+    int32_t left =
+        BALL_RADIUS * FP_ONE;
+
+    int32_t right =
+        (SCREEN_WIDTH - 1 - BALL_RADIUS) * FP_ONE;
+
+    int32_t top =
+        BALL_RADIUS * FP_ONE;
+
+    int32_t bottom =
+        (SCREEN_HEIGHT - 1 - BALL_RADIUS) * FP_ONE;
+
+
+    /*
+     * Left wall.
+     */
+    if (x < left)
     {
-        x = BALL_RADIUS;
+        x = left;
+
         vx = -vx;
-    }
-    else if (x >= (SCREEN_WIDTH - 1 - BALL_RADIUS))
-    {
-        x = SCREEN_WIDTH - 1 - BALL_RADIUS;
-        vx = -vx;
+
+        // Lose some energy during bounce
+        vx = ((int32_t)vx * BOUNCE_LOSS) >> 8;
     }
 
     /*
-     * Top/bottom collision.
+     * Right wall.
      */
-    if (y <= BALL_RADIUS)
+    else if (x > right)
     {
-        y = BALL_RADIUS;
-        vy = -vy;
+        x = right;
+
+        vx = -vx;
+        vx = ((int32_t)vx * BOUNCE_LOSS) >> 8;
     }
-    else if (y >= (SCREEN_HEIGHT - 1 - BALL_RADIUS))
+
+
+    /*
+     * Top wall.
+     */
+    if (y < top)
     {
-        y = SCREEN_HEIGHT - 1 - BALL_RADIUS;
+        y = top;
+
         vy = -vy;
+        vy = ((int32_t)vy * BOUNCE_LOSS) >> 8;
     }
 
     /*
-     * Advance the 5-second animation timer.
+     * Bottom wall.
+     */
+    else if (y > bottom)
+    {
+        y = bottom;
+
+        vy = -vy;
+        vy = ((int32_t)vy * BOUNCE_LOSS) >> 8;
+    }
+
+
+    /*
+     * Prevent extremely tiny velocities from causing
+     * sub-pixel movement forever.
+     *
+     * 16 fixed-point units = 1/16 pixel/frame.
+     */
+    if (vx > -16 && vx < 16)
+        vx = 0;
+
+    if (vy > -16 && vy < 16)
+        vy = 0;
+
+
+    /*
+     * Restart with a new trajectory after 5 seconds.
      */
     frame++;
 
-    if (frame >= ANIMATION_FRAMES)
-    {
+    if (frame >= ANIMATION_FRAMES) {
         frame = 0;
     }
-
+    
     framebuffer_updated_flag = 1;
 }
+    
