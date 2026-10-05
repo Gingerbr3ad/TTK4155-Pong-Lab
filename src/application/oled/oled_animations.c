@@ -3,6 +3,7 @@ static uint8_t pattern = 0xF0;
 void shutters() {
     memset(FRAMEBUFFER, pattern, FRAMEBUFFER_SIZE);
     pattern = (pattern >> 1) | (pattern << 7);
+    framebuffer_updated_flag = 1;
 }
 
 
@@ -78,4 +79,6 @@ void expanding_rectangles(void)
     {
         step = 0;
     }
+
+    framebuffer_updated_flag = 1;
 }
