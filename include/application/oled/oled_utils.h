@@ -18,6 +18,5 @@ void oled_init();
 
 void oled_flush();
 
-void oled_test();
 void oled_clear();
-void oled_checker();
+void oled_checkerboard_test();

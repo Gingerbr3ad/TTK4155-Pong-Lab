@@ -15,6 +15,7 @@ void oled_data_write(uint8_t data[], int data_len) {
 
 void oled_flush() {
     oled_data_write(FRAMEBUFFER, FRAMEBUFFER_SIZE);
+    display_update_flag = 0;
 }
 
 void display_update_timer_init() {
@@ -36,7 +37,12 @@ void display_update_timer_init() {
 }
 
 // If the framebuffer was changed set a flag to send the frame buffer to the screen
-ISR(TIMER3_COMPA_vect) {if (framebuffer_updated_flag) {display_update_flag = 1;}}
+ISR(TIMER3_COMPA_vect) {
+    if (framebuffer_updated_flag) {
+        display_update_flag = 1;
+        framebuffer_updated_flag = 0;
+    }
+}
 
 void oled_init() {
     set_bit(DDRB, OLED_DC);
@@ -47,29 +53,19 @@ void oled_init() {
     oled_command_write((uint8_t[]){0xA4}, 1); // Follow GDDRAM
     oled_command_write((uint8_t[]){0xAF}, 1); // Display ON
 
-    oled_checker();
+    oled_checkerboard_test();
     _delay_ms(1000);
 
     display_update_timer_init();
     oled_clear();
 }
 
-void oled_test() {
-    uint8_t ENTIRLE_DISP_ON_COMMAND[1] = {0xA5};
-    uint8_t ENTIRLE_DISP_ON_REVERT_COMMAND[1] = {0xA4};
-
-    oled_command_write(ENTIRLE_DISP_ON_COMMAND, sizeof(ENTIRLE_DISP_ON_COMMAND));
-    _delay_ms(1000);
-    oled_command_write(ENTIRLE_DISP_ON_REVERT_COMMAND, sizeof(ENTIRLE_DISP_ON_REVERT_COMMAND));
-}
-
-
 void oled_clear() {
     memset(FRAMEBUFFER, 0, FRAMEBUFFER_SIZE);
     framebuffer_updated_flag = 1;
 }
 
-void oled_checker() {
+void oled_checkerboard_test() {
     uint8_t block[16];
 
     for (uint8_t i = 0; i < sizeof(block); i++) {
