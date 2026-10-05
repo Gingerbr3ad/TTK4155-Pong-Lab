@@ -1,5 +1,8 @@
 #include "application/oled/oled_utils.h"
 
+volatile uint8_t display_update_flag = 0;
+volatile uint8_t framebuffer_updated_flag = 0;
+
 void oled_command_write(uint8_t command[], int command_len) {
     clear_bit(PORTB, OLED_DC);
     spi_w(command, command_len, oled_ss);
@@ -10,6 +13,31 @@ void oled_data_write(uint8_t data[], int data_len) {
     spi_w(data, data_len, oled_ss);
 }
 
+void oled_flush() {
+    oled_data_write(FRAMEBUFFER, FRAMEBUFFER_SIZE);
+}
+
+void display_update_timer_init() {
+    // Setup of 16 bit timer/counter 3 on pin PD4 (OC3A)
+    // Select CTC mode with TOP = OCR3A
+    set_bit(TCCR3B, WGM32);
+
+    // Select clk(I/O) / 1024
+    set_bit(TCCR3B, CS32);
+    set_bit(TCCR3B, CS30);
+
+    // Set timer frequency
+    OCR3A = 199; // 24 Hz
+    //OCR3A = 159; // 30 Hz
+
+
+    // Enable Compare Match A interrupt
+    set_bit(ETIMSK, OCIE3A);
+}
+
+// If the framebuffer was changed set a flag to send the frame buffer to the screen
+ISR(TIMER3_COMPA_vect) {if (framebuffer_updated_flag) {display_update_flag = 1;}}
+
 void oled_init() {
     set_bit(DDRB, OLED_DC);
 
@@ -19,6 +47,10 @@ void oled_init() {
     oled_command_write((uint8_t[]){0xA4}, 1); // Follow GDDRAM
     oled_command_write((uint8_t[]){0xAF}, 1); // Display ON
 
+    oled_checker();
+    _delay_ms(1000);
+
+    display_update_timer_init();
     oled_clear();
 }
 
@@ -33,11 +65,8 @@ void oled_test() {
 
 
 void oled_clear() {
-    uint8_t block[8] = {0};
-
-    for (uint8_t i = 0; i < 128; i++) {
-        oled_data_write(block, sizeof(block));
-    }
+    memset(FRAMEBUFFER, 0, FRAMEBUFFER_SIZE);
+    framebuffer_updated_flag = 1;
 }
 
 void oled_checker() {

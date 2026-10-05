@@ -30,6 +30,7 @@ int main(void) {
 
     while(1) { 
         if(uart_recieved_flag) {handle_uart_interrupt();}
+        if(display_update_flag) {oled_flush();}
         
         if(print_controlls_command_flag) {
             printf("Touch position: x:%i%% ; y:%i%% \n", touch_pos.x, touch_pos.y);
@@ -37,11 +38,7 @@ int main(void) {
             printf("Joystick direction value: %i \n", joy_dir);
         }
 
-        //oled_test();
-        oled_clear();
-        _delay_ms(1000);
-        oled_checker();
-        _delay_ms(1000);
+        _delay_ms(10);
     }
     
     return 0;

@@ -4,7 +4,7 @@
 #include "drivers/external_memory_driver.h"
 
 void adc_init() {
-    //Setup of 16 bit timer/counter 1 on pin PD5 (OC1A)
+    // Setup of 16 bit timer/counter 1 on pin PD5 (OC1A)
     // Select Clear OC1A on Compare Match, set OC1A at TOP (Non-inverting)
     set_bit(TCCR1A, COM1A1);
 
