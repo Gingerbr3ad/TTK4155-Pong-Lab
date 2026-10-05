@@ -13,15 +13,13 @@ void oled_data_write(uint8_t data[], int data_len) {
 void oled_init() {
     set_bit(DDRB, OLED_DC);
 
-    uint8_t DISP_ON_COMMAND[1] = {0xAF};
-
     oled_command_write((uint8_t[]){0x20, 0x00}, 2);       // Horizontal mode
     oled_command_write((uint8_t[]){0x21, 0x00, 0x7F}, 3); // Col 0-127
     oled_command_write((uint8_t[]){0x22, 0x00, 0x07}, 3); // Page 0-7
-
     oled_command_write((uint8_t[]){0xA4}, 1); // Follow GDDRAM
+    oled_command_write((uint8_t[]){0xAF}, 1); // Display ON
 
-    oled_command_write(DISP_ON_COMMAND, sizeof(DISP_ON_COMMAND));
+    oled_clear();
 }
 
 void oled_test() {
@@ -34,15 +32,15 @@ void oled_test() {
 }
 
 
-void oled_clear(void) {
-    uint8_t block[16] = {0};
+void oled_clear() {
+    uint8_t block[8] = {0};
 
-    for (uint8_t i = 0; i < 64; i++) {
+    for (uint8_t i = 0; i < 128; i++) {
         oled_data_write(block, sizeof(block));
     }
 }
 
-void oled_checker(void) {
+void oled_checker() {
     uint8_t block[16];
 
     for (uint8_t i = 0; i < sizeof(block); i++) {
