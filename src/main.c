@@ -32,7 +32,7 @@ int main(void) {
     while(1) { 
         if(uart_recieved_flag) {handle_uart_interrupt();}
         if(display_update_flag) {
-            expanding_rectangles();
+            bouncing_ball_animation();
             oled_flush();
         }
         

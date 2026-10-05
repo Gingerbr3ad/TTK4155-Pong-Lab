@@ -4,3 +4,4 @@
 
 void shutters();
 void expanding_rectangles(void);
+void bouncing_ball_animation(void);
