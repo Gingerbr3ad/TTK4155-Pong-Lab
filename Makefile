@@ -2,7 +2,8 @@ APP_SOURCES := \
     src/main.c \
     src/application/sram_test.c \
 	src/application/joystick.c \
-	src/application/oled/oled_utils.c
+	src/application/oled/oled_utils.c \
+	src/application/oled/oled_animations.c
 
 DRIVER_SOURCES := \
     src/drivers/adc_driver.c \

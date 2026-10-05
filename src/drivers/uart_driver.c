@@ -77,7 +77,7 @@ void handle_uart_interrupt() {
       printf("Clearing the OLED screen \n");
   }
   else if(!strcmp(recieved_string, "C_OLED_CHECKERS")) {
-      oled_checker();
+      oled_checkerboard_test();
       printf("Drawing the checker board pattern on the OLED screen \n");
   }
   else if(!strcmp(recieved_string, "C_PRINT_CONTROLLS")) {

@@ -3,7 +3,8 @@
 #include "drivers/uart_driver.h"
 #include "drivers/external_memory_driver.h"
 #include "drivers/adc_driver.h"
-//#include "drivers/spi_driver.h"
+#include "drivers/spi_driver.h"
+#include "application/oled/oled_animations.h"
 
 #include "application/joystick.h"
 #include "application/oled/oled_utils.h"
@@ -30,7 +31,10 @@ int main(void) {
 
     while(1) { 
         if(uart_recieved_flag) {handle_uart_interrupt();}
-        if(display_update_flag) {oled_flush();}
+        if(display_update_flag) {
+            shutters();
+            oled_flush();
+        }
         
         if(print_controlls_command_flag) {
             printf("Touch position: x:%i%% ; y:%i%% \n", touch_pos.x, touch_pos.y);
