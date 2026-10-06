@@ -1,5 +1,6 @@
 #include "application/oled/oled_utils.h"
-
+#include <avr/pgmspace.h>
+#include "application/oled/fonts.h"
 volatile uint8_t display_update_flag = 0;
 volatile uint8_t framebuffer_updated_flag = 0;
 
@@ -17,6 +18,37 @@ void oled_flush() {
     oled_data_write(FRAMEBUFFER, FRAMEBUFFER_SIZE);
     display_update_flag = 0;
 }
+
+
+void oled_write_char(char c) {
+    if (c < 32 || c > 126) {
+        return; // Ignore unsupported characters
+    }
+//font5 array is defined in fonts.h and contains the bitmap for each character from ASCII 32 to 126
+    const unsigned char *char_bitmap = font5[c - 32];
+    uint8_t char_data[5];
+      for (int i = 0; i < 5; i++) {
+ // Use pgm_read_byte since the font data is stored in flash memory and not in RAM
+ //pgm_read_byte is taken from the avr library and it reads a byte from each character's bitmap    
+        char_data[i] = pgm_read_byte(&char_bitmap[i]);
+    }
+    // Send the character data to the OLED display
+    oled_data_write(char_data, 5);
+
+    uint8_t space = 0x00;
+    oled_data_write(&space, 1); // Add a space between characters
+}
+
+
+// Function to write a string to the OLED display
+// It goes through each character in the string and calls oled_write_char function to write it to the display
+void oled_write_string(const char *str) {
+    while (*str!= '\0') {
+        oled_write_char(*str++);
+    }
+}
+
+
 
 void display_update_timer_init() {
     // Setup of 16 bit timer/counter 3 on pin PD4 (OC3A)
