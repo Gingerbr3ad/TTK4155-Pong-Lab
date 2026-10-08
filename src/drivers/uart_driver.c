@@ -73,7 +73,7 @@ void handle_uart_interrupt() {
     printf("Test command recieved\n");
   }
   else if(!strcmp(recieved_string, "C_OLED_CLEAR")) {
-      oled_clear();
+      framebuffer_clear();
       printf("Clearing the OLED screen \n");
   }
   else if(!strcmp(recieved_string, "C_OLED_CHECKERS")) {

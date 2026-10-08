@@ -2,23 +2,22 @@
 
 #include "utils/board_macros.h"
 #include "drivers/spi_driver.h"
+#include "application/oled/fonts.h"
 #include <util/delay.h>
 
-#define FRAMEBUFFER_ADDR  0x1400
+#define FRAMEBUFFER_ADDR  0x1400 // Framebuffer is set to addresses 0x1400 - 0x17FF
 #define FRAMEBUFFER_SIZE 1024
 #define FRAMEBUFFER ((uint8_t *)(uintptr_t)FRAMEBUFFER_ADDR)
 
-extern volatile uint8_t display_update_flag;
-extern volatile uint8_t framebuffer_updated_flag;
+#define PAGEBUFFER_ADDR  0x1800 // Pagebuffer is set to addresses 0x1800 - 187F
+#define PAGEBUFFER_SIZE 128
+#define PAGEBUFFER ((uint8_t *)(uintptr_t)PAGEBUFFER_ADDR)
 
-void oled_command_write(uint8_t command[], int command_len);
-void oled_data_write(uint8_t data[], int data_len);
 void oled_write_char(char c);
 void oled_write_string(const char *str);
-void display_update_timer_init();
+
 void oled_init();
 
 void oled_flush();
-
-void oled_clear();
+void framebuffer_clear();
 void oled_checkerboard_test();

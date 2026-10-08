@@ -37,3 +37,6 @@
 /*################## COMMAND FLAGS ##################*/
 extern volatile int print_controlls_command_flag;
 /*###################################################*/
+
+extern volatile uint8_t system_tick_flag;
+void system_tick_timer_init(uint8_t freq);

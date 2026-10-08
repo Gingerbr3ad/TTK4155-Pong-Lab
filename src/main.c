@@ -23,6 +23,7 @@ void system_init() {
     spi_init();
     joystick_init();
     oled_init();
+    system_tick_timer_init(24);
     sei(); // Enable global interrupts
 }
 
@@ -31,9 +32,13 @@ int main(void) {
 
     while(1) { 
         if(uart_recieved_flag) {handle_uart_interrupt();}
-        if(display_update_flag) {
-            bouncing_ball_animation();
+        if(system_tick_flag) {
+            // ### ANIMATION UPDATES ###
+
+            // ### OLED UPDATE ###
             oled_flush();
+
+            system_tick_flag = 0;
         }
         
         if(print_controlls_command_flag) {
