@@ -9,8 +9,9 @@ static void SPI_MasterInit(void) {
     /* Set MOSI and SCK output, all others input */
     DDRB |= (1<<DD_MOSI)|(1<<DD_SCK)|(1 << PB4);
     PORTB |= (1 << PB4);
-    /* Enable SPI, Master, set clock rate fck/16 */
-    SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);
+    /* Enable SPI, Master, set clock rate fck/2 */
+    SPCR = (1<<SPE)|(1<<MSTR);
+    SPSR = (1<<SPI2X);
 }
 
 void spi_init() {
