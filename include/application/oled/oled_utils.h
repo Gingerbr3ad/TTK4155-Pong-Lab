@@ -13,6 +13,8 @@ extern volatile uint8_t framebuffer_updated_flag;
 
 void oled_command_write(uint8_t command[], int command_len);
 void oled_data_write(uint8_t data[], int data_len);
+void oled_write_char(char c);
+void oled_write_string(const char *str);
 void display_update_timer_init();
 void oled_init();
 
