@@ -1,8 +1,12 @@
 #include "drivers/spi_driver.h"
+#include "drivers/mcp2515_driver.h"
+
+
 
 /*##################### SS PINS #####################*/
 const spi_ss_pin_t oled_ss = OLED_SS;
-const spi_ss_pin_t slaves[1] = {OLED_SS};
+const spi_ss_pin_t can_ss = CAN_SS;
+const spi_ss_pin_t slaves[] = {OLED_SS, CAN_SS};
 /*###################################################*/
 
 static void SPI_MasterInit(void) {

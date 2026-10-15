@@ -9,7 +9,8 @@ typedef struct {
 } spi_ss_pin_t;
 
 extern const spi_ss_pin_t oled_ss;
-extern const spi_ss_pin_t slaves[1];
+extern const spi_ss_pin_t can_ss;
+extern const spi_ss_pin_t slaves[];
 
 void spi_init();
 uint8_t * spi_wr(uint8_t data[], int data_len, spi_ss_pin_t slave, uint8_t * return_buff);
