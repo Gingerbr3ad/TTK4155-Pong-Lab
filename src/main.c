@@ -8,6 +8,8 @@
 
 #include "application/joystick.h"
 #include "application/oled/oled_utils.h"
+#include "drivers/can_driver.h"
+#include "drivers/mcp2515_driver.h"
 
 static FILE uartstdout = FDEV_SETUP_STREAM(uart_putchar, uart_getchar, _FDEV_SETUP_RW);
 
@@ -23,6 +25,8 @@ void system_init() {
     spi_init();
     joystick_init();
     oled_init();
+    mcp2515_init();
+    can_init();
     sei(); // Enable global interrupts
 }
 
@@ -30,6 +34,12 @@ int main(void) {
     system_init();
 
     while(1) { 
+
+        if(can_received_flag) {
+            can_interrupt_handler();
+        }
+
+
         if(uart_recieved_flag) {handle_uart_interrupt();}
         if(display_update_flag) {
             bouncing_ball_animation();

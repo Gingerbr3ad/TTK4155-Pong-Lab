@@ -4,12 +4,15 @@ APP_SOURCES := \
 	src/application/joystick.c \
 	src/application/oled/oled_utils.c \
 	src/application/oled/oled_animations.c
+	
 
 DRIVER_SOURCES := \
     src/drivers/adc_driver.c \
     src/drivers/external_memory_driver.c \
     src/drivers/uart_driver.c \
-	src/drivers/spi_driver.c
+	src/drivers/spi_driver.c \
+	src/drivers/mcp2515_driver.c \
+	src/drivers/can_driver.c 
 
 UTILS_SOURCES := \
 	src/utils/board_macros.c
