@@ -1,7 +1,7 @@
 #ifndef CAN_H
 #define CAN_H
+#include "utils/board_macros.h"
 
-#include <stdint.h>
 extern volatile uint8_t can_received_flag;
 typedef struct {
     uint32_t id; // CAN ID

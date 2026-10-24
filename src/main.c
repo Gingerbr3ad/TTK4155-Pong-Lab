@@ -33,6 +33,8 @@ void system_init() {
 int main(void) {
     system_init();
 
+   
+
     while(1) { 
 
         if(can_received_flag) {

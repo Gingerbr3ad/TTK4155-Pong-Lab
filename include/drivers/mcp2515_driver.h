@@ -1,7 +1,8 @@
 #ifndef MCP2515_H
 #define MCP2515_H
 
-#include <stdint.h>
+
+#include "utils/board_macros.h"
 
 uint8_t mcp2515_init();
 uint8_t mcp2515_read(uint8_t address);
