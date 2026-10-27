@@ -44,6 +44,7 @@ int main(void) {
 
         if(uart_recieved_flag) {handle_uart_interrupt();}
         if(display_update_flag) {
+          //  oled_write_string("TTK4155 Pong Lab", 1, 10);
             bouncing_ball_animation();
             oled_flush();
         }

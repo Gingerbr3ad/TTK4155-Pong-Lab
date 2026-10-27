@@ -20,31 +20,50 @@ void oled_flush() {
 }
 
 
-void oled_write_char(char c) {
+void oled_write_char(char c, uint8_t page, uint8_t coloumn) {
     if (c < 32 || c > 126) {
         return; // Ignore unsupported characters
     }
+    if(page > 7 || coloumn > 127) {
+        return; // Ignore out of bounds
+    }
+
+    if (coloumn + 4 > 127) {
+        return; // Ignore if character would overflow the display width
+    }
 //font5 array is defined in fonts.h and contains the bitmap for each character from ASCII 32 to 126
     const unsigned char *char_bitmap = font5[c - 32];
-    uint8_t char_data[5];
+    uint16_t index = (page * 128) + coloumn;
       for (int i = 0; i < 5; i++) {
  // Use pgm_read_byte since the font data is stored in flash memory and not in RAM
  //pgm_read_byte is taken from the avr library and it reads a byte from each character's bitmap    
-        char_data[i] = pgm_read_byte(&char_bitmap[i]);
+   uint16_t framebuffer_index = index + i;
+   if (framebuffer_index < FRAMEBUFFER_SIZE) {
+    FRAMEBUFFER[framebuffer_index] = pgm_read_byte(&char_bitmap[i]);
     }
+}
     // Send the character data to the OLED display
-    oled_data_write(char_data, 5);
-
-    uint8_t space = 0x00;
-    oled_data_write(&space, 1); // Add a space between characters
+    if(coloumn + 5 < 128){
+        uint16_t space_index = index + 5;
+        if (space_index < FRAMEBUFFER_SIZE) {
+            FRAMEBUFFER[space_index] = 0x00; // Add a space between characters
+        }
+    }
+    framebuffer_updated_flag = 1; // Set the flag to indicate that the framebuffer has been updated
+    
 }
 
 
 // Function to write a string to the OLED display
 // It goes through each character in the string and calls oled_write_char function to write it to the display
-void oled_write_string(const char *str) {
+void oled_write_string(const char *str, uint8_t page, uint8_t coloumn) {
     while (*str!= '\0') {
-        oled_write_char(*str++);
+        oled_write_char(*str, page, coloumn);
+        str++;
+        coloumn += 6; // Move to the next character position (5 pixels for character + 1 pixel for space)
+        if (coloumn + 5 > 127) {
+          return; // Stop writing if the next character would overflow the display width
+        }
     }
 }
 
