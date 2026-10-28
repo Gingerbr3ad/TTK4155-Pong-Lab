@@ -38,7 +38,7 @@ uint8_t joystick_button_pressed(void) {
 void joystick_init() {
     int x;
     int y;
-
+//havent chosen pin numbers yet
    clear_bit(DDRx, JOY_B_PIN);
 
     // Enable internal pull-up
