@@ -4,6 +4,7 @@
 #include "drivers/external_memory_driver.h"
 #include "drivers/adc_driver.h"
 #include "drivers/spi_driver.h"
+#include "drivers/can_driver.h"
 
 #include "application/input.h"
 #include "application/FSM/fsm.h"
@@ -19,6 +20,7 @@ void system_init() {
     external_memory_init();
     adc_init();
     spi_init();
+    mcp_init();
     input_init();
     oled_init();
     fsm_init();
@@ -47,6 +49,28 @@ static void dispatch_uart_command(uart_command_t command) {
         case UART_COMMAND_SRAM_TEST:
             SRAM_test();
             break;
+        case UART_COMMAND_CAN_LOOPBACK_TEST: {
+            can_message_t tx = {
+                .id = 0x123,
+                .length = 3,
+                .data = {0xAA, 0xBB, 0xCC}
+            };
+
+            can_message_t rx;
+
+            can_send(&tx);
+
+            while (!can_receive(&rx)) {
+                // Wait for reception
+            }
+
+            printf("ID: 0x%03X\n", (unsigned)rx.id);
+
+            for (uint8_t i = 0; i < rx.length; i++) {
+                printf("Data %u: 0x%02X\n",
+                    (unsigned)i, (unsigned)rx.data[i]);
+            }
+            break; }
         case UART_COMMAND_UI_UP: input_inject_joystick(JOYSTICK_UP); break;
         case UART_COMMAND_UI_DOWN: input_inject_joystick(JOYSTICK_DOWN); break;
         case UART_COMMAND_UI_SELECT: input_inject_button(INPUT_BUTTON_JOYSTICK); break;

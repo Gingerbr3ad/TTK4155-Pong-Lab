@@ -81,8 +81,10 @@ uart_command_t handle_uart_interrupt() {
     command = UART_COMMAND_OLED_CHECKERS;
   } else if(!strcmp(recieved_string, "C_PRINT_DEBUG")) {
     command = UART_COMMAND_PRINT_DEBUG;
-    } else if(!strcmp(recieved_string, "C_SRAM_TEST")) {
+  } else if(!strcmp(recieved_string, "C_SRAM_TEST")) {
     command = UART_COMMAND_SRAM_TEST;
+  } else if(!strcmp(recieved_string, "C_CAN_TEST")) {
+    command = UART_COMMAND_CAN_LOOPBACK_TEST;
   } else if (!strcmp(recieved_string, "C_UI_UP")) {
     command = UART_COMMAND_UI_UP;
   } else if (!strcmp(recieved_string, "C_UI_DOWN")) {

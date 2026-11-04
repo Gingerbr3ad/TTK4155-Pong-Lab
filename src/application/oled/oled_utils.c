@@ -12,12 +12,12 @@ static const oled_font_t fonts[3] = {
 
 static void oled_command_write(uint8_t command[], int command_len) {
     clear_bit(PORTB, OLED_DC);
-    spi_w(command, command_len, oled_ss);
+    spi_w_transmit(command, command_len, oled_ss);
 }
 
 static void oled_data_write(uint8_t data[], int data_len) {
     set_bit(PORTB, OLED_DC);
-    spi_w(data, data_len, oled_ss);
+    spi_w_transmit(data, data_len, oled_ss);
 }
 
 static void oled_send_page(uint8_t page) {

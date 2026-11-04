@@ -10,12 +10,17 @@ typedef struct {
 
 extern const spi_ss_pin_t oled_ss;
 extern const spi_ss_pin_t io_ss;
-extern const spi_ss_pin_t slaves[2];
+extern const spi_ss_pin_t mcp2515_ss;
+extern const spi_ss_pin_t slaves[3];
 
 void spi_init();
-uint8_t * spi_wr(uint8_t data[], int data_len, spi_ss_pin_t slave, uint8_t * return_buff);
-void spi_w(uint8_t data[], int data_len, spi_ss_pin_t slave);
-uint8_t * spi_transmit(uint8_t data[], int data_len, uint8_t * return_buff);
 
+uint8_t * spi_r_transmit(int data_len, spi_ss_pin_t slave, uint8_t * return_buff);
+void spi_w_transmit(uint8_t data[], int data_len, spi_ss_pin_t slave);
+uint8_t * spi_wr_transmit(uint8_t data[], int data_len, spi_ss_pin_t slave, uint8_t * return_buff);
+
+uint8_t * spi_transmit(uint8_t data[], int data_len, uint8_t * return_buff);
+uint8_t spi_read();
+void spi_write(uint8_t cData);
 void select_slave(spi_ss_pin_t slave);
 void deselect_slave(spi_ss_pin_t slave);

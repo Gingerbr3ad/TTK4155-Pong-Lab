@@ -3,10 +3,11 @@
 /*##################### SS PINS #####################*/
 const spi_ss_pin_t oled_ss = OLED_SS;
 const spi_ss_pin_t io_ss = IO_SS;
-const spi_ss_pin_t slaves[2] = {OLED_SS, IO_SS};
+const spi_ss_pin_t mcp2515_ss = CAN_SS;
+const spi_ss_pin_t slaves[3] = {OLED_SS, IO_SS, CAN_SS};
 /*###################################################*/
 
-static void SPI_MasterInit(void) {
+static void SPI_MasterInit() {
     /* Set MOSI and SCK output, all others input */
     DDRB |= (1<<DD_MOSI)|(1<<DD_SCK)|(1 << PB4);
     PORTB |= (1 << PB4);
@@ -33,7 +34,28 @@ static uint8_t SPI_MasterTransmit(uint8_t cData) {
     return SPDR;
 }
 
-uint8_t * spi_wr(uint8_t data[], int data_len, spi_ss_pin_t slave, uint8_t * return_buff) {
+
+uint8_t * spi_r_transmit(int data_len, spi_ss_pin_t slave, uint8_t * return_buff) {
+    clear_bit(*slave.port, slave.bit);
+
+    for(int i = 0; i < data_len; ++i) {
+        return_buff[i] = SPI_MasterTransmit(0xFF);
+    }
+
+    set_bit(*slave.port, slave.bit);
+
+    return return_buff;
+}
+void spi_w_transmit(uint8_t data[], int data_len, spi_ss_pin_t slave) {
+    clear_bit(*slave.port, slave.bit);
+
+    for(int i = 0; i < data_len; ++i) {
+        SPI_MasterTransmit(data[i]);
+    }
+
+    set_bit(*slave.port, slave.bit);
+}
+uint8_t * spi_wr_transmit(uint8_t data[], int data_len, spi_ss_pin_t slave, uint8_t * return_buff) {
     clear_bit(*slave.port, slave.bit);
 
     for(int i = 0; i < data_len; ++i) {
@@ -51,17 +73,12 @@ uint8_t * spi_transmit(uint8_t data[], int data_len, uint8_t * return_buff) {
     }
     return return_buff;
 }
-
-void spi_w(uint8_t data[], int data_len, spi_ss_pin_t slave) {
-    clear_bit(*slave.port, slave.bit);
-
-    for(int i = 0; i < data_len; ++i) {
-        SPI_MasterTransmit(data[i]);
-    }
-
-    set_bit(*slave.port, slave.bit);
+uint8_t spi_read() {
+    return SPI_MasterTransmit(0xFF);
 }
-
+void spi_write(uint8_t cData) {
+    SPI_MasterTransmit(cData);
+}
 void select_slave(spi_ss_pin_t slave) {
     clear_bit(*slave.port, slave.bit);
 }
