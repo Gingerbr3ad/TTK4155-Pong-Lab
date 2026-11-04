@@ -128,9 +128,7 @@ joystick_position_t joystick_read_position() {
     return position;
 }
 
-joystick_direction_t joystick_get_direction() {
-    joystick_position_t position = joystick_read_position();
-
+joystick_direction_t joystick_get_direction(joystick_position_t position) {
     if (position.x < -JOYSTICK_DEADZONE) {
         return JOYSTICK_LEFT;
     }

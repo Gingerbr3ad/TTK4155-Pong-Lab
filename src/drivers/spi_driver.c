@@ -2,25 +2,26 @@
 
 /*##################### SS PINS #####################*/
 const spi_ss_pin_t oled_ss = OLED_SS;
-const spi_ss_pin_t slaves[1] = {OLED_SS};
+const spi_ss_pin_t io_ss = IO_SS;
+const spi_ss_pin_t slaves[2] = {OLED_SS, IO_SS};
 /*###################################################*/
 
 static void SPI_MasterInit(void) {
     /* Set MOSI and SCK output, all others input */
     DDRB |= (1<<DD_MOSI)|(1<<DD_SCK)|(1 << PB4);
     PORTB |= (1 << PB4);
+    clear_bit(DDRB, DD_MISO);
     /* Enable SPI, Master, set clock rate fck/2 */
     SPCR = (1<<SPE)|(1<<MSTR);
     SPSR = (1<<SPI2X);
 }
 
 void spi_init() {
-    SPI_MasterInit();
-
     for(uint8_t i = 0; i < sizeof(slaves)/sizeof(slaves[0]); ++i) {
         set_bit(*slaves[i].port, slaves[i].bit);
         set_bit(*slaves[i].ddr, slaves[i].bit);
     }
+    SPI_MasterInit();
 }
 
 static uint8_t SPI_MasterTransmit(uint8_t cData) {

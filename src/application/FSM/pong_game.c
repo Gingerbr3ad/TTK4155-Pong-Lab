@@ -15,7 +15,7 @@ void game_enter() {
 }
 
 uint8_t game_update() {
-    return input_button_pressed(INPUT_BUTTON_BACK);
+    return input_button_pressed(INPUT_BUTTON_L6);
 }
 
 void game_over_enter() {
@@ -27,6 +27,6 @@ void game_over_enter() {
 }
 
 uint8_t game_over_update() {
-    return input_button_pressed(INPUT_BUTTON_SELECT) ||
-           input_button_pressed(INPUT_BUTTON_BACK);
+    return input_button_pressed(INPUT_BUTTON_JOYSTICK) ||
+           input_button_pressed(INPUT_BUTTON_L6);
 }

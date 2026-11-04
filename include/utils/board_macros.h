@@ -19,6 +19,7 @@
 
 /*###################### PINS #######################*/
 #define OLED_SS {&DDRB, &PORTB, PB3}
+#define IO_SS {&DDRB, &PORTB, PB4}
 
 #define DD_MOSI 5
 #define DD_MISO 6

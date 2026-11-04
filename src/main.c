@@ -5,7 +5,6 @@
 #include "drivers/adc_driver.h"
 #include "drivers/spi_driver.h"
 
-#include "application/joystick.h"
 #include "application/input.h"
 #include "application/FSM/fsm.h"
 #include "application/oled/oled_utils.h"
@@ -20,7 +19,6 @@ void system_init() {
     external_memory_init();
     adc_init();
     spi_init();
-    joystick_init();
     input_init();
     oled_init();
     fsm_init();
@@ -51,8 +49,8 @@ static void dispatch_uart_command(uart_command_t command) {
             break;
         case UART_COMMAND_UI_UP: input_inject_joystick(JOYSTICK_UP); break;
         case UART_COMMAND_UI_DOWN: input_inject_joystick(JOYSTICK_DOWN); break;
-        case UART_COMMAND_UI_SELECT: input_inject_button(INPUT_BUTTON_SELECT); break;
-        case UART_COMMAND_UI_BACK: input_inject_button(INPUT_BUTTON_BACK); break;
+        case UART_COMMAND_UI_SELECT: input_inject_button(INPUT_BUTTON_JOYSTICK); break;
+        case UART_COMMAND_UI_BACK: input_inject_button(INPUT_BUTTON_L6); break;
         case UART_COMMAND_GAME_FINISHED: fsm_handle_event(FSM_EVENT_GAME_FINISHED); break;
         default: break;
     }
@@ -68,11 +66,12 @@ static void debug_print() {
         }
         ticks = 0;
 
-        touch_position_t touch = touch_read_position();
-        joystick_position_t joy = joystick_read_position();
-        joystick_direction_t direction = joystick_get_direction();
-        uint8_t joystick_button = joystick_button_read();
-        printf("Touch %d,%d Joy %d,%d Dir %d, Joy Button %d\n", touch.x, touch.y, joy.x, joy.y, direction, joystick_button);
+        touch_position_t touch = input_touch_position_read();
+        joystick_position_t joy = input_joystick_position_read();
+        joystick_direction_t direction = input_joystick_direction_read();
+        input_slider_t slider = input_slider_read();
+        uint32_t buttons = input_buttons_read();
+        printf("Touch %d,%d Joy %d,%d Dir %d, Silder %d, Buttons %ld\n", touch.x, touch.y, joy.x, joy.y, direction, slider.position, buttons);
     }
 }
 

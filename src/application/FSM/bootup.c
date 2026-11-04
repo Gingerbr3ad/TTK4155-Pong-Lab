@@ -28,5 +28,5 @@ uint8_t bootup_tick() {
 
 // Pressing the select button skips the splash screen
 uint8_t bootup_update(void) {
-    return input_button_pressed(INPUT_BUTTON_SELECT);
+    return input_button_pressed(INPUT_BUTTON_JOYSTICK);
 }
