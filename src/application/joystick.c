@@ -69,12 +69,11 @@ void joystick_init() {
     calibration.center_x = x_sum / JOYSTICK_FILTER_SIZE;
     calibration.center_y = y_sum / JOYSTICK_FILTER_SIZE;
 
-    // Initialize fixed calibration limits
-    calibration.min_x = JOYSTICK_RAW_MIN;
-    calibration.max_x = JOYSTICK_RAW_MAX;
+    calibration.min_x = 50;
+    calibration.max_x = 200;
 
-    calibration.min_y = JOYSTICK_RAW_MIN;
-    calibration.max_y = JOYSTICK_RAW_MAX;
+    calibration.min_y = 50;
+    calibration.max_y = 200;
 }
 
 touch_position_t touch_read_position() {
@@ -109,9 +108,8 @@ joystick_position_t joystick_read_position() {
     x_sum += raw_x;
     y_sum += raw_y;
 
-    // Advance circular buffer index
+    // Advance buffer index
     history_index++;
-
     if (history_index >= JOYSTICK_FILTER_SIZE) {
         history_index = 0;
     }
@@ -120,19 +118,8 @@ joystick_position_t joystick_read_position() {
     int average_x = x_sum / JOYSTICK_FILTER_SIZE;
     int average_y = y_sum / JOYSTICK_FILTER_SIZE;
 
-    position.x = normalize_axis(
-        average_x,
-        calibration.center_x,
-        calibration.min_x,
-        calibration.max_x
-    );
-
-    position.y = normalize_axis(
-        average_y,
-        calibration.center_y,
-        calibration.min_y,
-        calibration.max_y
-    );
+    position.x = normalize_axis(average_x, calibration.center_x, calibration.min_x, calibration.max_x);
+    position.y = normalize_axis(average_y, calibration.center_y, calibration.min_y, calibration.max_y);
 
     return position;
 }
