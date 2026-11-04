@@ -28,5 +28,16 @@ void system_tick_timer_init(uint8_t freq) {
 
 // If the framebuffer was changed set a flag to send the frame buffer to the screen
 ISR(TIMER3_COMPA_vect) {
+    system_tick_flag = 1;
+}
+
+// Safely check if a system tick has occured and if so, clear its flag
+uint8_t system_tick_take(void) {
+    uint8_t pending;
+    cli();
+    pending = system_tick_flag;
     system_tick_flag = 0;
+    sei();
+
+    return pending;
 }

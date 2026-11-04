@@ -1,5 +1,4 @@
 #include "drivers/uart_driver.h"
-#include "application/oled/oled_utils.h"
 
 /* This uart driver implementation is based on the code examples from the offical Atmel AVR ATmega162 documentation and the AVR Libc documentation  */
 volatile char uart_buffer[BufferSize]; // Buffer to store received characters
@@ -64,33 +63,37 @@ int uart_getchar(FILE *stream) {
     return UDR0;
 }
 
-void handle_uart_interrupt() {
+uart_command_t handle_uart_interrupt() {
   char recieved_string[BufferSize]; // Since strcmp() can't handle a volatile string we make a copy of the character buffer
+  uart_command_t command = UART_COMMAND_NONE;
+
+  cli();
   for (int i = 0; i < BufferSize; i++) {recieved_string[i] = uart_buffer[i];}
-  
+  uart_recieved_flag = 0; // Reset the uart recieved flag
+  sei();
+
   printf("######################## UART RECIEVED #######################\n");
   if(!strcmp(recieved_string, "C_TEST")) {
-    printf("Test command recieved\n");
-  }
-  else if(!strcmp(recieved_string, "C_OLED_CLEAR")) {
-      framebuffer_clear();
-      printf("Clearing the OLED screen \n");
-  }
-  else if(!strcmp(recieved_string, "C_OLED_CHECKERS")) {
-      oled_checkerboard_test();
-      printf("Drawing the checker board pattern on the OLED screen \n");
-  }
-  else if(!strcmp(recieved_string, "C_PRINT_CONTROLLS")) {
-    if(print_controlls_command_flag) {
-      print_controlls_command_flag = 0;
-      printf("Stopping printing controlls vlaues \n");
-    } else {
-      print_controlls_command_flag = 1;
-      printf("Printing controlls vlaues \n");
-    }
+    command = UART_COMMAND_TEST;
+  } else if(!strcmp(recieved_string, "C_OLED_CLEAR")) {
+    command = UART_COMMAND_OLED_CLEAR;
+  } else if(!strcmp(recieved_string, "C_OLED_CHECKERS")) {
+    command = UART_COMMAND_OLED_CHECKERS;
+  } else if(!strcmp(recieved_string, "C_PRINT_DEBUG")) {
+    command = UART_COMMAND_PRINT_DEBUG;
+  } else if (!strcmp(recieved_string, "C_UI_UP")) {
+    command = UART_COMMAND_UI_UP;
+  } else if (!strcmp(recieved_string, "C_UI_DOWN")) {
+    command = UART_COMMAND_UI_DOWN;
+  } else if (!strcmp(recieved_string, "C_UI_SELECT")) {
+    command = UART_COMMAND_UI_SELECT;
+  } else if (!strcmp(recieved_string, "C_UI_BACK")) {
+    command = UART_COMMAND_UI_BACK;
+  } else if (!strcmp(recieved_string, "C_GAME_OVER")) {
+    command = UART_COMMAND_GAME_FINISHED;
   }
   else {printf("I've recieved this from UART (Command not recognized): %s \n", recieved_string);}
   printf("##############################################################\n");
 
-  uart_recieved_flag = 0; // Reset the uart recieved flag
+  return command;
 }

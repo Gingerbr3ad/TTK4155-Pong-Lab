@@ -4,7 +4,13 @@ APP_SOURCES := \
 	src/application/joystick.c \
 	src/application/oled/oled_utils.c \
 	src/application/oled/fonts.c \
-	src/application/oled/oled_animations.c
+	src/application/oled/sprites.c \
+	src/application/oled/oled_animations.c \
+	src/application/FSM/fsm.c \
+	src/application/FSM/bootup.c \
+	src/application/FSM/pong_game.c \
+	src/application/FSM/menu.c \
+	src/application/input.c
 
 DRIVER_SOURCES := \
     src/drivers/adc_driver.c \
