@@ -28,8 +28,7 @@ static void io_read(uint8_t command, uint8_t *data, uint8_t length) {
     _delay_us(40);
 
     for (uint8_t i = 0; i < length; ++i) {
-        uint8_t dummy = {0x00, 0x00, 0x00};
-        spi_wr(&dummy, 3, io_ss, &data[i]);
+        spi_wr((uint8_t[]){0x21, 0x00, 0x7F}, 3, io_ss, &data[i]);
     }
 }
 
