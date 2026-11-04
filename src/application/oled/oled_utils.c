@@ -67,7 +67,8 @@ void oled_init() {
     oled_command_write((uint8_t[]){0x00, 0x10}, 2);       // Set column 0 as the start address
     oled_command_write((uint8_t[]){0x21, 0x00, 0x7F}, 3); // Col 0-127
     oled_command_write((uint8_t[]){0x22, 0x00, 0x07}, 3); // Page 0-7
-    oled_command_write((uint8_t[]){0xC8}, 1);             // Flip the display vertically
+    oled_command_write((uint8_t[]){0xA1}, 1);             // Reverse horizontal mapping
+    oled_command_write((uint8_t[]){0xC0}, 1);             // Reverse vertical mapping
     oled_command_write((uint8_t[]){0xA4}, 1);             // Follow GDDRAM
     oled_command_write((uint8_t[]){0xAF}, 1);             // Display ON
 
