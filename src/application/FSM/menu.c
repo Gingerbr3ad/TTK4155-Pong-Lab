@@ -147,7 +147,7 @@ void menu_enter() {
 
 // Processes inputs and returns application actions
 menu_action_t menu_update() {
-    if (input_button_pressed(INPUT_BUTTON_L6)) {
+    if (input_button_pressed(INPUT_BUTTON_R6)) {
         menu_go_back();
         return MENU_ACTION_NONE;
     }

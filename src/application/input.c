@@ -28,12 +28,8 @@ static void io_read(uint8_t command, uint8_t *data, uint8_t length) {
     _delay_us(40);
 
     for (uint8_t i = 0; i < length; ++i) {
-        uint8_t dummy = 0x00;
-        spi_wr(&dummy, 1, io_ss, &data[i]);
-
-        if (i + 1 < length) {
-            _delay_us(2);
-        }
+        uint8_t dummy = {0x00, 0x00, 0x00};
+        spi_wr(&dummy, 3, io_ss, &data[i]);
     }
 }
 
@@ -95,10 +91,10 @@ void input_update() {
     joystick_direction_t direction = joystick_get_direction(joystick_position);
 
     // If the direction has changed, register it as the edge, else reports neutral edge (no movement)
-    direction_edge = JOYSTICK_NEUTRAL;
     if (direction != previous_direction) {
         direction_edge = direction;
     }
+    previous_direction = direction;
 
     // If a direction was injected, it overwrites the next input update with it
     if(injected_direction != JOYSTICK_NEUTRAL) {
