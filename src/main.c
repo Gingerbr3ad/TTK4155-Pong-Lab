@@ -71,7 +71,8 @@ static void debug_print() {
         touch_position_t touch = touch_read_position();
         joystick_position_t joy = joystick_read_position();
         joystick_direction_t direction = joystick_get_direction();
-        printf("Touch %d,%d Joy %d,%d Dir %d\n", touch.x, touch.y, joy.x, joy.y, direction);
+        uint8_t joystick_button = joystick_button_read();
+        printf("Touch %d,%d Joy %d,%d Dir %d, Joy Button %d\n", touch.x, touch.y, joy.x, joy.y, direction, joystick_button);
     }
 }
 

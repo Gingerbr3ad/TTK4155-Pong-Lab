@@ -42,3 +42,4 @@ touch_position_t touch_read_position();
 
 joystick_position_t joystick_read_position();
 joystick_direction_t joystick_get_direction();
+uint8_t joystick_button_read();

@@ -25,6 +25,8 @@
 #define DD_SCK 7
 
 #define OLED_DC 2
+
+#define JOYSITCK_BUTTON PD4
 /*###################################################*/
 
 /*################## ADC CHANNELS ###################*/

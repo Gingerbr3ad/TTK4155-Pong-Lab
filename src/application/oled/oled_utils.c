@@ -72,8 +72,10 @@ void oled_init() {
     oled_command_write((uint8_t[]){0xA4}, 1);             // Follow GDDRAM
     oled_command_write((uint8_t[]){0xAF}, 1);             // Display ON
 
+    /*
     oled_checkerboard_test();
     _delay_ms(1000);
+    */
 
     framebuffer_clear();
 }

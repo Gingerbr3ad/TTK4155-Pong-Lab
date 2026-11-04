@@ -52,11 +52,15 @@ static int normalize_axis(int raw, int center, int minimum, int maximum) {
 }
 
 void joystick_init() {
+    // Button pin setup
+    clear_bit(DDRD, JOYSITCK_BUTTON);
+    set_bit(PORTD, JOYSITCK_BUTTON);
+
     x_sum = 0;
     y_sum = 0;
     history_index = 0;
 
-    // Initialize history with actual readings
+    // Initialize the joystick avarage value with initial readings
     for (uint8_t i = 0; i < JOYSTICK_FILTER_SIZE; i++) {
         x_history[i] = clamp_raw(adc_read(JOYSTICK_X_CHANNEL));
         y_history[i] = clamp_raw(adc_read(JOYSTICK_Y_CHANNEL));
@@ -144,4 +148,8 @@ joystick_direction_t joystick_get_direction() {
     }
 
     return JOYSTICK_NEUTRAL;
+}
+
+uint8_t joystick_button_read() {
+    return !test_bit(PIND, JOYSITCK_BUTTON);
 }
