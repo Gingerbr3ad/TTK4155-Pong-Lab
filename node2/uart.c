@@ -1,7 +1,7 @@
 #include "sam.h"
 #include <stdio.h>
 
-#define F_CPU 84000000
+
 
 typedef struct RingBuf RingBuf;
 struct RingBuf {

@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdarg.h>
+#include "uart.h"
+#include "can.h"
 #include "sam.h"
 
 /*
@@ -18,10 +20,20 @@ int main()
     SystemInit();
 
     WDT->WDT_MR = WDT_MR_WDDIS; //Disable Watchdog Timer
-
-    //Uncomment after including uart above
+    uart_init(F_CPU, 115200); //Initialize UART with CPU frequency and baud rate
+    
     //uart_init(/*cpufreq*/, /*baud*/);
     //printf("Hello World\n\r");
+    CanInit canInit = {
+        .phase2 = 4,
+        .phase1 = 5,
+        .propag = 1,
+        .sjw = 0,
+        .brp = 5,
+        .smp = 0
+    };
+    can_init(canInit, 0);
+    
 
     while (1)
     {

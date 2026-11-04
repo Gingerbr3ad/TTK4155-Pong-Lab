@@ -11,6 +11,7 @@ uint8_t can_init(void) {
    mcp2515_write(MCP_CNF2, 0x90);
    mcp2515_write(MCP_CNF3, 0x02); // Set CNF3 register (example value)
    mcp2515_bit_modify(MCP_CANCTRL, MODE_MASK, MODE_LOOPBACK); // Set MCP2515 to loopback mode for testing
+   //mcp2515_bit_modify(MCP_CANCTRL, MODE_MASK, MODE_NORMAL); // Set MCP2515 to normal mode for operation
    mcp2515_bit_modify(MCP_CANINTE, MCP_RX_INT, MCP_RX_INT); // Enable interrupts for RX0 and RX1
 
 uint8_t value = mcp2515_read(MCP_CANSTAT);
