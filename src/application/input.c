@@ -24,11 +24,22 @@ static uint8_t downclock_counter;
 
 // Special SPI read to account for the time delays specified in the IO board documentation
 static void io_read(uint8_t command, uint8_t *data, uint8_t length) {
-    spi_w(&command, 1, io_ss);
+    select_slave(io_ss);
+
+    uint8_t ignored;
+    spi_transmit(&command, 1, &ignored);
     _delay_us(40);
 
-    uint8_t dummy[3] = {0};
-    spi_wr_2usdelay(dummy, length, io_ss, data);
+    for (uint8_t i = 0; i < length; ++i) {
+        uint8_t dummy = 0x00;
+        spi_transmit(&dummy, 1, &data[i]);
+
+        if (i + 1 < length) {
+            _delay_us(2);
+        }
+    }
+
+    deselect_slave(io_ss);
 }
 
 static uint32_t read_buttons() {

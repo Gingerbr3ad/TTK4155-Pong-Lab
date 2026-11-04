@@ -45,16 +45,10 @@ uint8_t * spi_wr(uint8_t data[], int data_len, spi_ss_pin_t slave, uint8_t * ret
     return return_buff;
 }
 
-uint8_t * spi_wr_2usdelay(uint8_t data[], int data_len, spi_ss_pin_t slave, uint8_t * return_buff) {
-    clear_bit(*slave.port, slave.bit);
-
+uint8_t * spi_transmit(uint8_t data[], int data_len, uint8_t * return_buff) {
     for(int i = 0; i < data_len; ++i) {
         return_buff[i] = SPI_MasterTransmit(data[i]);
-        _delay_us(2);
     }
-
-    set_bit(*slave.port, slave.bit);
-
     return return_buff;
 }
 
@@ -62,8 +56,15 @@ void spi_w(uint8_t data[], int data_len, spi_ss_pin_t slave) {
     clear_bit(*slave.port, slave.bit);
 
     for(int i = 0; i < data_len; ++i) {
-        SPI_MasterTransmit(data[i]      );
+        SPI_MasterTransmit(data[i]);
     }
 
+    set_bit(*slave.port, slave.bit);
+}
+
+void select_slave(spi_ss_pin_t slave) {
+    clear_bit(*slave.port, slave.bit);
+}
+void deselect_slave(spi_ss_pin_t slave) {
     set_bit(*slave.port, slave.bit);
 }
