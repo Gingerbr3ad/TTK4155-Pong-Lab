@@ -69,10 +69,10 @@ void joystick_init() {
     calibration.center_x = x_sum / JOYSTICK_FILTER_SIZE;
     calibration.center_y = y_sum / JOYSTICK_FILTER_SIZE;
 
-    calibration.min_x = 50;
+    calibration.min_x = 75;
     calibration.max_x = 200;
 
-    calibration.min_y = 50;
+    calibration.min_y = 75;
     calibration.max_y = 200;
 }
 
