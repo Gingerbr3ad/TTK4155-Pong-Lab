@@ -9,6 +9,7 @@
 #include "application/input.h"
 #include "application/FSM/fsm.h"
 #include "application/oled/oled_utils.h"
+#include "application/sram_test.h"
 
 static FILE uartstdout = FDEV_SETUP_STREAM(uart_putchar, uart_getchar, _FDEV_SETUP_RW);
 static uint8_t ticks;
@@ -45,6 +46,9 @@ static void dispatch_uart_command(uart_command_t command) {
             print_controlls_command_flag = !print_controlls_command_flag;
             printf("Toggled debug printing \n");
             break;
+        case UART_COMMAND_SRAM_TEST:
+            SRAM_test();
+            break;
         case UART_COMMAND_UI_UP: input_inject_joystick(JOYSTICK_UP); break;
         case UART_COMMAND_UI_DOWN: input_inject_joystick(JOYSTICK_DOWN); break;
         case UART_COMMAND_UI_SELECT: input_inject_button(INPUT_BUTTON_SELECT); break;
@@ -52,6 +56,8 @@ static void dispatch_uart_command(uart_command_t command) {
         case UART_COMMAND_GAME_FINISHED: fsm_handle_event(FSM_EVENT_GAME_FINISHED); break;
         default: break;
     }
+
+    printf("##############################################################\n");
 }
 
 static void debug_print() {
