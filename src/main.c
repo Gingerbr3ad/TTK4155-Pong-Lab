@@ -69,9 +69,9 @@ static void debug_print() {
         touch_position_t touch = input_touch_position_read();
         joystick_position_t joy = input_joystick_position_read();
         joystick_direction_t direction = input_joystick_direction_read();
-        //input_slider_t slider = input_slider_read();
-        //uint32_t buttons = input_buttons_read();
-        printf("Touch %d,%d Joy %d,%d Dir %d\n", touch.x, touch.y, joy.x, joy.y, direction);
+        input_slider_t slider = input_slider_read();
+        uint32_t buttons = input_buttons_read();
+        printf("Touch %d,%d Joy %d,%d Dir %d, Silder %d, Buttons 0x%08lX\n", touch.x, touch.y, joy.x, joy.y, direction, slider.position, (unsigned long)buttons);
     }
 }
 
