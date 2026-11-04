@@ -14,4 +14,5 @@ extern const spi_ss_pin_t slaves[2];
 
 void spi_init();
 uint8_t * spi_wr(uint8_t data[], int data_len, spi_ss_pin_t slave, uint8_t * return_buff);
+uint8_t * spi_wr_2usdelay(uint8_t data[], int data_len, spi_ss_pin_t slave, uint8_t * return_buff);
 void spi_w(uint8_t data[], int data_len, spi_ss_pin_t slave);

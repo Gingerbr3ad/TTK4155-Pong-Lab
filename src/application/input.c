@@ -27,9 +27,8 @@ static void io_read(uint8_t command, uint8_t *data, uint8_t length) {
     spi_w(&command, 1, io_ss);
     _delay_us(40);
 
-    for (uint8_t i = 0; i < length; ++i) {
-        spi_wr((uint8_t[]){0x21, 0x00, 0x7F}, 3, io_ss, &data[i]);
-    }
+    uint8_t dummy[3] = {0};
+    spi_wr_2usdelay(dummy, length, io_ss, data);
 }
 
 static uint32_t read_buttons() {
