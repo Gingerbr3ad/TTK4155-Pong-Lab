@@ -2,7 +2,27 @@
 #include "drivers/adc_driver.h"
 
 static joystick_calibration_t calibration;
-    
+
+static uint8_t x_history[JOYSTICK_FILTER_SIZE];
+static uint8_t y_history[JOYSTICK_FILTER_SIZE];
+
+static uint16_t x_sum = 0;
+static uint16_t y_sum = 0;
+
+static uint8_t history_index = 0;
+
+static int clamp_raw(int value) {
+    if (value < JOYSTICK_RAW_MIN) {
+        return JOYSTICK_RAW_MIN;
+    }
+
+    if (value > JOYSTICK_RAW_MAX) {
+        return JOYSTICK_RAW_MAX;
+    }
+
+    return value;
+}
+
 static int normalize_axis(int raw, int center, int minimum, int maximum) {
     int result;
 
@@ -32,75 +52,93 @@ static int normalize_axis(int raw, int center, int minimum, int maximum) {
 }
 
 void joystick_init() {
-    int x;
-    int y;
+    x_sum = 0;
+    y_sum = 0;
+    history_index = 0;
 
-    x = adc_read(JOYSTICK_X_CHANNEL);
-    y = adc_read(JOYSTICK_Y_CHANNEL);
+    // Initialize history with actual readings
+    for (uint8_t i = 0; i < JOYSTICK_FILTER_SIZE; i++) {
+        x_history[i] = clamp_raw(adc_read(JOYSTICK_X_CHANNEL));
+        y_history[i] = clamp_raw(adc_read(JOYSTICK_Y_CHANNEL));
 
-    calibration.center_x = x;
-    calibration.center_y = y;
+        x_sum += x_history[i];
+        y_sum += y_history[i];
+    }
 
-    calibration.min_x = x;
-    calibration.max_x = x;
+    // Calibrate center from average of initial readings
+    calibration.center_x = x_sum / JOYSTICK_FILTER_SIZE;
+    calibration.center_y = y_sum / JOYSTICK_FILTER_SIZE;
 
-    calibration.min_y = y;
-    calibration.max_y = y;
+    // Initialize fixed calibration limits
+    calibration.min_x = JOYSTICK_RAW_MIN;
+    calibration.max_x = JOYSTICK_RAW_MAX;
+
+    calibration.min_y = JOYSTICK_RAW_MIN;
+    calibration.max_y = JOYSTICK_RAW_MAX;
 }
 
 touch_position_t touch_read_position() {
     touch_position_t position;
 
-    int raw_x;
-    int raw_y;
+    int raw_x = adc_read(TOUCH_X_CHANNEL);
+    int raw_y = adc_read(TOUCH_Y_CHANNEL);
 
-    raw_x = adc_read(TOUCH_X_CHANNEL);
-    raw_y = adc_read(TOUCH_Y_CHANNEL);
+    position.x = normalize_axis(raw_x, 255 / 2, 0, 255);
+    position.y = normalize_axis(raw_y, 255 / 2, 0, 255);
 
-    position.x = normalize_axis(raw_x, 255/2, 0, 255);
-    position.y = normalize_axis(raw_y, 255/2, 0, 255);
     return position;
 }
 
-/*Calibration method was made in AI which 
-was taken from the website
- https://dyadica.co.uk/blog/simple-bluetooth-joystick/ */
 
+// Calibration method was found on https://dyadica.co.uk/blog/simple-bluetooth-joystick/
 joystick_position_t joystick_read_position() {
     joystick_position_t position;
 
-    int raw_x;
-    int raw_y;
+    int raw_x = clamp_raw(adc_read(JOYSTICK_X_CHANNEL));
+    int raw_y = clamp_raw(adc_read(JOYSTICK_Y_CHANNEL));
 
-    raw_x = adc_read(JOYSTICK_X_CHANNEL);
-    raw_y = adc_read(JOYSTICK_Y_CHANNEL);
+    // Remove oldest readings from sum
+    x_sum -= x_history[history_index];
+    y_sum -= y_history[history_index];
 
-    if (raw_x < calibration.min_x) {
-        calibration.min_x = raw_x;
+    // Store new readings
+    x_history[history_index] = raw_x;
+    y_history[history_index] = raw_y;
+
+    // Add new readings to sum
+    x_sum += raw_x;
+    y_sum += raw_y;
+
+    // Advance circular buffer index
+    history_index++;
+
+    if (history_index >= JOYSTICK_FILTER_SIZE) {
+        history_index = 0;
     }
 
-    if (raw_x > calibration.max_x) {
-        calibration.max_x = raw_x;
-    }
+    // Calculate moving averages
+    int average_x = x_sum / JOYSTICK_FILTER_SIZE;
+    int average_y = y_sum / JOYSTICK_FILTER_SIZE;
 
-    if (raw_y < calibration.min_y) {
-        calibration.min_y = raw_y;
-    }
+    position.x = normalize_axis(
+        average_x,
+        calibration.center_x,
+        calibration.min_x,
+        calibration.max_x
+    );
 
-    if (raw_y > calibration.max_y) {
-        calibration.max_y = raw_y;
-    }
+    position.y = normalize_axis(
+        average_y,
+        calibration.center_y,
+        calibration.min_y,
+        calibration.max_y
+    );
 
-    position.x = normalize_axis(raw_x, calibration.center_x, calibration.min_x, calibration.max_x);
-    position.y = normalize_axis(raw_y, calibration.center_y, calibration.min_y, calibration.max_y);
     return position;
 }
 
 joystick_direction_t joystick_get_direction() {
-    joystick_position_t position;
-
-    position = joystick_read_position();
-
+    joystick_position_t position = joystick_read_position();
 
     if (position.x < -JOYSTICK_DEADZONE) {
         return JOYSTICK_LEFT;
