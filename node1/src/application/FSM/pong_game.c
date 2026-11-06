@@ -1,8 +1,16 @@
 #include "application/FSM/pong_game.h"
 #include "application/input.h"
 #include "application/oled/oled_utils.h"
+#include "drivers/can_driver.h"
 
-// PLACEHOLDER
+joystick_position_t joy_pos;
+joystick_position_t prev_joy_pos;
+
+can_message_t joy_message = {
+    .id = JOY_MESSAGE_ID,
+    .length = 2,
+    .data = {0x00, 0x00}
+};
 
 void game_enter() {
     framebuffer_clear();
@@ -16,6 +24,16 @@ void game_enter() {
 
 uint8_t game_update() {
     return input_button_pressed(INPUT_BUTTON_L6);
+}
+
+void game_system_update() {
+    joy_pos =  input_joystick_position_read();
+    if(joy_pos.x != prev_joy_pos.x || joy_pos.y != prev_joy_pos.y) {
+        joy_message.data[0] = joy_pos.x;
+        joy_message.data[1] = joy_pos.y;
+
+        can_send(&joy_message);
+    }
 }
 
 void game_over_enter() {

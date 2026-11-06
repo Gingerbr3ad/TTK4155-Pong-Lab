@@ -43,6 +43,10 @@
 extern volatile uint8_t print_controlls_command_flag;
 /*###################################################*/
 
+/*################# CAN MESSAGE IDs #################*/
+#define JOY_MESSAGE_ID 0x100
+/*###################################################*/
+
 #define SYSTEM_UI_TICK_HZ 24
 
 extern volatile uint8_t system_tick_flag;

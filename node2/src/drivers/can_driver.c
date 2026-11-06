@@ -70,7 +70,7 @@ void can_init(CanInit init, uint8_t rxInterrupt){
 }
 
 
-void can_tx(CanMsg m){
+void can_send(CanMsg m){
     while(!(CAN0->CAN_MB[txMailbox].CAN_MSR & CAN_MSR_MRDY)){}
     
     // Set message ID and use CAN 2.0B protocol
@@ -87,7 +87,7 @@ void can_tx(CanMsg m){
     CAN0->CAN_MB[txMailbox].CAN_MCR = (m.length << CAN_MCR_MDLC_Pos) | CAN_MCR_MTCR;
 }
 
-uint8_t can_rx(CanMsg* m){
+uint8_t can_receive(CanMsg* m){
     if(!(CAN0->CAN_MB[rxMailbox].CAN_MSR & CAN_MSR_MRDY)){
         return 0;
     }
@@ -107,6 +107,15 @@ uint8_t can_rx(CanMsg* m){
     CAN0->CAN_MB[rxMailbox].CAN_MCR |= CAN_MCR_MTCR;
     return 1;
 }
+
+uint8_t can_test_receive() {
+    CanMsg rx;
+    if (can_receive(&rx) && rx.id == 0x123 && rx.length == 3 &&
+        rx.byte[0] == 0xAA && rx.byte[1] == 0xBB && rx.byte[2] == 0xCC) {
+        return 0;
+    }
+    return 1;
+}
     
     
 
@@ -119,7 +128,7 @@ void CAN0_Handler(void){
     // RX interrupt
     if(can_sr & (1 << rxMailbox)){
         // Add your message-handling code here
-        can_printmsg(can_rx());
+        can_printmsg(can_receive());
     } else {
         printf("CAN0 message arrived in non-used mailbox\n\r");
     }

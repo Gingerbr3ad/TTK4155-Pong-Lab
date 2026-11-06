@@ -3,7 +3,6 @@
 
 #define IO_READ_SLIDER 0x02
 #define IO_READ_BUTTONS 0x04
-#define DOWNCLOCK 50
 
 static joystick_position_t joystick_position;
 static touch_position_t touch_position;
@@ -89,11 +88,6 @@ void input_update() {
     direction_edge = JOYSTICK_NEUTRAL;
     pressed_buttons = 0;
     released_buttons = 0;
-
-    if (++downclock_counter < DOWNCLOCK) {
-        return;
-    }
-    downclock_counter = 0;
 
     joystick_position = joystick_read_position();
     touch_position = touch_read_position();

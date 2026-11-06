@@ -83,18 +83,18 @@ static void debug_print() {
     }
 }
 
-int main(void) {
+int main() {
     system_init();
 
     while (1) {
         // ###### EACH LOOP ######
         if (uart_recieved_flag) {dispatch_uart_command(handle_uart_interrupt());}
-        input_update();
         fsm_update();
 
 
         // ###### SYSTEM TICK ######
         if (system_tick_take()) {
+            input_update();
             fsm_system_tick_update();
             oled_flush();
             debug_print();
