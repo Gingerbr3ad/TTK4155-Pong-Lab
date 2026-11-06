@@ -1,98 +1,66 @@
-APP_SOURCES := \
-    src/main.c \
-    src/application/sram_test.c \
-	src/application/joystick.c \
-	src/application/oled/oled_utils.c \
-	src/application/oled/fonts.c \
-	src/application/oled/sprites.c \
-	src/application/oled/oled_animations.c \
-	src/application/FSM/fsm.c \
-	src/application/FSM/bootup.c \
-	src/application/FSM/pong_game.c \
-	src/application/FSM/menu.c \
-	src/application/input.c
+# Root level make file for convinience sake
 
-DRIVER_SOURCES := \
-    src/drivers/adc_driver.c \
-    src/drivers/external_memory_driver.c \
-    src/drivers/uart_driver.c \
-	src/drivers/spi_driver.c \
-	src/drivers/mcp2515_driver.c \
-	src/drivers/can_driver.c
+.DEFAULT_GOAL := all
 
-UTILS_SOURCES := \
-	src/utils/board_macros.c
+.PHONY: all node1 node2 \
+       flash-node1 flash-node2 \
+       debug-node1 debug-node2 \
+       clean clean-node1 clean-node2 \
+       size-node1 erase-node1
 
-SOURCE_FILES := $(APP_SOURCES) $(DRIVER_SOURCES) $(UTILS_SOURCES)
+# Run the requested target (make/make clean) on both nodes and print results at the end
+define RUN_BOTH
+	+@node1_status=0; node2_status=0; \
+	$(MAKE) -C node1 $(1) || node1_status=1; \
+	$(MAKE) -C node2 $(1) || node2_status=1; \
+	printf '\n========== BUILD SUMMARY ==========\n'; \
+	if [ $$node1_status -eq 0 ]; then \
+		printf '\033[32m[OK]   Node 1: SUCCESS\033[0m\n'; \
+	else \
+		printf '\033[31m[FAIL] Node 1: FAILED\033[0m\n'; \
+	fi; \
+	if [ $$node2_status -eq 0 ]; then \
+		printf '\033[32m[OK]   Node 2: SUCCESS\033[0m\n'; \
+	else \
+		printf '\033[31m[FAIL] Node 2: FAILED\033[0m\n'; \
+	fi; \
+	printf '===================================\n'; \
+	test $$node1_status -eq 0 && test $$node2_status -eq 0
+endef
 
-# Set this flag to "yes" (no quotes) to use JTAG; otherwise ISP (SPI) is used
-PROGRAM_WITH_JTAG := yes
+all:
+	$(call RUN_BOTH,)
 
-PROGRAMMER := atmelice_isp
-ifeq ($(PROGRAM_WITH_JTAG), yes)
-	PROGRAMMER := atmelice
-endif
+node1:
+	$(MAKE) -C node1
 
-BUILD_DIR := build
-TARGET_CPU := atmega162
-TARGET_DEVICE := m162
+node2:
+	$(MAKE) -C node2
 
-CC := avr-gcc # Compiler choice
+flash-node1:
+	$(MAKE) -C node1 flash
 
-# Compiler flags
-CFLAGS := -Os -std=c11 -ggdb # Os optimizes stronger for file size than O
-CFLAGS += -Wall -Wextra # Adds extra warnings during compilation, usefull for catching stupid errors
-CFLAGS += -mmcu=$(TARGET_CPU)
-CFLAGS += -ffunction-sections -fdata-sections # Allow the linker to discard unused functions and data
+flash-node2:
+	$(MAKE) -C node2 flash
 
+debug-node1:
+	$(MAKE) -C node1 debug
 
-# C Preprocessor flags
-CPPFLAGS := -Iinclude # Sets the inc directory as the path for all includes
-CPPFLAGS += -DF_CPU=4915200UL # The CPU clock speed in Hz, for us this is 4.9152 MHz since that is the frequency of the osicialtor we use as the clock
-CPPFLAGS += -DBAUD=9600 # Defines the baud rate used by the AVR Libc macros, this works well here so long we only ever want to use a single baud value for everything, if we ever want two different baud rates this should be move to an include file
+debug-node2:
+	$(MAKE) -C node2 debug
 
-# Linker flags
-LDFLAGS := -mmcu=$(TARGET_CPU)
-LDFLAGS += -Wl,-Map=$(BUILD_DIR)/main.map # Generates a map of the build files, usefull for checking memory use
-LDFLAGS += -Wl,--gc-sections
-
-OBJECT_FILES = $(SOURCE_FILES:%.c=$(BUILD_DIR)/%.o)
-
-.DEFAULT_GOAL := $(BUILD_DIR)/main.hex
-
-$(BUILD_DIR):
-	mkdir -p $@
-
-$(BUILD_DIR)/%.o: %.c | $(BUILD_DIR)
-	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
-
-$(BUILD_DIR)/main.hex: $(OBJECT_FILES) | $(BUILD_DIR)
-	$(CC) $(LDFLAGS) $(OBJECT_FILES) -o $(BUILD_DIR)/a.out
-	avr-objcopy -j .text -j .data -O ihex $(BUILD_DIR)/a.out $(BUILD_DIR)/main.hex
-
-.PHONY: flash
-flash: $(BUILD_DIR)/main.hex
-	avrdude -p $(TARGET_DEVICE) -c $(PROGRAMMER) -U flash:w:$(BUILD_DIR)/main.hex:i
-
-.PHONY: clean
 clean:
-	rm -rf $(BUILD_DIR)
-	make
+	$(call RUN_BOTH, clean)
 
-.PHONY: size
-size:
-	avr-size --format=avr --mcu=atmega162 $(BUILD_DIR)/a.out
+clean-node1:
+	$(MAKE) -C node1 clean
 
-.PHONY: erase
-erase:
-	avrdude -p $(TARGET_DEVICE) -c $(PROGRAMMER) -e
-	
-.PHONY: debug
-debug:
-	if pgrep avarice; then pkill avarice; fi
-	avrdude -p $(TARGET_DEVICE) -c $(PROGRAMMER) -U flash:w:$(BUILD_DIR)/main.hex:i
-	x-terminal-emulator -e avarice --edbg --ignore-intr :4242
-	sleep 2
-	avr-gdb -tui -iex "target remote localhost:4242" $(BUILD_DIR)/a.out
-	killall -s 9 avarice	
+clean-node2:
+	$(MAKE) -C node2 clean
+
+size-node1:
+	$(MAKE) -C node1 size
+
+erase-node1:
+	$(MAKE) -C node1 erase
+

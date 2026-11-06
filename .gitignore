@@ -6,6 +6,10 @@
 # Added
 build
 build/
+node1/build
+node1/build/
+node2/build
+node2/build/
 
 # User-specific files
 *.rsuser
