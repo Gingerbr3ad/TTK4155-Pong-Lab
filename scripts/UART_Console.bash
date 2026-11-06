@@ -1,8 +1,16 @@
 #!/usr/bin/env bash
 
-#THIS SCRIPT IS AI GENERATED
+#THIS SCRIPT IS (mostly) AI GENERATED
 
-DEV="/dev/ttyS0"
+node="$1"
+
+if [[ "$node" == "2" ]] 
+then
+    DEV="/dev/ttyACM0"
+else
+    DEV="/dev/ttyS0"
+fi
+
 BAUD=9600
 
 # What gets appended when you press Enter.
