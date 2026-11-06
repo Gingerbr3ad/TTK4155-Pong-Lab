@@ -51,7 +51,8 @@ static void dispatch_uart_command(uart_command_t command) {
             SRAM_test();
             break;
         case UART_COMMAND_CAN_TEST:
-            can_test_send();
+            printf_P(PSTR("Can test start\n"));
+            if(!can_test_send()){printf_P(PSTR("Message send succesfully \n"));};
             break;
         case UART_COMMAND_UI_UP: input_inject_joystick(JOYSTICK_UP); break;
         case UART_COMMAND_UI_DOWN: input_inject_joystick(JOYSTICK_DOWN); break;
