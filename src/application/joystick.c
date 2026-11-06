@@ -74,10 +74,10 @@ void joystick_init() {
     calibration.center_y = y_sum / JOYSTICK_FILTER_SIZE;
 
     calibration.min_x = 75;
-    calibration.max_x = 200;
+    calibration.max_x = 230;
 
     calibration.min_y = 75;
-    calibration.max_y = 200;
+    calibration.max_y = 230;
 }
 
 touch_position_t touch_read_position() {
