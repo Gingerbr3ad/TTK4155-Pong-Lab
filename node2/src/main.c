@@ -36,7 +36,7 @@ int main(void) {
 
     while (1) {
         if (uart_recieved_flag) {dispatch_uart_command(handle_uart_interrupt());}
-        if(!can_test_receive()) {printf("Can test successful");}
+        //if(!can_test_receive()) {printf("Can test successful");}
         temp_can_joy_receive();
     }
 }
