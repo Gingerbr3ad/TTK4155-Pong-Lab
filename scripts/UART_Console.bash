@@ -17,7 +17,7 @@ BAUD=9600
 # What gets appended when you press Enter.
 TX_EOL=$'\n'
 
-PROMPT="> "
+PROMPT="node $node > "
 
 # ---------------------------------------------------------------------------
 # Setup
