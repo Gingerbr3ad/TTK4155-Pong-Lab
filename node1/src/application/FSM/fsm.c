@@ -53,7 +53,8 @@ void fsm_system_tick_update() {
             }
             break;
         case FSM_MENU: break;
-        case FSM_PLAYING: break;
+        case FSM_PLAYING: 
+            game_system_update();
         case FSM_GAME_OVER: break;
     }
 }
