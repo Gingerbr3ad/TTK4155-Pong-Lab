@@ -1,6 +1,14 @@
-
 #include "drivers/can_driver.h"
 #include "drivers/mcp2515.h"
+
+#include <avr/pgmspace.h>
+
+
+void can_init() {
+    if (!mcp_init()) {
+        printf_P(PSTR("CAN: MCP2515 initialization failed.\n"));
+    }
+}
 
 uint8_t can_send(const can_message_t *msg) {
     // Check that the message is a valid CAN message
@@ -80,4 +88,18 @@ uint8_t can_receive(can_message_t *msg) {
     mcp_bit_modify(MCP_CANINTF, rx_flag, 0);
 
     return 1;
+}
+
+uint8_t can_test_send() {
+    const can_message_t tx = {
+        .id = 0x123,
+        .length = 3,
+        .data = {0xAA, 0xBB, 0xCC}
+    };
+
+    if (can_send(&tx)) {
+        return 0;
+    } else {
+        return 1;
+    }
 }

@@ -91,6 +91,13 @@ uint8_t mcp_init() {
     mcp_write(MCP_CNF2, 0xAC);
     mcp_write(MCP_CNF3, 0x03);
 
+    // Verify setup
+    if (mcp_read(MCP_CNF1) != 0x03 ||
+        mcp_read(MCP_CNF2) != 0xAC ||
+        mcp_read(MCP_CNF3) != 0x03) {
+        return 0;
+    }
+
     // Accept all messages, enable RXB0 rollover
     mcp_write(MCP_RXB0CTRL, 0x64);
     mcp_write(MCP_RXB1CTRL, 0x60);
@@ -102,13 +109,13 @@ uint8_t mcp_init() {
     mcp_write(MCP_CANINTE, 0x03);
 
     // Request loopback mode
-    mcp_bit_modify(MCP_CANCTRL, MODE_MASK, MODE_LOOPBACK);
+    mcp_bit_modify(MCP_CANCTRL, MODE_MASK, MODE_NORMAL);
 
     // Verify successful mode transition
     for (uint8_t i = 0; i < 20; i++) {
         uint8_t mode = mcp_read(MCP_CANSTAT) & MODE_MASK;
 
-        if (mode == MODE_LOOPBACK) {
+        if (mode == MODE_NORMAL) {
             return 1;
         }
 

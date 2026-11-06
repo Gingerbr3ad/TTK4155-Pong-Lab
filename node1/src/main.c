@@ -22,7 +22,7 @@ static void system_init() {
     stdout = stdin = &uartstdout;
     adc_init();
     spi_init();
-    mcp_init();
+    can_init();
     input_init();
     oled_init();
     fsm_init();
@@ -50,28 +50,9 @@ static void dispatch_uart_command(uart_command_t command) {
         case UART_COMMAND_SRAM_TEST:
             SRAM_test();
             break;
-        case UART_COMMAND_CAN_LOOPBACK_TEST: {
-            can_message_t tx = {
-                .id = 0x123,
-                .length = 3,
-                .data = {0xAA, 0xBB, 0xCC}
-            };
-
-            can_message_t rx;
-
-            can_send(&tx);
-
-            while (!can_receive(&rx)) {
-                // Wait for reception
-            }
-
-            printf_P(PSTR("ID: 0x%03X\n"), (unsigned)rx.id);
-
-            for (uint8_t i = 0; i < rx.length; i++) {
-                printf_P(PSTR("Data %u: 0x%02X\n"),
-                    (unsigned)i, (unsigned)rx.data[i]);
-            }
-            break; }
+        case UART_COMMAND_CAN_TEST:
+            can_test_send();
+            break;
         case UART_COMMAND_UI_UP: input_inject_joystick(JOYSTICK_UP); break;
         case UART_COMMAND_UI_DOWN: input_inject_joystick(JOYSTICK_DOWN); break;
         case UART_COMMAND_UI_SELECT: input_inject_button(INPUT_BUTTON_JOYSTICK); break;

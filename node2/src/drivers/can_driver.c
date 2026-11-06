@@ -1,7 +1,7 @@
-
 #include "sam.h"
 #include "drivers/can_driver.h"
 #include <stdio.h>
+
 
 void can_printmsg(CanMsg m){
     printf("CanMsg(id:%d, length:%d, data:{", m.id, m.length);

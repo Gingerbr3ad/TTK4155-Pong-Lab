@@ -94,7 +94,7 @@ uart_command_t handle_uart_interrupt() {
   } else if(!strcmp_P(uart_parse_buffer, PSTR("C_SRAM_TEST"))) {
     command = UART_COMMAND_SRAM_TEST;
   } else if(!strcmp_P(uart_parse_buffer, PSTR("C_CAN_TEST"))) {
-    command = UART_COMMAND_CAN_LOOPBACK_TEST;
+    command = UART_COMMAND_CAN_TEST;
   } else if (!strcmp_P(uart_parse_buffer, PSTR("C_UI_UP"))) {
     command = UART_COMMAND_UI_UP;
   } else if (!strcmp_P(uart_parse_buffer, PSTR("C_UI_DOWN"))) {
