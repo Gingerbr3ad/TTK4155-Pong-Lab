@@ -25,7 +25,7 @@ static void dispatch_uart_command(uart_command_t command) {
 uint8_t temp_can_joy_receive() {
     CanMsg rx;
     if (can_receive(&rx) && rx.id == 0x100) {
-        printf(("Joy x: %d, Joy y: %d \n"), rx.byte[0], rx.byte[1]);
+        printf(("Joy x: %d, Joy y: %d \n"), (int8_t)rx.byte[0], (int8_t)rx.byte[1]);
         return 0;
     }
     return 1;
