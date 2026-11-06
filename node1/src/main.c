@@ -16,7 +16,7 @@
 static FILE uartstdout = FDEV_SETUP_STREAM(uart_putchar, uart_getchar, _FDEV_SETUP_RW);
 static uint8_t ticks;
 
-void system_init() {
+static void system_init() {
     external_memory_init();
     uart_init();
     stdout = stdin = &uartstdout;

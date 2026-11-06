@@ -75,7 +75,10 @@ uart_command_t handle_uart_interrupt() {
 
   cli();
   // Since strcmp() can't handle a volatile string we make a copy of the character buffer
-  for (uint8_t i = 0; i < BufferSize; i++) {uart_parse_buffer[i] = uart_buffer[i];}
+  for (uint8_t i = 0; i < BufferSize; i++) {
+    uart_parse_buffer[i] = uart_buffer[i];
+    if (uart_parse_buffer[i] == '\0') {break;}
+  }
   uart_recieved_flag = 0; // Reset the uart recieved flag
   sei();
   

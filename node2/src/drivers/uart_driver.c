@@ -1,8 +1,11 @@
 #include "sam.h"
 #include "drivers/uart_driver.h"
 #include <stdio.h>
+#include <string.h>
 
-#define F_CPU 84000000
+volatile uint8_t uart_recieved_flag = 0; // Index for the head of the buffer
+static char uart_buffer[BufferSize];
+
 
 typedef struct RingBuf RingBuf;
 struct RingBuf {
@@ -36,7 +39,7 @@ int pop(RingBuf* rb, uint8_t* val){
     return 1;
 }
 
-void uart_init(uint32_t cpufreq, uint32_t baudrate){
+void uart_init(){
     PMC->PMC_PCER0 |= (1 << ID_UART);
     
     // Set UART pins (A8, A9) to use alternate function (this disables regular IO)
@@ -47,7 +50,7 @@ void uart_init(uint32_t cpufreq, uint32_t baudrate){
     // Configure UART settings
     UART->UART_CR   |= UART_CR_TXEN | UART_CR_RXEN;
     UART->UART_MR   |= UART_MR_PAR_NO;
-    UART->UART_BRGR = cpufreq / 16 / baudrate;
+    UART->UART_BRGR = SystemCoreClock / 16 / BAUD;
     
     
     // Configure interrupts on receive ready and errors
@@ -68,20 +71,30 @@ uint8_t uart_rx(uint8_t* val){
     return pop(&ringBuf, val);
 }    
 
-int uart_flush(char* buf, int len){
+// Changed to null terminate
+int uart_flush(char* buf, int len) {
     int r = 0;
-    for(; r < len; r++){
-        int ret = uart_rx((uint8_t*)&buf[r]);
-        if(!ret){
+    uint8_t received;
+
+    for (; r < len - 1; r++) {
+        int ret = uart_rx(&received);
+
+        if (!ret) {
             break;
-        }                
-    }    
+        }
+        else if (received == '\0') {
+            break;
+        }
+
+        buf[r] = (char)received;
+    }
+
+    buf[r] = '\0';
     return r;
 }
 
 
 void UART_Handler(){
-    
     uint32_t status = UART->UART_SR;
     
     // Errors: Reset UART
@@ -90,13 +103,37 @@ void UART_Handler(){
     }
     
     // Receive ready: push to ring buffer
-    if(status & UART_SR_RXRDY){
-        if(!push(&ringBuf, UART->UART_RHR & 0xff)){
-            printf("UART receive buffer full\n");
+    if (status & UART_SR_RXRDY) {
+        uint8_t received = UART->UART_RHR & 0xFF;
+
+        if (received == '\n') {
+            push(&ringBuf, '\0');
+            uart_recieved_flag = 1;
+        } else {
+            push(&ringBuf, received);
         }
+    } 
+}
+
+
+uart_command_t handle_uart_interrupt() {
+    uart_command_t command = UART_COMMAND_NONE;
+
+    __disable_irq();
+    uart_flush(uart_buffer, sizeof(uart_buffer)/sizeof(uart_buffer[0]));
+    uart_recieved_flag = 0;
+    __enable_irq();
+
+    printf("######################## UART RECIEVED #######################\n");
+    if (!strcmp(uart_buffer, "C_TEST")) {
+        command =  UART_COMMAND_TEST;
+    } else {
+        printf("I've recieved this from UART (Command not recognized): %s \n", uart_buffer);
+        command = UART_COMMAND_NONE;
     }
-    
-} 
+
+    return command;
+}
 
 
 

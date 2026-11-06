@@ -1,5 +1,8 @@
 # Node 2 - ATSAM3X8E
 
+F_CPU := 84000000UL
+BAUD := 9600
+
 SAM_DIR := utils/sam
 
 MCUTYPE := __SAM3X8E__
@@ -45,6 +48,9 @@ CFLAGS += -I$(SAM_DIR)/sam3x/include
 CFLAGS += -I$(SAM_DIR)/sam3x/source
 CFLAGS += -I$(SAM_DIR)/cmsis
 
+CPPFLAGS := -DF_CPU=$(F_CPU)
+CPPFLAGS += -DBAUD=$(BAUD)
+
 LDFLAGS := -T$(LDSCRIPT)
 LDFLAGS += -mthumb -mcpu=cortex-m3
 LDFLAGS += -Wl,--gc-sections
@@ -56,7 +62,7 @@ $(BUILD_DIR):
 
 $(BUILD_DIR)/%.o: %.c | $(BUILD_DIR)
 	mkdir -p $(dir $@)
-	$(CC) -c $(CFLAGS) $< -o $@
+	$(CC) -c $(CPPFLAGS) $(CFLAGS) $< -o $@
 	#$(CC) -MM $(CFLAGS) $< > $@.d
 
 $(BUILD_DIR)/%.o : %.s | $(BUILD_DIR)
