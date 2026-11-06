@@ -81,7 +81,7 @@ static void debug_print() {
         printf_P(PSTR("Touch %d,%d Joy %d,%d Dir %d, Silder %d, Buttons 0x%08lX\n"), touch.x, touch.y, joy.x, joy.y, direction, slider.position, (unsigned long)buttons);
         fsm_state_t fsm_state = fsm_get_state();
         printf_P(PSTR("FSM State: %d \n"), fsm_state);
-        printf_P(PSTR("-----------------------------------------------------------------------------------------------\n"));
+        printf_P(PSTR("--------------------------------------------------------------------------\n"));
     }
 }
 

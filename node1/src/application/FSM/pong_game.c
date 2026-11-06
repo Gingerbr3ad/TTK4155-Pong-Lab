@@ -33,6 +33,7 @@ void game_system_update() {
         joy_message.data[1] = joy_pos.y;
 
         can_send(&joy_message);
+        prev_joy_pos = joy_pos;
     }
 }
 

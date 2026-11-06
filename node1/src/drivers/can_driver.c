@@ -13,12 +13,12 @@ void can_init() {
 uint8_t can_send(const can_message_t *msg) {
     // Check that the message is a valid CAN message
     if (!msg || msg->id > 0x7FF || msg->length > 8) {
-        return 0;
+        return 1;
     }
 
     // Make sure TXB0 is available (TXREQ = bit 3)
     if (mcp_read(MCP_TXB0CTRL) & (1 << 3)) {
-        return 0;
+        return 1;
     }
 
     // Configure the 11-bit identifier
@@ -40,19 +40,19 @@ uint8_t can_send(const can_message_t *msg) {
     // Request transmission from TXB0
     mcp_request_to_send();
 
-    return 1;
+    return 0;
 }
 
 uint8_t can_receive(can_message_t *msg) {
     if (!msg) {
-        return 0;
+        return 1;
     }
 
     uint8_t flags = mcp_read(MCP_CANINTF);
 
     // Check whether either receive buffer has data
     if (!(flags & (MCP_RX0IF | MCP_RX1IF))) {
-        return 0;
+        return 1;
     }
 
     uint8_t rx_flag;
@@ -76,7 +76,7 @@ uint8_t can_receive(can_message_t *msg) {
     msg->length = mcp_read(address + 4) & 0x0F;
     if (msg->length > 8) {
         mcp_bit_modify(MCP_CANINTF, rx_flag, 0);
-        return 0;
+        return 1;
     }
 
     // Read the message data by iterating through the data registers
@@ -87,7 +87,7 @@ uint8_t can_receive(can_message_t *msg) {
     // Clear the corresponding receive interrupt flag
     mcp_bit_modify(MCP_CANINTF, rx_flag, 0);
 
-    return 1;
+    return 0;
 }
 
 uint8_t can_test_send() {
@@ -98,8 +98,8 @@ uint8_t can_test_send() {
     };
 
     if (can_send(&tx)) {
-        return 0;
-    } else {
         return 1;
+    } else {
+        return 0;
     }
 }
