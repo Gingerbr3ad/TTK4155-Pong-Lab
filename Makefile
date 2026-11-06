@@ -82,7 +82,7 @@ clean:
 
 .PHONY: size
 size:
-	avr-size -C --mcu=atmega162 build/a.out
+	avr-size --format=avr --mcu=atmega162 $(BUILD_DIR)/a.out
 
 .PHONY: erase
 erase:
