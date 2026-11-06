@@ -11,13 +11,15 @@
 #include "application/oled/oled_utils.h"
 #include "application/sram_test.h"
 
+#include <avr/pgmspace.h>
+
 static FILE uartstdout = FDEV_SETUP_STREAM(uart_putchar, uart_getchar, _FDEV_SETUP_RW);
 static uint8_t ticks;
 
 void system_init() {
+    external_memory_init();
     uart_init();
     stdout = stdin = &uartstdout;
-    external_memory_init();
     adc_init();
     spi_init();
     mcp_init();
@@ -32,19 +34,18 @@ void system_init() {
 // Handles the uart commands in main as to not have to include everything in the uart driver
 static void dispatch_uart_command(uart_command_t command) {
     switch(command) {
-        case UART_COMMAND_NONE: break;
-        case UART_COMMAND_TEST: printf("Test command recieved\n"); break;
+        case UART_COMMAND_TEST: printf_P(PSTR("Test command recieved\n")); break;
         case UART_COMMAND_OLED_CLEAR: 
             framebuffer_clear();
-            printf("Clearing the OLED screen \n");
+            printf_P(PSTR("Clearing the OLED screen \n"));
             break;
         case UART_COMMAND_OLED_CHECKERS:
             oled_checkerboard_test();
-            printf("Drawing the checker board pattern on the OLED screen \n");
+            printf_P(PSTR("Drawing the checker board pattern on the OLED screen \n"));
             break;
         case UART_COMMAND_PRINT_DEBUG:
             print_controlls_command_flag = !print_controlls_command_flag;
-            printf("Toggled debug printing \n");
+            printf_P(PSTR("Toggled debug printing \n"));
             break;
         case UART_COMMAND_SRAM_TEST:
             SRAM_test();
@@ -64,10 +65,10 @@ static void dispatch_uart_command(uart_command_t command) {
                 // Wait for reception
             }
 
-            printf("ID: 0x%03X\n", (unsigned)rx.id);
+            printf_P(PSTR("ID: 0x%03X\n"), (unsigned)rx.id);
 
             for (uint8_t i = 0; i < rx.length; i++) {
-                printf("Data %u: 0x%02X\n",
+                printf_P(PSTR("Data %u: 0x%02X\n"),
                     (unsigned)i, (unsigned)rx.data[i]);
             }
             break; }
@@ -76,10 +77,10 @@ static void dispatch_uart_command(uart_command_t command) {
         case UART_COMMAND_UI_SELECT: input_inject_button(INPUT_BUTTON_JOYSTICK); break;
         case UART_COMMAND_UI_BACK: input_inject_button(INPUT_BUTTON_L6); break;
         case UART_COMMAND_GAME_FINISHED: fsm_handle_event(FSM_EVENT_GAME_FINISHED); break;
+        case UART_COMMAND_NONE: break;
         default: break;
     }
-
-    printf("##############################################################\n");
+    printf_P(PSTR("##############################################################\n"));
 }
 
 static void debug_print() {
@@ -95,7 +96,8 @@ static void debug_print() {
         joystick_direction_t direction = input_joystick_direction_read();
         input_slider_t slider = input_slider_read();
         uint32_t buttons = input_buttons_read();
-        printf("Touch %d,%d Joy %d,%d Dir %d, Silder %d, Buttons 0x%08lX\n", touch.x, touch.y, joy.x, joy.y, direction, slider.position, (unsigned long)buttons);
+        printf_P(PSTR("Touch %d,%d Joy %d,%d Dir %d, Silder %d, Buttons 0x%08lX\n"), touch.x, touch.y, joy.x, joy.y, direction, slider.position, (unsigned long)buttons);
+        printf_P(PSTR("-----------------------------------------------------------------------------------------------\n"));
     }
 }
 

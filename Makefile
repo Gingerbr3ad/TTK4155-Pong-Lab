@@ -40,9 +40,11 @@ TARGET_DEVICE := m162
 CC := avr-gcc # Compiler choice
 
 # Compiler flags
-CFLAGS := -O -std=c11 -ggdb
+CFLAGS := -Os -std=c11 -ggdb # Os optimizes stronger for file size than O
 CFLAGS += -Wall -Wextra # Adds extra warnings during compilation, usefull for catching stupid errors
 CFLAGS += -mmcu=$(TARGET_CPU)
+CFLAGS += -ffunction-sections -fdata-sections # Allow the linker to discard unused functions and data
+
 
 # C Preprocessor flags
 CPPFLAGS := -Iinclude # Sets the inc directory as the path for all includes
@@ -51,6 +53,8 @@ CPPFLAGS += -DBAUD=9600 # Defines the baud rate used by the AVR Libc macros, thi
 
 # Linker flags
 LDFLAGS := -mmcu=$(TARGET_CPU)
+LDFLAGS += -Wl,-Map=$(BUILD_DIR)/main.map # Generates a map of the build files, usefull for checking memory use
+LDFLAGS += -Wl,--gc-sections
 
 OBJECT_FILES = $(SOURCE_FILES:%.c=$(BUILD_DIR)/%.o)
 
@@ -74,6 +78,11 @@ flash: $(BUILD_DIR)/main.hex
 .PHONY: clean
 clean:
 	rm -rf $(BUILD_DIR)
+	make
+
+.PHONY: size
+size:
+	avr-size -C --mcu=atmega162 build/a.out
 
 .PHONY: erase
 erase:

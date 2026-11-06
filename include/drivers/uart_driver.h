@@ -6,6 +6,8 @@
 #include <util/setbaud.h>
 
 #define BufferSize 64 
+#define UART_RECEIVE_BUFFER_ADDR 0x1880
+#define UART_PARSE_BUFFER_ADDR 0x18C0
 
 extern volatile uint8_t uart_recieved_flag;
 

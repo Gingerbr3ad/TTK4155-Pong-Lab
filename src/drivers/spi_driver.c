@@ -1,11 +1,11 @@
 #include "drivers/spi_driver.h"
 
-/*##################### SS PINS #####################*/
-const spi_ss_pin_t oled_ss = OLED_SS;
-const spi_ss_pin_t io_ss = IO_SS;
-const spi_ss_pin_t mcp2515_ss = CAN_SS;
+// TODO: If there is time this should be re-wrtien so that there is only the transmit or read/write functions, having both is ugly
+// This was done this way because when writing the driver at first we didn't think there would be a need for other function to controll the ss pins in specific ways
+
+
 const spi_ss_pin_t slaves[3] = {OLED_SS, IO_SS, CAN_SS};
-/*###################################################*/
+
 
 static void SPI_MasterInit() {
     /* Set MOSI and SCK output, all others input */

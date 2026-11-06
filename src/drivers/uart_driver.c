@@ -1,11 +1,18 @@
 #include "drivers/uart_driver.h"
+#include <avr/pgmspace.h>
 
 /* This uart driver implementation is based on the code examples from the offical Atmel AVR ATmega162 documentation and the AVR Libc documentation  */
-volatile char uart_buffer[BufferSize]; // Buffer to store received characters
+#define uart_buffer ((volatile char *)(uintptr_t)UART_RECEIVE_BUFFER_ADDR) // Buffer to store received characters
+#define uart_parse_buffer ((char *)(uintptr_t)UART_PARSE_BUFFER_ADDR)
 volatile uint8_t uart_recieved_flag = 0; // Index for the head of the buffer
 volatile uint8_t char_count = 0; // Count of characters received
 
 void uart_init() {
+    // Since the uart buffer is placed in the external ram, we initilize it manually
+    for (uint8_t i = 0; i < BufferSize; ++i) {
+        uart_buffer[i] = '\0';
+    }
+
     // Set baud rate with the values calculated by the setbaud macro
     UBRR0H = UBRRH_VALUE;
     UBRR0L = UBRRL_VALUE;
@@ -64,41 +71,41 @@ int uart_getchar(FILE *stream) {
 }
 
 uart_command_t handle_uart_interrupt() {
-  char recieved_string[BufferSize]; // Since strcmp() can't handle a volatile string we make a copy of the character buffer
   uart_command_t command = UART_COMMAND_NONE;
 
   cli();
-  for (int i = 0; i < BufferSize; i++) {recieved_string[i] = uart_buffer[i];}
+  // Since strcmp() can't handle a volatile string we make a copy of the character buffer
+  for (uint8_t i = 0; i < BufferSize; i++) {uart_parse_buffer[i] = uart_buffer[i];}
   uart_recieved_flag = 0; // Reset the uart recieved flag
   sei();
-
-  printf("######################## UART RECIEVED #######################\n");
-  if(!strcmp(recieved_string, "C_TEST")) {
+  
+  printf_P(PSTR("######################## UART RECIEVED #######################\n"));
+  if(!strcmp_P(uart_parse_buffer, PSTR("C_TEST"))) {
     command = UART_COMMAND_TEST;
-  } else if(!strcmp(recieved_string, "C_OLED_CLEAR")) {
+  } else if(!strcmp_P(uart_parse_buffer, PSTR("C_OLED_CLEAR"))) {
     command = UART_COMMAND_OLED_CLEAR;
-  } else if(!strcmp(recieved_string, "C_OLED_CHECKERS")) {
+  } else if(!strcmp_P(uart_parse_buffer, PSTR("C_OLED_CHECKERS"))) {
     command = UART_COMMAND_OLED_CHECKERS;
-  } else if(!strcmp(recieved_string, "C_PRINT_DEBUG")) {
+  } else if(!strcmp_P(uart_parse_buffer, PSTR("C_PRINT_DEBUG"))) {
     command = UART_COMMAND_PRINT_DEBUG;
-  } else if(!strcmp(recieved_string, "C_SRAM_TEST")) {
+  } else if(!strcmp_P(uart_parse_buffer, PSTR("C_SRAM_TEST"))) {
     command = UART_COMMAND_SRAM_TEST;
-  } else if(!strcmp(recieved_string, "C_CAN_TEST")) {
+  } else if(!strcmp_P(uart_parse_buffer, PSTR("C_CAN_TEST"))) {
     command = UART_COMMAND_CAN_LOOPBACK_TEST;
-  } else if (!strcmp(recieved_string, "C_UI_UP")) {
+  } else if (!strcmp_P(uart_parse_buffer, PSTR("C_UI_UP"))) {
     command = UART_COMMAND_UI_UP;
-  } else if (!strcmp(recieved_string, "C_UI_DOWN")) {
+  } else if (!strcmp_P(uart_parse_buffer, PSTR("C_UI_DOWN"))) {
     command = UART_COMMAND_UI_DOWN;
-  } else if (!strcmp(recieved_string, "C_UI_SELECT")) {
+  } else if (!strcmp_P(uart_parse_buffer, PSTR("C_UI_SELECT"))) {
     command = UART_COMMAND_UI_SELECT;
-  } else if (!strcmp(recieved_string, "C_UI_BACK")) {
+  } else if (!strcmp_P(uart_parse_buffer, PSTR("C_UI_BACK"))) {
     command = UART_COMMAND_UI_BACK;
-  } else if (!strcmp(recieved_string, "C_GAME_OVER")) {
+  } else if (!strcmp_P(uart_parse_buffer, PSTR("C_GAME_OVER"))) {
     command = UART_COMMAND_GAME_FINISHED;
   }
   else {
-    printf("I've recieved this from UART (Command not recognized): %s \n", recieved_string);
-    printf("##############################################################\n");
+    command = UART_COMMAND_NONE;
+    printf_P(PSTR("I've recieved this from UART (Command not recognized): %s \n"), uart_parse_buffer);
   }
 
   return command;

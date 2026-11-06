@@ -8,10 +8,10 @@ typedef struct {
     int bit;
 } spi_ss_pin_t;
 
-extern const spi_ss_pin_t oled_ss;
-extern const spi_ss_pin_t io_ss;
-extern const spi_ss_pin_t mcp2515_ss;
 extern const spi_ss_pin_t slaves[3];
+#define oled_ss (slaves[0])
+#define io_ss (slaves[1])
+#define mcp2515_ss (slaves[2])
 
 void spi_init();
 

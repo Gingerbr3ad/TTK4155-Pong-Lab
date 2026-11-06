@@ -40,7 +40,7 @@
 /*###################################################*/
 
 /*################## COMMAND FLAGS ##################*/
-extern volatile int print_controlls_command_flag;
+extern volatile uint8_t print_controlls_command_flag;
 /*###################################################*/
 
 #define SYSTEM_UI_TICK_HZ 24

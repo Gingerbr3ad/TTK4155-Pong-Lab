@@ -8,13 +8,13 @@
 #define JOYSTICK_RAW_MAX 255
 
 typedef struct {
-    int x;
-    int y;
+    int8_t x;
+    int8_t y;
 } touch_position_t;
 
 typedef struct {
-    int x;
-    int y;
+    int8_t x;
+    int8_t y;
 } joystick_position_t;
 
 typedef enum {
@@ -26,14 +26,14 @@ typedef enum {
 } joystick_direction_t;
 
 typedef struct {
-    int center_x;
-    int center_y;
+    uint8_t center_x;
+    uint8_t center_y;
 
-    int min_x;
-    int max_x;
+    uint8_t min_x;
+    uint8_t max_x;
 
-    int min_y;
-    int max_y;
+    uint8_t min_y;
+    uint8_t max_y;
 } joystick_calibration_t;
 
 void joystick_init();

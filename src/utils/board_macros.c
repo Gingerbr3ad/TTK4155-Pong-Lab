@@ -1,7 +1,7 @@
 #include "utils/board_macros.h"
 
 /*################## COMMAND FLAGS ##################*/
-volatile int print_controlls_command_flag = 0;
+volatile uint8_t print_controlls_command_flag = 0;
 /*###################################################*/
 
 volatile uint8_t system_tick_flag = 0;
