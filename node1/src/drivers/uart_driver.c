@@ -82,7 +82,7 @@ uart_command_t handle_uart_interrupt() {
   uart_recieved_flag = 0; // Reset the uart recieved flag
   sei();
   
-  printf_P(PSTR("######################## UART RECIEVED #######################\n"));
+  printf_P(PSTR("##################### UART RECIEVED ####################\n"));
   if(!strcmp_P(uart_parse_buffer, PSTR("C_TEST"))) {
     command = UART_COMMAND_TEST;
   } else if(!strcmp_P(uart_parse_buffer, PSTR("C_OLED_CLEAR"))) {

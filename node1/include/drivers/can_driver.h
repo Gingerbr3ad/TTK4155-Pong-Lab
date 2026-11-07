@@ -2,6 +2,11 @@
 
 #include "drivers/mcp2515_driver.h"
 
+/*################# CAN MESSAGE IDs #################*/
+#define TEST_MESSAGE_ID 0x123
+#define JOYSTICK_MESSAGE_ID 0x100
+/*###################################################*/
+
 
 typedef struct {
     uint16_t id;

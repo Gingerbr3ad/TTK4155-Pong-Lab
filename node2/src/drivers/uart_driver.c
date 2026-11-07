@@ -124,7 +124,7 @@ uart_command_t handle_uart_interrupt() {
     uart_recieved_flag = 0;
     __enable_irq();
 
-    printf("######################## UART RECIEVED #######################\n");
+    printf("##################### UART RECIEVED ####################\n");
     if (!strcmp(uart_buffer, "C_TEST")) {
         command =  UART_COMMAND_TEST;
     } else if(!strcmp(uart_buffer, "C_CAN_TEST")) {

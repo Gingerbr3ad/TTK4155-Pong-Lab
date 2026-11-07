@@ -7,7 +7,7 @@ void system_init() {
     SystemInit();
     WDT->WDT_MR = WDT_MR_WDDIS; // Disable Watchdog Timer
     uart_init(SystemCoreClock);
-    can_init((CanInit){.reg = CAN_BR_BRP(41) | CAN_BR_SJW(0) | CAN_BR_PROPAG(4) | CAN_BR_PHASE1(5) | CAN_BR_PHASE2(3)}, 1);
+    can_init((CanInit){.reg = CAN_BR_BRP(41), .sjw = CAN_BR_SJW(0), .propag = CAN_BR_PROPAG(4), .phase1 = CAN_BR_PHASE1(5), .phase2 = CAN_BR_PHASE2(3)}, 1);
 }
 
 static void dispatch_uart_command(uart_command_t command) {
@@ -18,23 +18,23 @@ static void dispatch_uart_command(uart_command_t command) {
         case UART_COMMAND_CAN_TEST:
             printf("Can test start\n");
             can_test_send();
-            printf("Message send succesfully \n");
+            printf("Message send\n");
             break;
         case UART_COMMAND_NONE:
         default:
             break;
     }
-    printf("##############################################################\n");
+    printf("########################################################\n");
 }
 
 static void dispatch_can_message(CanMsg rx) {
     switch (rx.id) {
-        case 0x100:
+        case JOYSTICK_MESSAGE_ID:
             printf("Joy x: %d, Joy y: %d \n", (int8_t)rx.byte[0], (int8_t)rx.byte[1]);
             break;
-        case 0x123:
+        case TEST_MESSAGE_ID:
             can_test_receive(rx);
-            printf("Can test\n");
+            printf("Can test successfull\n");
             break;
         default:
             break;

@@ -2,6 +2,11 @@
 
 #include <stdint.h>
 
+/*################# CAN MESSAGE IDs #################*/
+#define TEST_MESSAGE_ID 0x123
+#define JOYSTICK_MESSAGE_ID 0x100
+/*###################################################*/
+
 // Struct with bit timing information
 // See `can_init` for usage example
 typedef struct CanInit CanInit;

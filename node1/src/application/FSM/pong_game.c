@@ -7,7 +7,7 @@ joystick_position_t joy_pos;
 joystick_position_t prev_joy_pos;
 
 can_message_t joy_message = {
-    .id = JOY_MESSAGE_ID,
+    .id = JOYSTICK_MESSAGE_ID,
     .length = 2,
     .data = {0x00, 0x00}
 };
