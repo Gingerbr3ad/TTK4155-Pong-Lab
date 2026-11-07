@@ -3,11 +3,23 @@
 
 #include <avr/pgmspace.h>
 
+volatile uint8_t can_received_flag = 0;
 
 void can_init() {
     if (!mcp_init()) {
         printf_P(PSTR("CAN: MCP2515 initialization failed.\n"));
     }
+
+    // PD2 / INT0: interrupt while the MCP2515 INT pin is low.
+    MCUCR &= ~((1 << ISC01) | (1 << ISC00));
+    GIFR = (1 << INTF0);
+    GICR |= (1 << INT0);
+}
+
+ISR(INT0_vect) {
+    // Disable INT0 until main reads the message.
+    GICR &= ~(1 << INT0);
+    can_received_flag = 1;
 }
 
 uint8_t can_send(const can_message_t *msg) {
@@ -90,6 +102,17 @@ uint8_t can_receive(can_message_t *msg) {
     return 0;
 }
 
+can_message_t * handle_can_interrupt() {
+    static can_message_t msg;
+    can_receive(&msg);
+
+    // Clear the flag before re-enabling INT0. If another message is waiting,
+    // the MCP2515 keeps INT low and the ISR sets the flag again.
+    can_received_flag = 0;
+    GICR |= (1 << INT0);
+    return (&msg);
+}
+
 uint8_t can_test_send() {
     const can_message_t tx = {
         .id = 0x123,
@@ -102,4 +125,12 @@ uint8_t can_test_send() {
     } else {
         return 0;
     }
+}
+
+uint8_t can_test_receive(can_message_t rx) {
+    if (can_receive(&rx) && rx.id == 0x123 && rx.length == 3 &&
+        rx.data[0] == 0xAA && rx.data[1] == 0xBB && rx.data[2] == 0xCC) {
+        return 0;
+    }
+    return 1;
 }

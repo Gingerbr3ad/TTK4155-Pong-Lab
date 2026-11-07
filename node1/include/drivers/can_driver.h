@@ -9,8 +9,13 @@ typedef struct {
     uint8_t data[8];
 } can_message_t;
 
+extern volatile uint8_t can_received_flag;
+
 void can_init();
 uint8_t can_send(const can_message_t *msg);
 uint8_t can_receive(can_message_t *msg);
 
+can_message_t * handle_can_interrupt();
+
 uint8_t can_test_send();
+uint8_t can_test_receive();

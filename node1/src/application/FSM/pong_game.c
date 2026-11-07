@@ -12,7 +12,7 @@ can_message_t joy_message = {
     .data = {0x00, 0x00}
 };
 
-void game_enter() {
+void pong_game_enter() {
     framebuffer_clear();
     oled_goto_pos(8, 8);
     oled_write_string_P(PSTR("PLAYING"), OLED_FONT_LARGE);
@@ -22,11 +22,11 @@ void game_enter() {
     oled_write_string_P(PSTR("BACK to menu"), OLED_FONT_SMALL);
 }
 
-uint8_t game_update() {
+uint8_t pong_game_update() {
     return input_button_pressed(INPUT_BUTTON_L6);
 }
 
-void game_system_update() {
+void pong_game_system_update() {
     joy_pos =  input_joystick_position_read();
     if(joy_pos.x != prev_joy_pos.x || joy_pos.y != prev_joy_pos.y) {
         joy_message.data[0] = joy_pos.x;
@@ -37,7 +37,7 @@ void game_system_update() {
     }
 }
 
-void game_over_enter() {
+void pong_game_over_enter() {
     framebuffer_clear();
     oled_goto_pos(8, 8);
     oled_write_string_P(PSTR("GAME OVER"), OLED_FONT_LARGE);
@@ -45,7 +45,6 @@ void game_over_enter() {
     oled_write_string_P(PSTR("SELECT or BACK"), OLED_FONT_SMALL);
 }
 
-uint8_t game_over_update() {
-    return input_button_pressed(INPUT_BUTTON_JOYSTICK) ||
-           input_button_pressed(INPUT_BUTTON_L6);
+uint8_t pong_game_over_update() {
+    return input_button_pressed(INPUT_BUTTON_JOYSTICK) || input_button_pressed(INPUT_BUTTON_L6);
 }

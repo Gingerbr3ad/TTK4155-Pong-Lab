@@ -15,6 +15,7 @@ extern volatile uint8_t uart_recieved_flag;
 typedef enum {
     UART_COMMAND_NONE,
     UART_COMMAND_TEST,
+    UART_COMMAND_CAN_TEST,
 } uart_command_t;
 
 

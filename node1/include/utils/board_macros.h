@@ -47,7 +47,7 @@ extern volatile uint8_t print_controlls_command_flag;
 #define JOY_MESSAGE_ID 0x100
 /*###################################################*/
 
-#define SYSTEM_UI_TICK_HZ 24
+#define SYSTEM_UI_TICK_HZ 30
 
 extern volatile uint8_t system_tick_flag;
 void system_tick_timer_init(uint8_t freq);

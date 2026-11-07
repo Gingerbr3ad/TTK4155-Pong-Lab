@@ -19,6 +19,8 @@ __attribute__((packed)) struct CanInit {
     };
 };
 
+extern volatile uint8_t can_recieved_flag;
+
 
 // Initialize CAN bus, with bit timings and optional interrupt
 // If `rxInterrupt` is not 0, an interrupt will be triggered when a message is received.
@@ -91,7 +93,11 @@ uint8_t can_receive(CanMsg* m);
 // Print a CAN message (using `printf`)
 void can_printmsg(CanMsg m);
 
+CanMsg handle_can_interrupt();
+
+uint8_t can_test_send();
 uint8_t can_test_receive();
+
 
 
 

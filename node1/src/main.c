@@ -65,6 +65,16 @@ static void dispatch_uart_command(uart_command_t command) {
     printf_P(PSTR("##############################################################\n"));
 }
 
+static void dispatch_can_message(can_message_t *msg) {
+    switch (msg->id) {
+        case 0x123:
+            if (!can_test_receive(msg)) {printf("Can test successful\n");}
+            break;
+        default:
+            break;
+    }
+}
+
 static void debug_print() {
     // If the print flag is high, print debug info once a second
     if (print_controlls_command_flag) {
@@ -91,6 +101,7 @@ int main() {
     while (1) {
         // ###### EACH LOOP ######
         if (uart_recieved_flag) {dispatch_uart_command(handle_uart_interrupt());}
+        if (can_received_flag) {dispatch_can_message(handle_can_interrupt());}
         fsm_update();
 
 

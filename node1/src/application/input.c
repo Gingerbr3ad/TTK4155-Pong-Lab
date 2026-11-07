@@ -19,7 +19,6 @@ static input_slider_t slider;
 static joystick_direction_t injected_direction;
 static uint32_t injected_buttons;
 
-static uint8_t downclock_counter;
 
 // Special SPI read to account for the time delays specified in the IO board documentation
 static void io_read(uint8_t command, uint8_t *data, uint8_t length) {
@@ -79,7 +78,6 @@ void input_init() {
     released_buttons = 0;
     board_buttons = (input_buttons_t){0, 0, 0};
     slider = (input_slider_t){0, 0};
-    downclock_counter = 0;
 }
 
 // Takes the input values on each loop

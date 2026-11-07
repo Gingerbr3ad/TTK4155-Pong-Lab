@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-void game_enter();
-uint8_t game_update();
-void game_system_update();
-void game_over_enter();
-uint8_t game_over_update();
+void pong_game_enter();
+uint8_t pong_game_update();
+void pong_game_system_update();
+void pong_game_over_enter();
+uint8_t pong_game_over_update();

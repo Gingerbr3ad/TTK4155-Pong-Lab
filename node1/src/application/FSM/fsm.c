@@ -12,8 +12,8 @@ static void fsm_transition(fsm_state_t next_state) {
     switch (current_state) {
         case FSM_BOOTUP: bootup_enter(); break;
         case FSM_MENU: menu_enter(); break;
-        case FSM_PLAYING: game_enter(); break;
-        case FSM_GAME_OVER: game_over_enter(); break;
+        case FSM_PLAYING: pong_game_enter(); break;
+        case FSM_GAME_OVER: pong_game_over_enter(); break;
     }
 }
 
@@ -32,8 +32,8 @@ void fsm_update() {
     switch (current_state) {
         case FSM_BOOTUP: if (bootup_update()) {fsm_transition(FSM_MENU);} break;
         case FSM_MENU: if (menu_update() == MENU_ACTION_START_GAME) {fsm_transition(FSM_PLAYING);} break;
-        case FSM_PLAYING: if (game_update()) {fsm_transition(FSM_MENU);} break;
-        case FSM_GAME_OVER: if (game_over_update()) {fsm_transition(FSM_MENU);} break;
+        case FSM_PLAYING: if (pong_game_update()) {fsm_transition(FSM_MENU);} break;
+        case FSM_GAME_OVER: if (pong_game_over_update()) {fsm_transition(FSM_MENU);} break;
     }
 }
 
@@ -54,7 +54,7 @@ void fsm_system_tick_update() {
             break;
         case FSM_MENU: break;
         case FSM_PLAYING: 
-            game_system_update();
+            pong_game_system_update();
         case FSM_GAME_OVER: break;
     }
 }

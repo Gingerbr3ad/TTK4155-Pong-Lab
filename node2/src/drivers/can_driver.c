@@ -2,6 +2,9 @@
 #include "drivers/can_driver.h"
 #include <stdio.h>
 
+volatile uint8_t can_recieved_flag = 0;
+static volatile CanMsg can_rx_buffer;
+
 
 void can_printmsg(CanMsg m){
     printf("CanMsg(id:%d, length:%d, data:{", m.id, m.length);
@@ -69,7 +72,6 @@ void can_init(CanInit init, uint8_t rxInterrupt){
     CAN0->CAN_MR |= CAN_MR_CANEN;
 }
 
-
 void can_send(CanMsg m){
     while(!(CAN0->CAN_MB[txMailbox].CAN_MSR & CAN_MSR_MRDY)){}
     
@@ -107,28 +109,15 @@ uint8_t can_receive(CanMsg* m){
     CAN0->CAN_MB[rxMailbox].CAN_MCR |= CAN_MCR_MTCR;
     return 1;
 }
-
-uint8_t can_test_receive() {
+    
+void CAN0_Handler(){
+    char can_sr = CAN0->CAN_SR;
     CanMsg rx;
-    if (can_receive(&rx) && rx.id == 0x123 && rx.length == 3 &&
-        rx.byte[0] == 0xAA && rx.byte[1] == 0xBB && rx.byte[2] == 0xCC) {
-        return 0;
-    }
-    return 1;
-}
-    
-    
-
-    
-/*
-// Example CAN interrupt handler
-void CAN0_Handler(void){
-    char can_sr = CAN0->CAN_SR; 
     
     // RX interrupt
     if(can_sr & (1 << rxMailbox)){
-        // Add your message-handling code here
-        can_printmsg(can_receive());
+        can_rx_buffer = rx;
+        can_recieved_flag = 1;
     } else {
         printf("CAN0 message arrived in non-used mailbox\n\r");
     }
@@ -139,6 +128,33 @@ void CAN0_Handler(void){
     }
     
     NVIC_ClearPendingIRQ(ID_CAN0);
-} 
-*/
+}
 
+CanMsg handle_can_interrupt() {
+    // Called from main when can_received_flag is set.
+    CanMsg rx = can_rx_buffer;
+    can_recieved_flag = 0;
+    // Re-enable the interrupt AFTER copying the buffer
+    CAN0->CAN_IER |= (1 << rxMailbox);
+
+    return rx;
+}
+
+uint8_t can_test_send() {
+    CanMsg tx = {
+        .id = 0x123,
+        .length = 3,
+        .byte = {0xAA, 0xBB, 0xCC}
+    };
+
+    can_send(tx);
+}
+
+
+uint8_t can_test_receive(CanMsg rx) {
+    if (can_receive(&rx) && rx.id == 0x123 && rx.length == 3 &&
+        rx.byte[0] == 0xAA && rx.byte[1] == 0xBB && rx.byte[2] == 0xCC) {
+        return 0;
+    }
+    return 1;
+}
