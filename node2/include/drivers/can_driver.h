@@ -95,7 +95,7 @@ void can_printmsg(CanMsg m);
 
 CanMsg handle_can_interrupt();
 
-uint8_t can_test_send();
+void can_test_send();
 uint8_t can_test_receive();
 
 

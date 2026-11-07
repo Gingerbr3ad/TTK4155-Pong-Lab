@@ -18,4 +18,4 @@ uint8_t can_receive(can_message_t *msg);
 can_message_t * handle_can_interrupt();
 
 uint8_t can_test_send();
-uint8_t can_test_receive();
+uint8_t can_test_receive(can_message_t rx);

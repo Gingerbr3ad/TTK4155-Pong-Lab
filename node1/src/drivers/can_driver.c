@@ -128,8 +128,7 @@ uint8_t can_test_send() {
 }
 
 uint8_t can_test_receive(can_message_t rx) {
-    if (can_receive(&rx) && rx.id == 0x123 && rx.length == 3 &&
-        rx.data[0] == 0xAA && rx.data[1] == 0xBB && rx.data[2] == 0xCC) {
+    if (rx.id == 0x123 && rx.length == 3 && rx.data[0] == 0xAA && rx.data[1] == 0xBB && rx.data[2] == 0xCC) {
         return 0;
     }
     return 1;

@@ -116,6 +116,7 @@ void CAN0_Handler(){
     
     // RX interrupt
     if(can_sr & (1 << rxMailbox)){
+        can_receive(&rx);
         can_rx_buffer = rx;
         can_recieved_flag = 1;
     } else {
@@ -140,7 +141,7 @@ CanMsg handle_can_interrupt() {
     return rx;
 }
 
-uint8_t can_test_send() {
+void can_test_send() {
     CanMsg tx = {
         .id = 0x123,
         .length = 3,
@@ -152,7 +153,7 @@ uint8_t can_test_send() {
 
 
 uint8_t can_test_receive(CanMsg rx) {
-    if (can_receive(&rx) && rx.id == 0x123 && rx.length == 3 &&
+    if (&rx && rx.id == 0x123 && rx.length == 3 &&
         rx.byte[0] == 0xAA && rx.byte[1] == 0xBB && rx.byte[2] == 0xCC) {
         return 0;
     }

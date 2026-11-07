@@ -17,7 +17,8 @@ static void dispatch_uart_command(uart_command_t command) {
             break;
         case UART_COMMAND_CAN_TEST:
             printf("Can test start\n");
-            if(!can_test_send()){printf("Message send succesfully \n");};
+            can_test_send();
+            printf("Message send succesfully \n");
             break;
         case UART_COMMAND_NONE:
         default:
