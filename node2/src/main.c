@@ -35,7 +35,7 @@ static void dispatch_can_message(CanMsg rx) {
     switch (rx.id) {
         case JOYSTICK_MESSAGE_ID:
             printf("Joy x: %d, Joy y: %d \n", (int8_t)rx.byte[0], (int8_t)rx.byte[1]);
-            arm_servo_update(rx.byte[0]);
+            arm_servo_update((int8_t)rx.byte[0]);
             break;
         case TEST_MESSAGE_ID:
             can_test_receive(rx);
