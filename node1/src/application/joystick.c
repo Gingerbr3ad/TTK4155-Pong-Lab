@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "application/joystick.h"
 #include "drivers/adc_driver.h"
 
@@ -10,6 +12,7 @@ static uint16_t x_sum = 0;
 static uint16_t y_sum = 0;
 
 static uint8_t history_index = 0;
+joystick_position_t prev_position;
 
 static int clamp_raw(int value) {
     if (value < JOYSTICK_RAW_MIN) {
@@ -56,6 +59,8 @@ void joystick_init() {
     clear_bit(DDRD, JOYSITCK_BUTTON);
     set_bit(PORTD, JOYSITCK_BUTTON);
 
+    prev_position.x = 0;
+    prev_position.y = 0;
     x_sum = 0;
     y_sum = 0;
     history_index = 0;
@@ -124,7 +129,12 @@ joystick_position_t joystick_read_position() {
 
     position.x = normalize_axis(average_x, calibration.center_x, calibration.min_x, calibration.max_x);
     position.y = normalize_axis(average_y, calibration.center_y, calibration.min_y, calibration.max_y);
+    
+    if ((abs(position.x - prev_position.x) < 2) && (abs(position.y - prev_position.y))) {
+        return prev_position;
+    }
 
+    prev_position = position;
     return position;
 }
 
