@@ -130,7 +130,7 @@ joystick_position_t joystick_read_position() {
     position.x = normalize_axis(average_x, calibration.center_x, calibration.min_x, calibration.max_x);
     position.y = normalize_axis(average_y, calibration.center_y, calibration.min_y, calibration.max_y);
     
-    if ((abs(position.x - prev_position.x) < 2) && (abs(position.y - prev_position.y) < 2)) {
+    if ((abs(position.x - prev_position.x) < 3) && (abs(position.y - prev_position.y) < 3)) {
         return prev_position;
     }
 

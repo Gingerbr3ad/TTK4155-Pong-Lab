@@ -3,7 +3,7 @@
 #include "utils/board_macros.h"
 
 #define JOYSTICK_DEADZONE 20
-#define JOYSTICK_FILTER_SIZE 4
+#define JOYSTICK_FILTER_SIZE 8
 #define JOYSTICK_RAW_MIN 0
 #define JOYSTICK_RAW_MAX 255
 
