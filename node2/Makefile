@@ -15,11 +15,13 @@ BOOTUP := \
     $(SAM_DIR)/sam3x/source/system_sam3x.c
 
 APP_SOURCES := \
+	src/application/servo.c \
     src/main.c
 
 DRIVER_SOURCES := \
     src/drivers/uart_driver.c \
-    src/drivers/can_driver.c
+    src/drivers/can_driver.c \
+	src/drivers/pwm_driver.c
 
 UTILS_SOURCES := \
     utils/time.c

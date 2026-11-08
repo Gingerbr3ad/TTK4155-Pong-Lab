@@ -7,7 +7,7 @@ void system_init() {
     SystemInit();
     WDT->WDT_MR = WDT_MR_WDDIS; // Disable Watchdog Timer
     uart_init(SystemCoreClock);
-    can_init((CanInit){.reg = CAN_BR_BRP(41), .sjw = CAN_BR_SJW(0), .propag = CAN_BR_PROPAG(4), .phase1 = CAN_BR_PHASE1(5), .phase2 = CAN_BR_PHASE2(3)}, 1);
+    can_init((CanInit){.reg = 41, .sjw = 0, .propag = 4, .phase1 = 5, .phase2 = 3}, 1);
 }
 
 static void dispatch_uart_command(uart_command_t command) {

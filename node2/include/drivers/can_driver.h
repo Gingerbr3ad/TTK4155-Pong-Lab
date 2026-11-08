@@ -2,6 +2,8 @@
 
 #include <stdint.h>
 
+// TODO: It would be nice to refactor this a little just so that it's more inline with the implementation in node 1
+
 /*################# CAN MESSAGE IDs #################*/
 #define TEST_MESSAGE_ID 0x123
 #define JOYSTICK_MESSAGE_ID 0x100
