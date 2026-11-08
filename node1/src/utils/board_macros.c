@@ -4,7 +4,10 @@
 volatile uint8_t print_controlls_command_flag = 0;
 /*###################################################*/
 
+volatile uint8_t system_ui_tick_flag = 0;
 volatile uint8_t system_tick_flag = 0;
+
+uint8_t system_ui_tick_counter = 0;
 
 void system_tick_timer_init(uint8_t freq) {
     // Setup of 16 bit timer/counter 3 on pin PD4 (OC3A)
@@ -17,9 +20,9 @@ void system_tick_timer_init(uint8_t freq) {
 
     // Set timer frequency
     if (freq == 30) {
-        OCR3A = 159; // 30 Hz
+        OCR3A = 159 * 4; // 30 Hz
     } else {
-        OCR3A = 199; // 24 Hz
+        OCR3A = 199 * 4; // 24 Hz
     }
 
     // Enable Compare Match A interrupt
@@ -29,10 +32,25 @@ void system_tick_timer_init(uint8_t freq) {
 // If the framebuffer was changed set a flag to send the frame buffer to the screen
 ISR(TIMER3_COMPA_vect) {
     system_tick_flag = 1;
+
+    if(++system_ui_tick_counter > 3) {
+        system_ui_tick_flag = 1;
+        system_ui_tick_counter = 0;
+    }
 }
 
 // Safely check if a system tick has occured and if so, clear its flag
-uint8_t system_tick_take(void) {
+uint8_t system_ui_tick_take() {
+    uint8_t pending;
+    cli();
+    pending = system_ui_tick_flag;
+    system_ui_tick_flag = 0;
+    sei();
+
+    return pending;
+}
+
+uint8_t system_tick_take() {
     uint8_t pending;
     cli();
     pending = system_tick_flag;

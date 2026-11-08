@@ -17,5 +17,6 @@ typedef enum {
 void fsm_init();
 void fsm_update();
 void fsm_handle_event(fsm_event_t event);
-void fsm_system_tick_update();
+void fsm_system_ui_tick();
+void fsm_system_tick();
 fsm_state_t fsm_get_state();

@@ -108,9 +108,16 @@ int main() {
         // ###### SYSTEM TICK ######
         if (system_tick_take()) {
             input_update();
-            fsm_system_tick_update();
+            fsm_system_tick();
+        }
+
+
+        // ###### SYSTEM UI TICK ######
+        if (system_ui_tick_take()) {
+            fsm_system_ui_tick();
             oled_flush();
             debug_print();
+
         }
     }
 }

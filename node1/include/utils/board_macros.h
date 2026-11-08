@@ -43,8 +43,11 @@
 extern volatile uint8_t print_controlls_command_flag;
 /*###################################################*/
 
-#define SYSTEM_UI_TICK_HZ 30
+#define SYSTEM_UI_TICK_HZ 24
 
+extern volatile uint8_t system_ui_tick_flag;
 extern volatile uint8_t system_tick_flag;
+
 void system_tick_timer_init(uint8_t freq);
+uint8_t system_ui_tick_take();
 uint8_t system_tick_take();

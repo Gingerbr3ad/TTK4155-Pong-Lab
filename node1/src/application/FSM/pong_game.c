@@ -26,7 +26,7 @@ uint8_t pong_game_update() {
     return input_button_pressed(INPUT_BUTTON_L6);
 }
 
-void pong_game_system_update() {
+void pong_game_system_tick() {
     joy_pos =  input_joystick_position_read();
     if(joy_pos.x != prev_joy_pos.x || joy_pos.y != prev_joy_pos.y) {
         joy_message.data[0] = joy_pos.x;

@@ -19,7 +19,7 @@ void bootup_enter() {
     oled_write_string_P(PSTR("PONG"), OLED_FONT_LARGE);
 }
 
-uint8_t bootup_tick() {
+uint8_t bootup_ui_tick() {
     if (elapsed_ticks < BOOTUP_TICKS) {
         ++elapsed_ticks;
     }

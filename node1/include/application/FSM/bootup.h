@@ -4,4 +4,4 @@
 
 void bootup_enter();
 uint8_t bootup_update();
-uint8_t bootup_tick();
+uint8_t bootup_ui_tick();

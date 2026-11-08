@@ -45,16 +45,26 @@ void fsm_handle_event(fsm_event_t event) {
 }
 
 // This function calls the update function of the active state on each system tick
-void fsm_system_tick_update() {
+void fsm_system_ui_tick() {
     switch (current_state) {
         case FSM_BOOTUP:
-            if (bootup_tick()) {
+            if (bootup_ui_tick()) {
                 fsm_transition(FSM_MENU);
             }
             break;
         case FSM_MENU: break;
+        case FSM_PLAYING: break;
+        case FSM_GAME_OVER: break;
+    }
+}
+
+void fsm_system_tick() {
+    switch (current_state) {
+        case FSM_BOOTUP: break;
+        case FSM_MENU: break;
         case FSM_PLAYING: 
-            pong_game_system_update();
+            pong_game_system_tick();
+            break;
         case FSM_GAME_OVER: break;
     }
 }
