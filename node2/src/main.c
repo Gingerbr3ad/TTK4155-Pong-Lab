@@ -1,13 +1,17 @@
 #include <stdio.h>
 #include "sam.h"
+
 #include "drivers/uart_driver.h"
 #include "drivers/can_driver.h"
+
+#include "application/servo.h"
 
 void system_init() {
     SystemInit();
     WDT->WDT_MR = WDT_MR_WDDIS; // Disable Watchdog Timer
     uart_init(SystemCoreClock);
     can_init((CanInit){.reg = 41, .sjw = 0, .propag = 4, .phase1 = 5, .phase2 = 3}, 1);
+    arm_servo_init();
 }
 
 static void dispatch_uart_command(uart_command_t command) {
@@ -31,6 +35,7 @@ static void dispatch_can_message(CanMsg rx) {
     switch (rx.id) {
         case JOYSTICK_MESSAGE_ID:
             printf("Joy x: %d, Joy y: %d \n", (int8_t)rx.byte[0], (int8_t)rx.byte[1]);
+            arm_servo_update(rx.byte[0]);
             break;
         case TEST_MESSAGE_ID:
             can_test_receive(rx);
