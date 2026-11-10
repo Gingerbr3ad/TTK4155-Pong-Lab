@@ -1,5 +1,5 @@
 #include "drivers/adc_driver.h"
-#include "utils/sam/sam3x/include/sam.h"
+#include "sam.h"
 #include <stdint.h>
 
 
