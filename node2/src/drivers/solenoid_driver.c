@@ -17,7 +17,7 @@ void solenoid_init(){
 };
 
 void solenoid_set_state(uint8_t state){
-    if (state == 0) {
+    if (state == 1) {
         PIOB->PIO_CODR = PIO_PB25; // Set PB25 LOW (solenoid on)
     } else {
         PIOB->PIO_SODR = PIO_PB25; // Set PB25 HIGH (solenoid off)
@@ -26,6 +26,7 @@ void solenoid_set_state(uint8_t state){
 
 void solenoid_pulse(){
     solenoid_set_state(1);
+    time_spinFor(msecs(100));
     solenoid_set_state(0);
 };
 
