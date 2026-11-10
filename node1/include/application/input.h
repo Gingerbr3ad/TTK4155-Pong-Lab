@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdint.h>
-#include "application/joystick.h"
+#include "drivers/joystick_driver.h"
 
 typedef enum {
     INPUT_BUTTON_JOYSTICK,

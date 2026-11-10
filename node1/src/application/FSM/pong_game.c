@@ -5,11 +5,12 @@
 
 joystick_position_t joy_pos;
 joystick_position_t prev_joy_pos;
+uint8_t shoot_button;
 
 can_message_t joy_message = {
     .id = JOYSTICK_MESSAGE_ID,
     .length = 2,
-    .data = {0x00, 0x00}
+    .data = {0x00, 0x00, 0x00}
 };
 
 void pong_game_enter() {
@@ -28,9 +29,11 @@ uint8_t pong_game_update() {
 
 void pong_game_system_tick() {
     joy_pos =  input_joystick_position_read();
+    shoot_button = input_button_pressed(INPUT_BUTTON_JOYSTICK);
     if(joy_pos.x != prev_joy_pos.x || joy_pos.y != prev_joy_pos.y) {
         joy_message.data[0] = joy_pos.x;
         joy_message.data[1] = joy_pos.y;
+        joy_message.data[2] = shoot_button;
 
         can_send(&joy_message);
         prev_joy_pos = joy_pos;

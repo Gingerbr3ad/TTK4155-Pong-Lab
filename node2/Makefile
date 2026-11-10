@@ -22,7 +22,7 @@ APP_SOURCES := \
 DRIVER_SOURCES := \
     src/drivers/uart_driver.c \
     src/drivers/can_driver.c \
-	src/drivers/pwm_driver.c
+	src/drivers/pwm_driver.c \
 	src/drivers/encoder_driver.c \
     src/drivers/motor_driver.c \
 	src/drivers/adc_driver.c \

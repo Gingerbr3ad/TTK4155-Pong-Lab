@@ -3,7 +3,7 @@
 APP_SOURCES := \
     src/main.c \
     src/application/sram_test.c \
-	src/application/joystick.c \
+	src/drivers/joystick_driver.c \
 	src/application/oled/oled_utils.c \
 	src/application/oled/fonts.c \
 	src/application/oled/sprites.c \

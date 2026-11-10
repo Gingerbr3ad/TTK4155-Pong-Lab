@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "application/joystick.h"
+#include "drivers/joystick_driver.h"
 #include "drivers/adc_driver.h"
 
 static joystick_calibration_t calibration;
@@ -98,7 +98,7 @@ touch_position_t touch_read_position() {
 }
 
 
-// Calibration method was found on https://dyadica.co.uk/blog/simple-bluetooth-joystick/
+// Calibration method was inspired by the solution found on https://dyadica.co.uk/blog/simple-bluetooth-joystick/
 joystick_position_t joystick_read_position() {
     joystick_position_t position;
 

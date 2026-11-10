@@ -9,6 +9,7 @@
 #include "drivers/solenoid_driver.h"
 
 #include "application/servo.h"
+#include "application/position_controller.h"
 
 
 
@@ -50,6 +51,9 @@ static void dispatch_can_message(CanMsg rx) {
             printf("Joy x: %d, Joy y: %d \n", (int8_t)rx.byte[0], (int8_t)rx.byte[1]);
             position_controller_set_joystick((int8_t)rx.byte[0]);
             arm_servo_update((int8_t)rx.byte[1]);
+            if (rx.byte[2]) {
+                solenoid_pulse();
+            }
             break;
         case TEST_MESSAGE_ID:
             can_test_receive(rx);
