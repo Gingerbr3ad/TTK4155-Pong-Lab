@@ -3,28 +3,27 @@
 #include <stdint.h>
 
 void solenoid_init(){
-    // Enable the peripheral clock for the PIOA
-    PMC->PMC_PCER0 |= (1 << ID_PIOA);
+    // Enable the peripheral clock for the PIOC
+    PMC->PMC_PCER0 |= (1 << ID_PIOC);
 
     // Configure PA10 as output for solenoid control
-    PIOA->PIO_PER = PIO_PA10;  // Enable control of PA10 by PIO
-    PIOA->PIO_OER = PIO_PA10;  // Set PA10 as output
-    PIOA->PIO_CODR = PIO_PA10; // Set PA10 low (solenoid off)
+    PIOC->PIO_PER = PIO_PC13;  // Enable control of PA10 by PIO
+    PIOC->PIO_OER = PIO_PC13;  // Set PA10 as output
+    PIOC->PIO_CODR = PIO_PC13; // Set PA10 low (solenoid off)
 };
 void solenoid_pulse(uint16_t duration_ms){
-    PIOA->PIO_SODR = PIO_PA10; // Set PA10 high (solenoid on)
-
+     PIOC->PIO_CODR = PIO_PC13; // Set PA10 low (solenoid on)
     delay_ms(duration_ms); // Wait for the specified duration
     // Deactivate the solenoid
-    PIOA->PIO_CODR = PIO_PA10; // Set PA10 low (solenoid off)
+      PIOC->PIO_SODR = PIO_PC13; // Set PA10 high (solenoid off)
 };
 
 void solenoid_set_state(){
     // Toggle the state of the solenoid
-    if (PIOA->PIO_ODSR & PIO_PA10) {
-        PIOA->PIO_CODR = PIO_PA10; // Set PA10 low (solenoid off)
+    if (PIOC->PIO_ODSR & PIO_PC13) {
+        PIOC->PIO_CODR = PIO_PC13; // Set PA10 low (solenoid on)
     } else {
-        PIOA->PIO_SODR = PIO_PA10; // Set PA10 high (solenoid on)
+        PIOC->PIO_SODR = PIO_PC13; // Set PA10 high (solenoid off)
     }
 };
 
