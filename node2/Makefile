@@ -19,7 +19,8 @@ APP_SOURCES := \
 
 DRIVER_SOURCES := \
     src/drivers/uart_driver.c \
-    src/drivers/can_driver.c
+    src/drivers/can_driver.c \
+	src/drivers/solenoid_driver.c
 
 UTILS_SOURCES := \
     utils/time.c

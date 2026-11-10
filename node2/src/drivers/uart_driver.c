@@ -1,7 +1,9 @@
-#include "sam.h"
-#include "drivers/uart_driver.h"
 #include <stdio.h>
 #include <string.h>
+
+#include "sam.h"
+
+#include "drivers/uart_driver.h"
 
 volatile uint8_t uart_recieved_flag = 0; // Index for the head of the buffer
 static char uart_buffer[BufferSize];
@@ -128,7 +130,9 @@ uart_command_t handle_uart_interrupt() {
     if (!strcmp(uart_buffer, "C_TEST")) {
         command =  UART_COMMAND_TEST;
     } else if(!strcmp(uart_buffer, "C_CAN_TEST")) {
-    command = UART_COMMAND_CAN_TEST;
+        command = UART_COMMAND_CAN_TEST;
+    } else if(!strcmp(uart_buffer, "C_SHOOT")) {
+        command = UART_COMMAND_SHOOT;
     } else {
         printf("I've recieved this from UART (Command not recognized): %s \n", uart_buffer);
         command = UART_COMMAND_NONE;

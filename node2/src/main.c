@@ -1,13 +1,18 @@
 #include <stdio.h>
+
 #include "sam.h"
+#include "time.h"
+
 #include "drivers/uart_driver.h"
 #include "drivers/can_driver.h"
+#include "drivers/solenoid_driver.h"
+
 
 void system_init() {
     SystemInit();
     WDT->WDT_MR = WDT_MR_WDDIS; // Disable Watchdog Timer
     uart_init(SystemCoreClock);
-    can_init((CanInit){.reg = CAN_BR_BRP(41), .sjw = CAN_BR_SJW(0), .propag = CAN_BR_PROPAG(4), .phase1 = CAN_BR_PHASE1(5), .phase2 = CAN_BR_PHASE2(3)}, 1);
+    can_init((CanInit){.brp = 41, .sjw = 0, .propag = 4, .phase1 = 5, .phase2 = 3}, 1);
 }
 
 static void dispatch_uart_command(uart_command_t command) {
@@ -19,6 +24,10 @@ static void dispatch_uart_command(uart_command_t command) {
             printf("Can test start\n");
             can_test_send();
             printf("Message send\n");
+            break;
+        case UART_COMMAND_SHOOT:
+            printf("Triggering the solenoid\n");
+            solenoid_pulse();
             break;
         case UART_COMMAND_NONE:
         default:

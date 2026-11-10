@@ -1,30 +1,32 @@
-#include "drivers/solenoid_driver.h"
-#include "utils/sam/sam3x/include/sam.h"
 #include <stdint.h>
 
+#include "sam.h"
+#include "time.h"
+
+#include "drivers/solenoid_driver.h"
+
+
 void solenoid_init(){
-    // Enable the peripheral clock for the PIOC
-    PMC->PMC_PCER0 |= (1 << ID_PIOC);
+    // Enable the peripheral clock for the PIOB
+    PMC->PMC_PCER0 |= (1 << ID_PIOB);
 
-    // Configure PA10 as output for solenoid control
-    PIOC->PIO_PER = PIO_PC13;  // Enable control of PA10 by PIO
-    PIOC->PIO_OER = PIO_PC13;  // Set PA10 as output
-    PIOC->PIO_CODR = PIO_PC13; // Set PA10 low (solenoid off)
-};
-void solenoid_pulse(uint16_t duration_ms){
-     PIOC->PIO_CODR = PIO_PC13; // Set PA10 low (solenoid on)
-    delay_ms(duration_ms); // Wait for the specified duration
-    // Deactivate the solenoid
-      PIOC->PIO_SODR = PIO_PC13; // Set PA10 high (solenoid off)
+    // Configure PB25 as output for solenoid control
+    PIOB->PIO_PER = PIO_PB25;  // Enable control of PB25 by PIO
+    PIOB->PIO_OER = PIO_PB25;  // Set PB25 as output
+    PIOB->PIO_SODR = PIO_PB25; // Set PB25 HIGH (solenoid off)
 };
 
-void solenoid_set_state(){
-    // Toggle the state of the solenoid
-    if (PIOC->PIO_ODSR & PIO_PC13) {
-        PIOC->PIO_CODR = PIO_PC13; // Set PA10 low (solenoid on)
+void solenoid_set_state(uint8_t state){
+    if (state == 0) {
+        PIOB->PIO_CODR = PIO_PB25; // Set PB25 LOW (solenoid on)
     } else {
-        PIOC->PIO_SODR = PIO_PC13; // Set PA10 high (solenoid off)
+        PIOB->PIO_SODR = PIO_PB25; // Set PB25 HIGH (solenoid off)
     }
+};
+
+void solenoid_pulse(){
+    solenoid_set_state(1);
+    solenoid_set_state(0);
 };
 
 
