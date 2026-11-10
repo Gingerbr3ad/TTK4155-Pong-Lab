@@ -53,8 +53,8 @@ uint16_t adc_read_average(uint8_t samples) {
 
 uint16_t adc_state() {
     // Read the converted average value
-  uint16_t value = adc_read_average(10);
-  if (value < 1900) {
+  uint16_t value = adc_read_average(4);
+  if (value < 150) {
     return 0; // Low state}
   } else { 
     return 1; // High state}

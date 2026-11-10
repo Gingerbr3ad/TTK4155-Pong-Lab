@@ -60,7 +60,7 @@ int main(void) {
         if (uart_recieved_flag) {dispatch_uart_command(handle_uart_interrupt());}
         if (can_recieved_flag) {dispatch_can_message(handle_can_interrupt());}
 
-        if (adc_state) {
+        if (!adc_state()) {
             printf("-----------\n");
             printf("Beam broken\n");
             printf("-----------\n");
