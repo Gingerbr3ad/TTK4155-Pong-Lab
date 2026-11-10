@@ -5,6 +5,7 @@
 
 #include "drivers/uart_driver.h"
 #include "drivers/can_driver.h"
+#include "drivers/adc_driver.h"
 #include "drivers/solenoid_driver.h"
 
 
@@ -13,6 +14,8 @@ void system_init() {
     WDT->WDT_MR = WDT_MR_WDDIS; // Disable Watchdog Timer
     uart_init(SystemCoreClock);
     can_init((CanInit){.brp = 41, .sjw = 0, .propag = 4, .phase1 = 5, .phase2 = 3}, 1);
+    adc_init();
+    solenoid_init();
 }
 
 static void dispatch_uart_command(uart_command_t command) {
@@ -56,5 +59,12 @@ int main(void) {
     while (1) {
         if (uart_recieved_flag) {dispatch_uart_command(handle_uart_interrupt());}
         if (can_recieved_flag) {dispatch_can_message(handle_can_interrupt());}
+
+        if (adc_state) {
+            printf("-----------\n");
+            printf("Beam broken\n");
+            printf("-----------\n");
+            time_spinFor(seconds(1));
+        }
     }
 }
