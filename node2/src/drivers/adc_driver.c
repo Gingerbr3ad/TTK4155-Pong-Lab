@@ -1,6 +1,8 @@
-#include "drivers/adc_driver.h"
-#include "sam.h"
 #include <stdint.h>
+
+#include "sam.h"
+
+#include "drivers/adc_driver.h"
 
 
 void adc_init() {
@@ -49,10 +51,10 @@ uint16_t adc_read_average(uint8_t samples) {
     return (uint16_t)(sum / samples);
 }
 
-uint16_t adc_state(void) {
+uint16_t adc_state() {
     // Read the converted average value
-  uint16_t value = adc_read_average(10);
-  if (value < 1900) {
+  uint16_t value = adc_read_average(4);
+  if (value < 150) {
     return 0; // Low state}
   } else { 
     return 1; // High state}

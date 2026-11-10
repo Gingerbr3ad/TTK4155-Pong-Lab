@@ -1,16 +1,24 @@
 #include <stdio.h>
+
 #include "sam.h"
+#include "time.h"
 
 #include "drivers/uart_driver.h"
 #include "drivers/can_driver.h"
+#include "drivers/adc_driver.h"
+#include "drivers/solenoid_driver.h"
 
 #include "application/servo.h"
+
+
 
 void system_init() {
     SystemInit();
     WDT->WDT_MR = WDT_MR_WDDIS; // Disable Watchdog Timer
     uart_init(SystemCoreClock);
     can_init((CanInit){.brp = 41, .sjw = 0, .propag = 4, .phase1 = 5, .phase2 = 3}, 1);
+    adc_init();
+    solenoid_init();
     arm_servo_init();
     position_controller_init();
 }
@@ -24,6 +32,10 @@ static void dispatch_uart_command(uart_command_t command) {
             printf("Can test start\n");
             can_test_send();
             printf("Message send\n");
+            break;
+        case UART_COMMAND_SHOOT:
+            printf("Triggering the solenoid\n");
+            solenoid_pulse();
             break;
         case UART_COMMAND_NONE:
         default:
@@ -54,5 +66,12 @@ int main(void) {
     while (1) {
         if (uart_recieved_flag) {dispatch_uart_command(handle_uart_interrupt());}
         if (can_recieved_flag) {dispatch_can_message(handle_can_interrupt());}
+
+        if (!adc_state()) {
+            printf("-----------\n");
+            printf("Beam broken\n");
+            printf("-----------\n");
+            time_spinFor(seconds(1));
+        }
     }
 }
