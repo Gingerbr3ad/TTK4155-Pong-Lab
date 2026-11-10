@@ -5,21 +5,20 @@
 static uint32_t period;
 static int8_t direction;
 
-static void disconnect_pwm(void) {
-    /* Low PB12 means coast on the newer DRV8871 shield. */
+static void disconnect_pwm() {
     PIOB->PIO_CODR = PIO_PB12;
     PIOB->PIO_OER = PIO_PB12;
     PIOB->PIO_PER = PIO_PB12;
     __DSB();
 }
 
-void motor_stop(void) {
+void motor_stop() {
     disconnect_pwm();
     PWM->PWM_CH_NUM[0].PWM_CDTYUPD = 0;
     direction = 0;
 }
 
-void motor_init(void) {
+void motor_init() {
     PMC->PMC_PCER0 = (1u << ID_PIOB) | (1u << ID_PIOC);
     PMC->PMC_PCER1 = 1u << (ID_PWM - 32);
     disconnect_pwm();
@@ -39,7 +38,6 @@ void motor_init(void) {
     PWM->PWM_CH_NUM[0].PWM_CDTY = 0;
     PWM->PWM_ENA = PWM_ENA_CHID0;
     direction = 0;
-    /* PB12 stays low as GPIO. Servo channel 1 is left untouched. */
 }
 
 void motor_set(int16_t command) {
@@ -50,8 +48,6 @@ void motor_set(int16_t command) {
     int8_t next_direction = command > 0 ? 1 : -1;
     uint16_t magnitude = command > 0 ? command : -command;
     if (next_direction != direction) {
-        /* Stop before changing DIR. The next control tick reconnects PWM,
-         * after the new duty has latched, without a blocking delay. */
         disconnect_pwm();
         if ((next_direction > 0) == MOTOR_RIGHT_DIR_HIGH)
             PIOC->PIO_SODR = PIO_PC23;

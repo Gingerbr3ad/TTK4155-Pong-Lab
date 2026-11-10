@@ -13,7 +13,7 @@ static float clamp_output(float value) {
     return value;
 }
 
-void position_controller_init(void) {
+void position_controller_init() {
     motor_init();
     encoder_init();
     enabled = 0;
@@ -44,7 +44,7 @@ void position_controller_set_joystick(int8_t x) {
     __set_PRIMASK(state);
 }
 
-void position_controller_stop(void) {
+void position_controller_stop() {
     uint32_t state = __get_PRIMASK();
     __disable_irq();
     enabled = 0;
@@ -53,10 +53,9 @@ void position_controller_stop(void) {
     __set_PRIMASK(state);
 }
 
-void TC0_Handler(void) {
+void TC0_Handler() {
     if (!(TC0->TC_CHANNEL[0].TC_SR & TC_SR_CPCS) || !enabled) return;
     int32_t position = encoder_read();
-    /* Rightward drive decreases counts: positive error requests RIGHT. */
     float error = (float)position - (float)target;
     if (error >= -POSITION_TOLERANCE && error <= POSITION_TOLERANCE) {
         integral = 0;
@@ -66,7 +65,6 @@ void TC0_Handler(void) {
     float p = POSITION_KP * error;
     float candidate = clamp_output(integral + POSITION_KI * error / POSITION_CONTROL_HZ);
     float proposed = p + candidate;
-    /* Prevent integrator windup while the drive is saturated. */
     if ((proposed <= POSITION_OUTPUT_LIMIT || error < 0) &&
         (proposed >= -POSITION_OUTPUT_LIMIT || error > 0)) integral = candidate;
     float output = clamp_output(p + integral);
