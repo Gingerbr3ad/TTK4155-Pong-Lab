@@ -105,7 +105,7 @@ static void menu_move_down() {
 }
 
 // Handles selecting the highlighted option
-static menu_action_t menu_select() {
+static menu_select() {
     switch (menu_page) {
         case MENU_MAIN:
             if (selection == 0) {
@@ -126,8 +126,6 @@ static menu_action_t menu_select() {
         case MENU_ABOUT:
             break;
     }
-
-    return MENU_ACTION_NONE;
 }
 
 // Returns to the parent menu
@@ -152,22 +150,12 @@ void menu_enter() {
 }
 
 // Menu navigation
-menu_action_t menu_system_tick() {
-    if (input_button_pressed(INPUT_BUTTON_R6)) {
-        menu_go_back();
-        return MENU_ACTION_NONE;
-    }
-    if (input_button_pressed(INPUT_BUTTON_JOYSTICK)) {
-        return menu_select();
-    }
-
+void menu_system_tick() {
     uint32_t buttons = input_buttons_read();
     joystick_direction_t direction = input_joystick_direction_read();
 
     if (direction == JOYSTICK_UP || (buttons & MENU_BUTTON_UP)) {menu_move_up();}
     else if (direction == JOYSTICK_DOWN || (buttons & MENU_BUTTON_DOWN)) {menu_move_down();}
     else if (direction == JOYSTICK_LEFT || (buttons & MENU_BUTTON_BACK)) {menu_go_back();}
-    else if (direction == JOYSTICK_RIGHT || (buttons & MENU_BUTTON_SELECT)) {menu_select();}
-
-    return MENU_ACTION_NONE;
+    else if (direction == JOYSTICK_RIGHT || (buttons & MENU_BUTTON_SELECT) || input_button_pressed(INPUT_BUTTON_JOYSTICK)) {menu_select();}
 }
