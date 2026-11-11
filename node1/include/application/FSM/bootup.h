@@ -3,5 +3,5 @@
 #include <stdint.h>
 
 void bootup_enter();
-uint8_t bootup_update();
-uint8_t bootup_ui_tick();
+void bootup_system_tick();
+void bootup_ui_tick();

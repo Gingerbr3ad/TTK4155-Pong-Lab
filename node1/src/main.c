@@ -8,6 +8,7 @@
 
 #include "application/input.h"
 #include "application/FSM/fsm.h"
+#include "application/FSM/pong_game.h"
 #include "application/oled/oled_utils.h"
 #include "application/sram_test.h"
 
@@ -67,6 +68,12 @@ static void dispatch_uart_command(uart_command_t command) {
 
 static void dispatch_can_message(can_message_t *msg) {
     switch (msg->id) {
+        case SCORE_MESSAGE_ID:
+            if (fsm_get_state() == FSM_PLAYING) {
+                uint32_t score = (uint32_t)msg->data[0] | ((uint32_t)msg->data[1] << 8) | ((uint32_t)msg->data[2] << 16) | ((uint32_t)msg->data[3] << 24);
+                pong_game_receive_score(score);
+            }
+            break;
         case TEST_MESSAGE_ID:
             if (!can_test_receive(*msg)) {printf("Can test successful\n");}
             break;

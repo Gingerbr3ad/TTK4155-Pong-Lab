@@ -14,6 +14,7 @@
 #include "application/motor.h"
 #include "application/motor_calibration.h"
 #include "application/position_controller.h"
+#include "application/score.h"
 
 
 
@@ -92,15 +93,10 @@ int main(void) {
         if (uart_recieved_flag) {dispatch_uart_command(handle_uart_interrupt());}
         if (can_recieved_flag) {dispatch_can_message(handle_can_interrupt());}
 
-        if (system_tick_60Hz_take()) {
-            
-        }
+        score_send_pending();
 
-        if (!adc_state()) {
-            printf("-----------\n");
-            printf("Beam broken\n");
-            printf("-----------\n");
-            time_spinFor(seconds(1));
+        if (system_tick_60Hz_take()) {
+            score_system_tick();
         }
     }
 }

@@ -7,6 +7,8 @@
 /*################# CAN MESSAGE IDs #################*/
 #define TEST_MESSAGE_ID 0x123
 #define JOYSTICK_MESSAGE_ID 0x100
+#define SCORE_MESSAGE_ID 0x101
+#define GAME_MESSAGE_ID 0x102
 /*###################################################*/
 
 // Struct with bit timing information

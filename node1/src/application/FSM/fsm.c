@@ -13,7 +13,6 @@ static void fsm_transition(fsm_state_t next_state) {
         case FSM_BOOTUP: bootup_enter(); break;
         case FSM_MENU: menu_enter(); break;
         case FSM_PLAYING: pong_game_enter(); break;
-        case FSM_GAME_OVER: pong_game_over_enter(); break;
     }
 }
 
@@ -30,41 +29,35 @@ fsm_state_t fsm_get_state() {
 // Implemented in this form to have a centralized state transition logic, instead of having it scattered in separate state functions
 void fsm_update() {
     switch (current_state) {
-        case FSM_BOOTUP: if (bootup_update()) {fsm_transition(FSM_MENU);} break;
-        case FSM_MENU: if (menu_update() == MENU_ACTION_START_GAME) {fsm_transition(FSM_PLAYING);} break;
-        case FSM_PLAYING: if (pong_game_update()) {fsm_transition(FSM_MENU);} break;
-        case FSM_GAME_OVER: if (pong_game_over_update()) {fsm_transition(FSM_MENU);} break;
+        case FSM_BOOTUP: break;
+        case FSM_MENU: menu_update(); break;
+        case FSM_PLAYING: break;
     }
 }
 
-// Event handler - TODO: Expand this
+// Event handler - This is the function that's exposed to other files for transitioning states
 void fsm_handle_event(fsm_event_t event) {
-    if (current_state == FSM_PLAYING && event == FSM_EVENT_GAME_FINISHED) {
-        fsm_transition(FSM_GAME_OVER);
+    switch (event) {
+        case FSM_EVENT_GAME_FINISHED: fsm_transition(FSM_MENU); break;
+        case FSM_EVENT_BOOTUP_EXIT: fsm_transition(FSM_MENU); break;
+        case FSM_EVENT_START_GAME: fsm_transition(FSM_PLAYING); break;
+    }
+}
+
+// This function calls the update function of the active state on each system UI tick
+void fsm_system_ui_tick() {
+    switch (current_state) {
+        case FSM_BOOTUP: bootup_ui_tick(); break;
+        case FSM_MENU: break;
+        case FSM_PLAYING: pong_game_ui_tick(); break;
     }
 }
 
 // This function calls the update function of the active state on each system tick
-void fsm_system_ui_tick() {
-    switch (current_state) {
-        case FSM_BOOTUP:
-            if (bootup_ui_tick()) {
-                fsm_transition(FSM_MENU);
-            }
-            break;
-        case FSM_MENU: break;
-        case FSM_PLAYING: break;
-        case FSM_GAME_OVER: break;
-    }
-}
-
 void fsm_system_tick() {
     switch (current_state) {
         case FSM_BOOTUP: break;
         case FSM_MENU: break;
-        case FSM_PLAYING: 
-            pong_game_system_tick();
-            break;
-        case FSM_GAME_OVER: break;
+        case FSM_PLAYING: pong_game_system_tick(); break;
     }
 }

@@ -1,4 +1,5 @@
 #include "application/FSM/menu.h"
+#include "application/FSM/fsm.h"
 #include "application/input.h"
 #include "application/oled/oled_utils.h"
 
@@ -103,7 +104,7 @@ static menu_action_t menu_select() {
     switch (menu_page) {
         case MENU_MAIN:
             if (selection == 0) {
-                return MENU_ACTION_START_GAME;
+                fsm_handle_event(FSM_EVENT_START_GAME);
             } else {
                 menu_open(MENU_OPTIONS);
             }

@@ -1,4 +1,5 @@
 #include "application/FSM/bootup.h"
+#include "application/FSM/fsm.h"
 #include "application/input.h"
 #include "application/oled/oled_utils.h"
 #include "application/oled/sprites.h"
@@ -13,20 +14,21 @@ void bootup_enter() {
     elapsed_ticks = 0;
     framebuffer_clear();
 
-    oled_goto_pos(0, 48);
+    oled_goto_pos(4, 48);
     oled_draw_sprite(ntnu_logo, NTNU_LOGO_WIDTH, NTNU_LOGO_HEIGHT);
-    oled_goto_pos(40, 47);
+    oled_goto_pos(44, 47);
     oled_write_string_P(PSTR("PONG"), OLED_FONT_LARGE);
 }
 
-uint8_t bootup_ui_tick() {
+void bootup_ui_tick() {
     if (elapsed_ticks < BOOTUP_TICKS) {
         ++elapsed_ticks;
-    }
-    return elapsed_ticks >= BOOTUP_TICKS;
+    } else {fsm_handle_event(FSM_EVENT_BOOTUP_EXIT);}
 }
 
 // Pressing the select button skips the splash screen
-uint8_t bootup_update(void) {
-    return input_button_pressed(INPUT_BUTTON_JOYSTICK);
+void bootup_system_tick() {
+    if (input_button_pressed(INPUT_BUTTON_JOYSTICK)) {
+        fsm_handle_event(FSM_EVENT_BOOTUP_EXIT);
+    }
 }
