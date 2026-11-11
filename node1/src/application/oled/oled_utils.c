@@ -152,8 +152,8 @@ void oled_goto_pos(uint8_t line, uint8_t col) {
     cursor_x = col;
 }
 
-void oled_goto_page(uint8_t page) {
-    cursor_x = 0;
+void oled_goto_page(uint8_t page, uint8_t col) {
+    cursor_x = col;
     cursor_y = page*8;
 }
 
