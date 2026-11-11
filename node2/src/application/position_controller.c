@@ -84,6 +84,7 @@ void TC3_Handler() {
     if (error >= -POSITION_TOLERANCE && error <= POSITION_TOLERANCE) {
         integral = 0;
         motor_set(0);
+        REG_TC1_SR0;
         return;
     }
 

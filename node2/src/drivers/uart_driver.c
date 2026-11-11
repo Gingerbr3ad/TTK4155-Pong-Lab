@@ -133,6 +133,8 @@ uart_command_t handle_uart_interrupt() {
         command = UART_COMMAND_CAN_TEST;
     } else if(!strcmp(uart_buffer, "C_SHOOT")) {
         command = UART_COMMAND_SHOOT;
+        } else if(!strcmp(uart_buffer, "C_MOTOR_CAL")) {
+        command = UART_COMMAND_MOTOR_CALIBRATE;
     } else {
         printf("I've recieved this from UART (Command not recognized): %s \n", uart_buffer);
         command = UART_COMMAND_NONE;

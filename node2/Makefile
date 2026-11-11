@@ -17,6 +17,7 @@ BOOTUP := \
 APP_SOURCES := \
 	src/application/servo.c \
 	src/application/motor.c \
+	src/application/motor_calibration.c \
 	src/application/position_controller.c \
     src/main.c
 

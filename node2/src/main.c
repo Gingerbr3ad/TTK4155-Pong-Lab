@@ -12,6 +12,7 @@
 
 #include "application/servo.h"
 #include "application/motor.h"
+#include "application/motor_calibration.h"
 #include "application/position_controller.h"
 
 
@@ -28,6 +29,10 @@ void system_init() {
     encoder_init();
     motor_init();
     position_controller_init();
+    if (!motor_calibrate()) {
+        printf("Motor Calibration failed, please re-run it with 'C_MOTOR_CAL'.");
+        return;
+    }
     position_controller_start();
     }
 
@@ -40,6 +45,14 @@ static void dispatch_uart_command(uart_command_t command) {
             printf("Can test start\n");
             can_test_send();
             printf("Message send\n");
+            break;
+        case UART_COMMAND_MOTOR_CALIBRATE:
+            printf("Running motor calibration\n");
+            if (!motor_calibrate()) {
+                printf("Motor Calibration failed, please re-run it with 'C_MOTOR_CAL'.");
+                break;
+            }
+            printf("Motor calibrated successfuly");
             break;
         case UART_COMMAND_SHOOT:
             printf("Triggering the solenoid\n");

@@ -3,6 +3,10 @@
 
 #define PINS PIO_PC25B_TIOA6 | PIO_PC26B_TIOB6
 
+volatile int16_t POSITION_MAX_LEFT = 50;
+volatile int16_t POSITION_MAX_RIGHT = 50;
+volatile int16_t POSITION_CENTER = 0;
+
 void encoder_init() {
     PMC->PMC_PCER0 = (1u << ID_PIOC) | (1u << ID_PIOA);
     PMC->PMC_PCER1 = 1u << (ID_TC6 - 32);
@@ -32,6 +36,11 @@ void encoder_init() {
     REG_TC2_CMR0 = TC_CMR_TCCLKS_XC0;
     // Start and reset the counter
     REG_TC2_CCR0 = TC_CCR_CLKEN | TC_CCR_SWTRG;
+
+    // Initialize the max travelt to very small values
+    POSITION_MAX_LEFT = 50;
+    POSITION_MAX_RIGHT = 50;
+    POSITION_CENTER = 0;
 }
 
 int32_t encoder_read() {

@@ -1,8 +1,6 @@
 #pragma once
 #include <stdint.h>
 
-#define POSITION_MAX_LEFT 2400
-#define POSITION_MAX_RIGHT (-2800)
 #define POSITION_CONTROL_LOOP_HZ 100
 #define MOTOR_EFFORT_LIMIT 1000
 #define POSITION_TOLERANCE 20

@@ -17,6 +17,7 @@ typedef enum {
     UART_COMMAND_TEST,
     UART_COMMAND_CAN_TEST,
     UART_COMMAND_SHOOT,
+    UART_COMMAND_MOTOR_CALIBRATE,
 } uart_command_t;
 
 
