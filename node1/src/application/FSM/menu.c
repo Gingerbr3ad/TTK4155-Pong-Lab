@@ -3,7 +3,15 @@
 #include "application/input.h"
 #include "application/oled/oled_utils.h"
 
-/* TODO: This is shit and should be refactored if there is time, handling the menu and sub menus should be more modular and adding more options should be a lot easier, maybe make it heuristic? */
+#define MENU_BUTTON_SELECT (INPUT_BUTTON_R6 | INPUT_BUTTON_NAV_CENTER | INPUT_BUTTON_NAV_RIGHT)
+#define MENU_BUTTON_BACK (INPUT_BUTTON_L6 | INPUT_BUTTON_L7 | INPUT_BUTTON_NAV_LEFT)
+#define MENU_BUTTON_UP (INPUT_BUTTON_NAV_UP)
+#define MENU_BUTTON_DOWN (INPUT_BUTTON_NAV_DOWN)
+
+/* TODO: This is bad and should be refactored if there is time, handling the menu and sub menus should be more modular and adding more options should be a lot easier, maybe make it heuristic? */
+
+static menu_page_t menu_page;
+static uint8_t selection;
 
 // Menu pages (main menu + sub menus)
 typedef enum {
@@ -11,9 +19,6 @@ typedef enum {
     MENU_OPTIONS,
     MENU_ABOUT
 } menu_page_t;
-
-static menu_page_t menu_page;
-static uint8_t selection;
 
 // Returns the number of option for the menu page
 static uint8_t menu_item_count() {
@@ -146,8 +151,8 @@ void menu_enter() {
     menu_open(MENU_MAIN);
 }
 
-// Processes inputs and returns application actions
-menu_action_t menu_system_ui_tick() {
+// Menu navigation
+menu_action_t menu_system_tick() {
     if (input_button_pressed(INPUT_BUTTON_R6)) {
         menu_go_back();
         return MENU_ACTION_NONE;
@@ -156,15 +161,13 @@ menu_action_t menu_system_ui_tick() {
         return menu_select();
     }
 
-    joystick_direction_t direction = input_joystick_direction_edge();
-    switch (direction) {
-        case JOYSTICK_UP: menu_move_up(); break;
-        case JOYSTICK_DOWN: menu_move_down(); break;
-        case JOYSTICK_LEFT:
-        case JOYSTICK_RIGHT:
-        case JOYSTICK_NEUTRAL:
-        default: break;
-    }
+    uint32_t buttons = input_buttons_read();
+    joystick_direction_t direction = input_joystick_direction_read();
+
+    if (direction == JOYSTICK_UP || (buttons & MENU_BUTTON_UP)) {menu_move_up();}
+    else if (direction == JOYSTICK_DOWN || (buttons & MENU_BUTTON_DOWN)) {menu_move_down();}
+    else if (direction == JOYSTICK_LEFT || (buttons & MENU_BUTTON_BACK)) {menu_go_back();}
+    else if (direction == JOYSTICK_RIGHT || (buttons & MENU_BUTTON_SELECT)) {menu_select();}
 
     return MENU_ACTION_NONE;
 }

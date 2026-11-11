@@ -46,7 +46,7 @@ void fsm_handle_event(fsm_event_t event) {
 void fsm_system_ui_tick() {
     switch (current_state) {
         case FSM_BOOTUP: bootup_ui_tick(); break;
-        case FSM_MENU: menu_system_ui_tick(); break;
+        case FSM_MENU: break;
         case FSM_PLAYING: pong_game_ui_tick(); break;
     }
 }
@@ -55,7 +55,7 @@ void fsm_system_ui_tick() {
 void fsm_system_tick() {
     switch (current_state) {
         case FSM_BOOTUP: break;
-        case FSM_MENU: break;
+        case FSM_MENU: menu_system_tick(); break;
         case FSM_PLAYING: pong_game_system_tick(); break;
     }
 }

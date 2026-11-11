@@ -7,4 +7,4 @@ typedef enum {
 } menu_action_t;
 
 void menu_enter();
-menu_action_t menu_system_ui_tick();
+menu_action_t menu_system_tick();
