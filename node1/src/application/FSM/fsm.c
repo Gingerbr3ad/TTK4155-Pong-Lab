@@ -25,12 +25,10 @@ fsm_state_t fsm_get_state() {
 }
 
 // This is a function for calling state updates that should run on every loop rather than on system tick
-// This mainly checks if a state transition should occur
-// Implemented in this form to have a centralized state transition logic, instead of having it scattered in separate state functions
 void fsm_update() {
     switch (current_state) {
         case FSM_BOOTUP: break;
-        case FSM_MENU: menu_update(); break;
+        case FSM_MENU: break;
         case FSM_PLAYING: break;
     }
 }
@@ -39,7 +37,7 @@ void fsm_update() {
 void fsm_handle_event(fsm_event_t event) {
     switch (event) {
         case FSM_EVENT_GAME_FINISHED: fsm_transition(FSM_MENU); break;
-        case FSM_EVENT_BOOTUP_EXIT: fsm_transition(FSM_MENU); break;
+        case FSM_EVENT_MENU_ENTER: fsm_transition(FSM_MENU); break;
         case FSM_EVENT_START_GAME: fsm_transition(FSM_PLAYING); break;
     }
 }
@@ -48,7 +46,7 @@ void fsm_handle_event(fsm_event_t event) {
 void fsm_system_ui_tick() {
     switch (current_state) {
         case FSM_BOOTUP: bootup_ui_tick(); break;
-        case FSM_MENU: break;
+        case FSM_MENU: menu_system_ui_tick(); break;
         case FSM_PLAYING: pong_game_ui_tick(); break;
     }
 }

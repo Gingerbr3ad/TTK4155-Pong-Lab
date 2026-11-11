@@ -34,8 +34,7 @@ void system_init() {
         printf("Motor Calibration failed, please re-run it with 'C_MOTOR_CAL'.\n");
         return;
     }
-    position_controller_start();
-    }
+}
 
 static void dispatch_uart_command(uart_command_t command) {
     switch (command) {
@@ -54,7 +53,6 @@ static void dispatch_uart_command(uart_command_t command) {
                 break;
             }
             printf("Motor calibrated successfuly\n");
-            position_controller_start();
             break;
         case UART_COMMAND_SHOOT:
             printf("Triggering the solenoid\n");
@@ -83,8 +81,10 @@ static void dispatch_can_message(CanMsg rx) {
             break;
         case GAME_MESSAGE_ID:
             if (rx.byte[0] == 1) {
+                position_controller_start();
                 score_start();
             } else if (rx.byte[0] == 0) {
+                position_controller_stop();
                 score_stop();
             }
         default: 
@@ -103,7 +103,6 @@ int main(void) {
 
         if (system_tick_60Hz_take()) {
             score_system_tick();
-            solenoid_pulse_tick();
         }
     }
 }

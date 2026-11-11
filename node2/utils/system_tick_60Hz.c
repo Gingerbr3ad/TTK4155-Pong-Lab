@@ -1,6 +1,7 @@
 #include "sam.h"
 
 #include "system_tick_60Hz.h"
+#include "drivers/solenoid_driver.h"
 
 volatile uint8_t system_tick_60Hz_flag = 0;
 
@@ -25,6 +26,7 @@ void system_tick_60Hz_init() {
 
 void TC0_Handler() {
     system_tick_60Hz_flag = 1;
+    solenoid_pulse_tick();
     // Clear the interrupt
     REG_TC0_SR0;
 }

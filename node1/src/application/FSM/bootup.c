@@ -23,12 +23,12 @@ void bootup_enter() {
 void bootup_ui_tick() {
     if (elapsed_ticks < BOOTUP_TICKS) {
         ++elapsed_ticks;
-    } else {fsm_handle_event(FSM_EVENT_BOOTUP_EXIT);}
+    } else {fsm_handle_event(FSM_EVENT_MENU_ENTER);}
 }
 
 // Pressing the select button skips the splash screen
 void bootup_system_tick() {
     if (input_button_pressed(INPUT_BUTTON_JOYSTICK)) {
-        fsm_handle_event(FSM_EVENT_BOOTUP_EXIT);
+        fsm_handle_event(FSM_EVENT_MENU_ENTER);
     }
 }

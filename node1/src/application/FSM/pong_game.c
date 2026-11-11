@@ -75,7 +75,7 @@ void pong_game_system_tick() {
     if (game_message_pending) {if(!can_send(&game_message)) {game_message_pending = 0;}}
     if (game_over) {
         if (!game_over_drawn) {pong_game_over_draw(); game_over_drawn = 1; return;}
-        if (input_button_pressed(INPUT_BUTTON_JOYSTICK) || input_button_pressed(INPUT_BUTTON_L6)) {fsm_handle_event(FSM_EVENT_BOOTUP_EXIT); return;}
+        if (input_button_pressed(INPUT_BUTTON_JOYSTICK) || input_button_pressed(INPUT_BUTTON_L6)) {fsm_handle_event(FSM_EVENT_MENU_ENTER); return;}
     }
 
 
@@ -86,7 +86,6 @@ void pong_game_system_tick() {
         joy_message.data[1] = joy_pos.y;
         joy_message.data[2] = shoot_button;
 
-        can_send(&joy_message);
-        prev_joy_pos = joy_pos;
+        if (!can_send(&joy_message)) {prev_joy_pos = joy_pos;}
     }
 }
