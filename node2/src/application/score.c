@@ -58,6 +58,9 @@ void score_send_pending() {
     }
     if (game_over) {
         message.byte[0] = 0;
+        message.byte[1] = 0;
+        message.byte[2] = 0;
+        message.byte[3] = 0;
         can_send(message);
     }
 }

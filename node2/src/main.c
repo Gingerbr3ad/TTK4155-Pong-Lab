@@ -69,6 +69,10 @@ static void dispatch_uart_command(uart_command_t command) {
 
 static void dispatch_can_message(CanMsg rx) {
     switch (rx.id) {
+        case TEST_MESSAGE_ID:
+            can_test_receive(rx);
+            printf("Can test successfull\n");
+            break;
         case JOYSTICK_MESSAGE_ID:
             printf("Joy x: %d, Joy y: %d \n, Button: %d", (int8_t)rx.byte[0], (int8_t)rx.byte[1], rx.byte[2]);
             position_controller_map_target((int8_t)rx.byte[0], -100, 100, POSITION_MAX_RIGHT, POSITION_MAX_LEFT);
@@ -77,11 +81,13 @@ static void dispatch_can_message(CanMsg rx) {
                 solenoid_pulse();
             }
             break;
-        case TEST_MESSAGE_ID:
-            can_test_receive(rx);
-            printf("Can test successfull\n");
-            break;
-        default:
+        case GAME_MESSAGE_ID:
+            if (rx.byte[0] == 1) {
+                score_start();
+            } else if (rx.byte[0] == 0) {
+                score_stop();
+            }
+        default: 
             break;
     }
 }
