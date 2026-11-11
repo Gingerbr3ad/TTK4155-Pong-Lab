@@ -10,8 +10,6 @@
 
 /* TODO: This is bad and should be refactored if there is time, handling the menu and sub menus should be more modular and adding more options should be a lot easier, maybe make it heuristic? */
 
-static menu_page_t menu_page;
-static uint8_t selection;
 
 // Menu pages (main menu + sub menus)
 typedef enum {
@@ -19,6 +17,9 @@ typedef enum {
     MENU_OPTIONS,
     MENU_ABOUT
 } menu_page_t;
+
+static menu_page_t menu_page;
+static uint8_t selection;
 
 // Returns the number of option for the menu page
 static uint8_t menu_item_count() {
@@ -105,7 +106,7 @@ static void menu_move_down() {
 }
 
 // Handles selecting the highlighted option
-static menu_select() {
+static void menu_select() {
     switch (menu_page) {
         case MENU_MAIN:
             if (selection == 0) {
