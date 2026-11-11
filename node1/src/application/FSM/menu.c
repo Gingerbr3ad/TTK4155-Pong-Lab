@@ -3,11 +3,6 @@
 #include "application/input.h"
 #include "application/oled/oled_utils.h"
 
-#define MENU_BUTTON_SELECT (INPUT_BUTTON_R6 | INPUT_BUTTON_NAV_CENTER | INPUT_BUTTON_NAV_RIGHT)
-#define MENU_BUTTON_BACK (INPUT_BUTTON_L6 | INPUT_BUTTON_L7 | INPUT_BUTTON_NAV_LEFT)
-#define MENU_BUTTON_UP (INPUT_BUTTON_NAV_UP)
-#define MENU_BUTTON_DOWN (INPUT_BUTTON_NAV_DOWN)
-
 /* TODO: This is bad and should be refactored if there is time, handling the menu and sub menus should be more modular and adding more options should be a lot easier, maybe make it heuristic? */
 
 
@@ -152,11 +147,11 @@ void menu_enter() {
 
 // Menu navigation
 void menu_system_tick() {
-    uint32_t buttons = input_buttons_read();
-    joystick_direction_t direction = input_joystick_direction_read();
+    joystick_direction_t direction = input_joystick_direction_edge();
 
-    if (direction == JOYSTICK_UP || (buttons & MENU_BUTTON_UP)) {menu_move_up();}
-    else if (direction == JOYSTICK_DOWN || (buttons & MENU_BUTTON_DOWN)) {menu_move_down();}
-    else if (direction == JOYSTICK_LEFT || (buttons & MENU_BUTTON_BACK)) {menu_go_back();}
-    else if (direction == JOYSTICK_RIGHT || (buttons & MENU_BUTTON_SELECT) || input_button_pressed(INPUT_BUTTON_JOYSTICK)) {menu_select();}
+    if (direction == JOYSTICK_UP || input_button_pressed(INPUT_BUTTON_NAV_UP)) {menu_move_up();}
+    else if (direction == JOYSTICK_DOWN || input_button_pressed(INPUT_BUTTON_NAV_DOWN)) {menu_move_down();}
+    else if (direction == JOYSTICK_LEFT || input_button_pressed(INPUT_BUTTON_NAV_LEFT) || input_button_pressed(INPUT_BUTTON_L6) || input_button_pressed(INPUT_BUTTON_L7)) {menu_go_back();}
+    else if (direction == JOYSTICK_RIGHT || input_button_pressed(INPUT_BUTTON_NAV_RIGHT) || input_button_pressed(INPUT_BUTTON_NAV_CENTER) || input_button_pressed(INPUT_BUTTON_R6) || input_button_pressed(INPUT_BUTTON_JOYSTICK)) {menu_select();
+    }
 }
