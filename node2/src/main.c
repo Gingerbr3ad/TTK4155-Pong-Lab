@@ -30,7 +30,7 @@ void system_init() {
     motor_init();
     position_controller_init();
     if (!motor_calibrate()) {
-        printf("Motor Calibration failed, please re-run it with 'C_MOTOR_CAL'.");
+        printf("Motor Calibration failed, please re-run it with 'C_MOTOR_CAL'.\n");
         return;
     }
     position_controller_start();
@@ -49,7 +49,7 @@ static void dispatch_uart_command(uart_command_t command) {
         case UART_COMMAND_MOTOR_CALIBRATE:
             printf("Running motor calibration\n");
             if (!motor_calibrate()) {
-                printf("Motor Calibration failed, please re-run it with 'C_MOTOR_CAL'.");
+                printf("Motor Calibration failed, please re-run it with 'C_MOTOR_CAL'.\n");
                 break;
             }
             printf("Motor calibrated successfuly");

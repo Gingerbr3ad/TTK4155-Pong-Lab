@@ -53,8 +53,8 @@ uint8_t motor_calibrate() {
     int32_t left;
     int32_t right;
 
-    if (left = !move_to_stop(1)) {return 1;}
-    if (right = !move_to_stop(0)) {return 1;}
+    if (!(left = move_to_stop(0))) {return 1;}
+    if (!(right = move_to_stop(1))) {return 1;}
 
     POSITION_MAX_LEFT = left;
     POSITION_MAX_RIGHT = right;
