@@ -43,13 +43,13 @@ void game_run(CanMsg rx) {
         if (!game_init_flag) {game_init();}
 
         if (speed_control_bit) {
-            motor_set(-(int8_t)rx.byte[0]);
+            motor_set(-((int8_t)rx.byte[0])*6);
             arm_servo_update((int8_t)rx.byte[1]);
         } else if (position_control_bit) {
-            position_controller_map_target(-((int16_t)rx.byte[0]*6), -100, 100, POSITION_MAX_RIGHT, POSITION_MAX_LEFT);
+            position_controller_map_target(-(int8_t)rx.byte[0], -100, 100, POSITION_MAX_RIGHT, POSITION_MAX_LEFT);
             arm_servo_update((int8_t)rx.byte[1]);
         } else if (slider_control_bit) {
-            position_controller_map_target((int16_t)rx.byte[0], 0, 255, POSITION_MAX_RIGHT, POSITION_MAX_LEFT);
+            position_controller_map_target((int16_t)rx.byte[0], 0, 255, POSITION_MAX_LEFT, POSITION_MAX_RIGHT);
             arm_servo_update((int8_t)rx.byte[1]);
         }
 
