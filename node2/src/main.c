@@ -23,8 +23,10 @@ void system_init() {
     adc_init();
     solenoid_init();
     arm_servo_init();
-    position_controller_init();
-}
+    encoder_init();
+    motor_init();
+    position_controller_start();
+    }
 
 static void dispatch_uart_command(uart_command_t command) {
     switch (command) {

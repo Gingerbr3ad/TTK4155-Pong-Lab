@@ -18,9 +18,9 @@ static void position_controller_timer_init() {
 
     TC1->TC_WPMR = TC_WPMR_WPKEY(0x54494d);
     REG_TC1_CCR0 = TC_CCR_CLKDIS;
-    REG_TC1_IDR1 = 0xffffffff;
-    REG_TC1_CMR1 = TC_CMR_TCCLKS_TIMER_CLOCK2 | TC_CMR_WAVE | TC_CMR_WAVSEL_UP_RC;
-    REG_TC1_RC1 = SystemCoreClock / 8u / POSITION_CONTROL_LOOP_HZ;
+    REG_TC1_IDR0 = 0xffffffff;
+    REG_TC1_CMR0 = TC_CMR_TCCLKS_TIMER_CLOCK2 | TC_CMR_WAVE | TC_CMR_WAVSEL_UP_RC;
+    REG_TC1_RC0 = SystemCoreClock / 8u / POSITION_CONTROL_LOOP_HZ;
 
     NVIC_SetPriority(TC3_IRQn, 0);
     REG_TC1_IER0 = TC_IER_CPCS;
@@ -56,6 +56,7 @@ void position_controller_map_target(int32_t input, int32_t in_min, int32_t in_ma
 
 void position_controller_stop() {
     __disable_irq();
+    motor_set(0);
     enabled = 0;
     integral = 0;
     __enable_irq();
@@ -70,11 +71,14 @@ void position_controller_start() {
 
 // Calculate the controller effort on interrup to keep it as time accurate as possible
 void TC3_Handler() {
-    if (!enabled) return;
+    if (!enabled) {
+        REG_TC1_SR0;
+        return;
+    }
 
     // Get the error
     int32_t position = encoder_read();
-    float error = (float)position - (float)target;
+    float error = (float)target - (float)position;
 
     // Small deadband to avoid tiny oscilation around the setpoint
     if (error >= -POSITION_TOLERANCE && error <= POSITION_TOLERANCE) {
@@ -100,4 +104,7 @@ void TC3_Handler() {
 
     // Send the regulator effort to the motor
     motor_set((int16_t)output);
+
+    // Clear the interrupt
+    REG_TC1_SR0;
 }

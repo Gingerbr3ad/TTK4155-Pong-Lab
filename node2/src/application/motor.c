@@ -10,6 +10,8 @@ static int8_t direction;
 static int8_t prev_direction;
 
 void motor_init() {
+    pwm_PB12_init();
+    
     PMC->PMC_PCER0 = (1u << ID_PIOC);
 
     PIOC->PIO_CODR = PIO_PC23;
@@ -34,7 +36,7 @@ void motor_set(int16_t command) {
 
     // If the direction was changed set the dir pin to the corresponing state
     if (prev_direction != direction) {
-        if (direction = 1) {PIOC->PIO_SODR = PIO_PC23;} 
+        if (direction == 1) {PIOC->PIO_SODR = PIO_PC23;} 
         else {PIOC->PIO_CODR = PIO_PC23;}
         prev_direction = direction;
     }
