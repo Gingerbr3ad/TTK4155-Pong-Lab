@@ -52,11 +52,11 @@ static uint32_t read_buttons() {
 
     // Creates a 32 bit mask for all of the buttons, and shifts the *right* buttons into the mask
     uint32_t buttons = (uint32_t)board_buttons.right << INPUT_BUTTON_R1;
-    // Adds teh *left* buttons into the button mask
+    // Adds thw *left* buttons into the button mask
     buttons |= (uint32_t)board_buttons.left << INPUT_BUTTON_L1;
     // Adds the *nav* buttons to the button mask
     buttons |= (uint32_t)board_buttons.nav << INPUT_BUTTON_NAV_CENTER;
-    // Adds the joystick buttin to the button mask if its high, this needs 1UL to make sure the correct 32u int is used
+    // Adds the joystick button to the button mask if its high, this needs 1UL to make sure the correct 32u int is used
     if (joystick_button_read()) {
         buttons |= 1UL << INPUT_BUTTON_JOYSTICK;
     }

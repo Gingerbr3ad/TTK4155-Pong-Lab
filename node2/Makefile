@@ -20,6 +20,7 @@ APP_SOURCES := \
 	src/application/score.c \
 	src/application/motor_calibration.c \
 	src/application/position_controller.c \
+	src/application/game_runner.c \
     src/main.c
 
 DRIVER_SOURCES := \

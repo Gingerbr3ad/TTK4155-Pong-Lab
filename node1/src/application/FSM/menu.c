@@ -1,5 +1,6 @@
 #include "application/FSM/menu.h"
 #include "application/FSM/fsm.h"
+#include "application/FSM/pong_game.h"
 #include "application/input.h"
 #include "application/oled/oled_utils.h"
 
@@ -23,8 +24,8 @@ static uint8_t menu_item_count() {
     switch (menu_page) {
         case MENU_MAIN: return 3;
         case MENU_OPTIONS: return 2;
-        case MENU_CONTROL_SCHEME: return 1;
-        case MENU_GAMEMODE: return 1;
+        case MENU_CONTROL_SCHEME: return 3;
+        case MENU_GAMEMODE: return 2;
         case MENU_MINIGAMES: return 1;
     }
     return 0;
@@ -37,7 +38,7 @@ static void menu_draw() {
     switch (menu_page) {
         case MENU_MAIN: oled_write_string_P(PSTR("PONG MENU"), OLED_FONT_LARGE); break;
         case MENU_OPTIONS: oled_write_string_P(PSTR("OPTIONS"), OLED_FONT_LARGE); break;
-        case MENU_CONTROL_SCHEME: oled_write_string_P(PSTR("CONTROL SCHEMES"), OLED_FONT_LARGE); break;
+        case MENU_CONTROL_SCHEME: oled_write_string_P(PSTR("CONTROL SCHEME"), OLED_FONT_LARGE); break;
         case MENU_GAMEMODE: oled_write_string_P(PSTR("GAME MODES"), OLED_FONT_LARGE); break;
         case MENU_MINIGAMES: oled_write_string_P(PSTR("MINIGAMES"), OLED_FONT_LARGE); break;
     }
@@ -61,12 +62,14 @@ static void menu_draw() {
             }
         } else if (menu_page == MENU_OPTIONS) {
             switch (i) {
-                case 0: oled_write_string_P(PSTR("Control Schemes"), OLED_FONT_NORMAL); break;
+                case 0: oled_write_string_P(PSTR("Control Scheme"), OLED_FONT_NORMAL); break;
                 case 1: oled_write_string_P(PSTR("Gamemodes"), OLED_FONT_NORMAL); break;
             }
         } else if (menu_page == MENU_CONTROL_SCHEME) {
             switch (i) {
-                case 0: oled_write_string_P(PSTR("WIP"), OLED_FONT_NORMAL); break;
+                case 0: oled_write_string_P(PSTR("Speed Control"), OLED_FONT_NORMAL); break;
+                case 1: oled_write_string_P(PSTR("Position Control"), OLED_FONT_NORMAL); break;
+                case 2: oled_write_string_P(PSTR("Position + Slider"), OLED_FONT_NORMAL); break;
             }
         } else if (menu_page == MENU_GAMEMODE) {
             switch (i) {
@@ -120,11 +123,14 @@ static void menu_select() {
         } break;
         case MENU_GAMEMODE:
             switch (selection) {
-                case 0: break;
+                case 0: game_config |= 1 << 3; menu_open(MENU_MAIN); break;
+                case 1: game_config |= 1 << 4; menu_open(MENU_MAIN); break;
         } break;
         case MENU_CONTROL_SCHEME:
             switch (selection) {
-                case 0: break;
+                case 0: game_config |= 1 << 0; menu_open(MENU_MAIN); break;
+                case 1: game_config |= 1 << 1; menu_open(MENU_MAIN); break;
+                case 2: game_config |= 1 << 2; menu_open(MENU_MAIN); break;
         } break;
         case MENU_MINIGAMES:
             switch (selection) {

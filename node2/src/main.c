@@ -15,6 +15,7 @@
 #include "application/motor_calibration.h"
 #include "application/position_controller.h"
 #include "application/score.h"
+#include "application/game_runner.h"
 
 
 
@@ -72,21 +73,12 @@ static void dispatch_can_message(CanMsg rx) {
             printf("Can test successfull\n");
             break;
         case JOYSTICK_MESSAGE_ID:
-            printf("Joy x: %d, Joy y: %d \n, Button: %d\n", (int8_t)rx.byte[0], (int8_t)rx.byte[1], rx.byte[2]);
-            position_controller_map_target(-(int8_t)rx.byte[0], -100, 100, POSITION_MAX_RIGHT, POSITION_MAX_LEFT);
-            arm_servo_update((int8_t)rx.byte[1]);
-            if (rx.byte[2]) {
-                solenoid_pulse_start();
-            }
+            //printf("Joy x: %d, Joy y: %d \n, Button: %d\n", (int8_t)rx.byte[0], (int8_t)rx.byte[1], rx.byte[2]);
+            game_run(rx);
             break;
-        case GAME_MESSAGE_ID:
-            if (rx.byte[0] == 1) {
-                position_controller_start();
-                score_start();
-            } else if (rx.byte[0] == 0) {
-                position_controller_stop();
-                score_stop();
-            }
+        case GAME_STATUS_MESSAGE_ID:
+            game_config = (uint8_t)rx.byte[0];
+            game_config_update();
         default: 
             break;
     }
