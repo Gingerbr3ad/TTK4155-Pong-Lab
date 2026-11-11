@@ -8,8 +8,10 @@
 #include "drivers/can_driver.h"
 #include "drivers/adc_driver.h"
 #include "drivers/solenoid_driver.h"
+#include "drivers/encoder_driver.h"
 
 #include "application/servo.h"
+#include "application/motor.h"
 #include "application/position_controller.h"
 
 
@@ -25,6 +27,7 @@ void system_init() {
     arm_servo_init();
     encoder_init();
     motor_init();
+    position_controller_init();
     position_controller_start();
     }
 
@@ -52,7 +55,7 @@ static void dispatch_uart_command(uart_command_t command) {
 static void dispatch_can_message(CanMsg rx) {
     switch (rx.id) {
         case JOYSTICK_MESSAGE_ID:
-            printf("Joy x: %d, Joy y: %d \n", (int8_t)rx.byte[0], (int8_t)rx.byte[1], rx.byte[2]);
+            printf("Joy x: %d, Joy y: %d \n, Button: %d", (int8_t)rx.byte[0], (int8_t)rx.byte[1], rx.byte[2]);
             position_controller_map_target((int8_t)rx.byte[0], -100, 100, POSITION_MAX_RIGHT, POSITION_MAX_LEFT);
             arm_servo_update((int8_t)rx.byte[1]);
             if (rx.byte[2]) {
