@@ -8,11 +8,11 @@
 #include "application/position_controller.h"
 #include "drivers/encoder_driver.h"
 
-#define CALIBRATION_EFFORT       250
-#define CALIBRATION_SAMPLE_MS     10u
-#define CALIBRATION_STALL_MS      300u
-#define CALIBRATION_TIMEOUT_MS  15000u
-#define CALIBRATION_SETTLE_MS     100u
+#define CALIBRATION_EFFORT 100
+#define CALIBRATION_SAMPLE_MS 10
+#define CALIBRATION_STALL_MS 300
+#define CALIBRATION_TIMEOUT_MS 20000
+#define CALIBRATION_SETTLE_MS 100
 
 
 static int32_t move_to_stop(uint8_t dir) {

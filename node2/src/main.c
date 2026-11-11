@@ -52,7 +52,8 @@ static void dispatch_uart_command(uart_command_t command) {
                 printf("Motor Calibration failed, please re-run it with 'C_MOTOR_CAL'.\n");
                 break;
             }
-            printf("Motor calibrated successfuly");
+            printf("Motor calibrated successfuly\n");
+            position_controller_start();
             break;
         case UART_COMMAND_SHOOT:
             printf("Triggering the solenoid\n");

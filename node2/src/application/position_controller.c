@@ -66,6 +66,7 @@ void position_controller_start() {
     __disable_irq();
     enabled = 1;
     integral = 0;
+    target = POSITION_CENTER;
     __enable_irq();
 }
 
@@ -78,7 +79,7 @@ void TC3_Handler() {
 
     // Get the error
     int32_t position = encoder_read();
-    float error = (float)target - (float)position;
+    float error = (float)position - (float)target;
 
     // Small deadband to avoid tiny oscilation around the setpoint
     if (error >= -POSITION_TOLERANCE && error <= POSITION_TOLERANCE) {
