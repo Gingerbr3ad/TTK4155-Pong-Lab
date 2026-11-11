@@ -123,14 +123,14 @@ static void menu_select() {
         } break;
         case MENU_GAMEMODE:
             switch (selection) {
-                case 0: game_config |= 1 << 3; menu_open(MENU_MAIN); break;
-                case 1: game_config |= 1 << 4; menu_open(MENU_MAIN); break;
+                case 0: game_config = (game_config & ~0x07) | (1 << 3);; menu_open(MENU_MAIN); break;
+                case 1: game_config = (game_config & ~0x07) | (1 << 4);; menu_open(MENU_MAIN); break;
         } break;
         case MENU_CONTROL_SCHEME:
             switch (selection) {
-                case 0: game_config |= 1 << 0; menu_open(MENU_MAIN); break;
-                case 1: game_config |= 1 << 1; menu_open(MENU_MAIN); break;
-                case 2: game_config |= 1 << 2; menu_open(MENU_MAIN); break;
+                case 0: game_config = (game_config & ~0x07) | (1 << 0);; menu_open(MENU_MAIN); break;
+                case 1: game_config = (game_config & ~0x07) | (1 << 1);; menu_open(MENU_MAIN); break;
+                case 2: game_config = (game_config & ~0x07) | (1 << 2);; menu_open(MENU_MAIN); break;
         } break;
         case MENU_MINIGAMES:
             switch (selection) {
