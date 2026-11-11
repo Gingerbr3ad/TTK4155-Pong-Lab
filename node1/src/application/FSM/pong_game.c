@@ -54,8 +54,6 @@ void pong_game_enter() {
     oled_goto_pos(8, 8);
     oled_write_string_P(PSTR("PLAYING"), OLED_FONT_LARGE);
     pong_game_draw_score();
-    oled_goto_pos(48, 8);
-    oled_write_string_P(PSTR("BACK to menu"), OLED_FONT_SMALL);
 }
 
 void pong_game_receive_score(uint32_t value) {
@@ -75,12 +73,12 @@ void pong_game_system_tick() {
     if (game_message_pending) {if(!can_send(&game_message)) {game_message_pending = 0;}}
     if (game_over) {
         if (!game_over_drawn) {pong_game_over_draw(); game_over_drawn = 1; return;}
-        if (input_button_pressed(INPUT_BUTTON_JOYSTICK) || input_button_pressed(INPUT_BUTTON_L6)) {fsm_handle_event(FSM_EVENT_MENU_ENTER); return;}
+        if (input_button_pressed(INPUT_BUTTON_JOYSTICK) || input_button_pressed(INPUT_BUTTON_R6) || input_button_pressed(INPUT_BUTTON_L6)) {fsm_handle_event(FSM_EVENT_MENU_ENTER); return;}
     }
 
 
     joy_pos =  input_joystick_position_read();
-    shoot_button = input_button_pressed(INPUT_BUTTON_JOYSTICK);
+    shoot_button = (input_button_pressed(INPUT_BUTTON_JOYSTICK) || input_button_pressed(INPUT_BUTTON_R6));
     if(joy_pos.x != prev_joy_pos.x || joy_pos.y != prev_joy_pos.y || shoot_button) {
         joy_message.data[0] = joy_pos.x;
         joy_message.data[1] = joy_pos.y;
