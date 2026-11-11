@@ -16,6 +16,8 @@ static uint8_t normal_mode_control_bit;
 static uint8_t hyper_mode_control_bit;
 static uint8_t game_on_control_bit;
 
+static uint8_t game_init_flag;
+
 void game_config_update() {
     speed_control_bit = (game_config >> 0) & 1;
     position_control_bit = (game_config >> 1) & 1;
@@ -25,10 +27,20 @@ void game_config_update() {
     game_on_control_bit = (game_config >> 7) & 1;
 }
 
-void game_run(CanMsg rx) {
-    if(game_on_control_bit) {
+static void game_init() {
+    if (speed_control_bit) {
+        score_start();
+    } else if (position_control_bit || slider_control_bit) {
         position_controller_start();
         score_start();
+    }
+
+    game_init_flag = 1;
+}
+
+void game_run(CanMsg rx) {
+    if(game_on_control_bit) {
+        if (!game_init_flag) {game_init();}
 
         if (speed_control_bit) {
             motor_set(-(int8_t)rx.byte[0]);
