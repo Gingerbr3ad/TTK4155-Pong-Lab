@@ -1,77 +1,103 @@
 #include "sam.h"
-#include "application/position_controller.h"
+
 #include "drivers/encoder_driver.h"
-#include "drivers/motor_driver.h"
+
+#include "application/position_controller.h"
+#include "application/motor.h"
+
+volatile float KP;
+volatile float KI; 
 
 static volatile int32_t target;
 static volatile uint8_t enabled;
 static float integral;
 
-static float clamp_output(float value) {
-    if (value > POSITION_OUTPUT_LIMIT) return POSITION_OUTPUT_LIMIT;
-    if (value < -POSITION_OUTPUT_LIMIT) return -POSITION_OUTPUT_LIMIT;
-    return value;
+
+static void position_controller_timer_init() {
+    PMC->PMC_PCER0 = 1u << ID_TC3;
+
+    TC1->TC_WPMR = TC_WPMR_WPKEY(0x54494d);
+    REG_TC1_CCR0 = TC_CCR_CLKDIS;
+    REG_TC1_IDR1 = 0xffffffff;
+    REG_TC1_CMR1 = TC_CMR_TCCLKS_TIMER_CLOCK2 | TC_CMR_WAVE | TC_CMR_WAVSEL_UP_RC;
+    REG_TC1_RC1 = SystemCoreClock / 8u / POSITION_CONTROL_LOOP_HZ;
+
+    NVIC_SetPriority(TC3_IRQn, 0);
+    REG_TC1_IER0 = TC_IER_CPCS;
+    NVIC_EnableIRQ(TC3_IRQn);
+
+    REG_TC1_CCR0 = TC_CCR_CLKEN | TC_CCR_SWTRG;
 }
 
 void position_controller_init() {
-    motor_init();
-    encoder_init();
+    KP = 0.4;
+    KI = 0.12;
+
     enabled = 0;
     integral = 0;
-    target = (POSITION_MAX_LEFT + POSITION_MAX_RIGHT) / 2;
-    PMC->PMC_PCER0 = 1u << ID_TC0;
-    TC0->TC_WPMR = TC_WPMR_WPKEY(0x54494d);
-    TC0->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKDIS;
-    TC0->TC_CHANNEL[0].TC_IDR = 0xffffffffu;
-    TC0->TC_CHANNEL[0].TC_CMR = TC_CMR_TCCLKS_TIMER_CLOCK2
-        | TC_CMR_WAVE | TC_CMR_WAVSEL_UP_RC;
-    TC0->TC_CHANNEL[0].TC_RC = SystemCoreClock / 8u / POSITION_CONTROL_HZ;
-    (void)TC0->TC_CHANNEL[0].TC_SR;
-    NVIC_ClearPendingIRQ(TC0_IRQn);
-    NVIC_SetPriority(TC0_IRQn, 0);
-    TC0->TC_CHANNEL[0].TC_IER = TC_IER_CPCS;
-    NVIC_EnableIRQ(TC0_IRQn);
-    TC0->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
+    target = 0;
+
+    position_controller_timer_init();
 }
 
-void position_controller_set_joystick(int8_t x) {
-    if (x < -100 || x > 100) return;
-    uint32_t state = __get_PRIMASK();
+void position_controller_map_target(int32_t input, int32_t in_min, int32_t in_max, int32_t min_position, int32_t max_position) {
+    if (input < in_min) {input = in_min;} 
+    if (input > in_max) {input = in_max;}
+
+    int64_t mapped_target= (((int64_t)input - in_min) * ((int64_t)max_position - min_position)/((int64_t)in_max - in_min) + min_position);
+
+    if (mapped_target < min_position) {mapped_target = min_position;} 
+    if (mapped_target > max_position) {mapped_target = max_position;}
+    
     __disable_irq();
-    target = POSITION_MAX_LEFT + ((int32_t)x + 100)
-        * (POSITION_MAX_RIGHT - POSITION_MAX_LEFT) / 200;
-    enabled = 1;
-    __set_PRIMASK(state);
+    target = (int32_t)mapped_target;
+    __enable_irq();
 }
 
 void position_controller_stop() {
-    uint32_t state = __get_PRIMASK();
     __disable_irq();
     enabled = 0;
     integral = 0;
-    motor_stop();
-    __set_PRIMASK(state);
+    __enable_irq();
 }
 
-void TC0_Handler() {
-    if (!(TC0->TC_CHANNEL[0].TC_SR & TC_SR_CPCS) || !enabled) return;
+void position_controller_start() {
+    __disable_irq();
+    enabled = 1;
+    integral = 0;
+    __enable_irq();
+}
+
+// Calculate the controller effort on interrup to keep it as time accurate as possible
+void TC3_Handler() {
+    if (!enabled) return;
+
+    // Get the error
     int32_t position = encoder_read();
     float error = (float)position - (float)target;
+
+    // Small deadband to avoid tiny oscilation around the setpoint
     if (error >= -POSITION_TOLERANCE && error <= POSITION_TOLERANCE) {
         integral = 0;
-        motor_stop();
+        motor_set(0);
         return;
     }
-    float p = POSITION_KP * error;
-    float candidate = clamp_output(integral + POSITION_KI * error / POSITION_CONTROL_HZ);
-    float proposed = p + candidate;
-    if ((proposed <= POSITION_OUTPUT_LIMIT || error < 0) &&
-        (proposed >= -POSITION_OUTPUT_LIMIT || error > 0)) integral = candidate;
-    float output = clamp_output(p + integral);
-    if ((position <= POSITION_MAX_RIGHT && output > 0) ||
-        (position >= POSITION_MAX_LEFT && output < 0)) {
-        integral = 0;
-        output = 0;
+
+    // Calculate the integral effort
+    float i = (KI*error)/POSITION_CONTROL_LOOP_HZ;
+    integral += i;
+    int32_t output = KP*error + integral;
+
+    // Apply saturation and anti windup
+    if (output > MOTOR_EFFORT_LIMIT) {
+        output = MOTOR_EFFORT_LIMIT;
+        integral -= i;
     }
+    if (output < -MOTOR_EFFORT_LIMIT) {
+        output =  -MOTOR_EFFORT_LIMIT;
+        integral -= i;
+    }
+
+    // Send the regulator effort to the motor
     motor_set((int16_t)output);
 }

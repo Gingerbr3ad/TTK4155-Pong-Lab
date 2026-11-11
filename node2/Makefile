@@ -16,6 +16,7 @@ BOOTUP := \
 
 APP_SOURCES := \
 	src/application/servo.c \
+	src/application/motor.c \
 	src/application/position_controller.c \
     src/main.c
 
@@ -24,12 +25,12 @@ DRIVER_SOURCES := \
     src/drivers/can_driver.c \
 	src/drivers/pwm_driver.c \
 	src/drivers/encoder_driver.c \
-    src/drivers/motor_driver.c \
 	src/drivers/adc_driver.c \
 	src/drivers/solenoid_driver.c
 
 UTILS_SOURCES := \
-    utils/time.c
+    utils/time.c \
+	utils/system_tick_60Hz.c
 
 SOURCE_FILES := $(BOOTUP) $(APP_SOURCES) $(DRIVER_SOURCES) $(UTILS_SOURCES)
 

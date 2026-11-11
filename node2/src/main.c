@@ -2,6 +2,7 @@
 
 #include "sam.h"
 #include "time.h"
+#include "system_tick_60Hz.h"
 
 #include "drivers/uart_driver.h"
 #include "drivers/can_driver.h"
@@ -18,6 +19,7 @@ void system_init() {
     WDT->WDT_MR = WDT_MR_WDDIS; // Disable Watchdog Timer
     uart_init(SystemCoreClock);
     can_init((CanInit){.brp = 41, .sjw = 0, .propag = 4, .phase1 = 5, .phase2 = 3}, 1);
+    system_tick_60Hz_init();
     adc_init();
     solenoid_init();
     arm_servo_init();
@@ -48,8 +50,8 @@ static void dispatch_uart_command(uart_command_t command) {
 static void dispatch_can_message(CanMsg rx) {
     switch (rx.id) {
         case JOYSTICK_MESSAGE_ID:
-            printf("Joy x: %d, Joy y: %d \n", (int8_t)rx.byte[0], (int8_t)rx.byte[1]);
-            position_controller_set_joystick((int8_t)rx.byte[0]);
+            printf("Joy x: %d, Joy y: %d \n", (int8_t)rx.byte[0], (int8_t)rx.byte[1], rx.byte[2]);
+            position_controller_map_target((int8_t)rx.byte[0], -100, 100, POSITION_MAX_RIGHT, POSITION_MAX_LEFT);
             arm_servo_update((int8_t)rx.byte[1]);
             if (rx.byte[2]) {
                 solenoid_pulse();
@@ -70,6 +72,10 @@ int main(void) {
     while (1) {
         if (uart_recieved_flag) {dispatch_uart_command(handle_uart_interrupt());}
         if (can_recieved_flag) {dispatch_can_message(handle_can_interrupt());}
+
+        if (system_tick_60Hz_take()) {
+            
+        }
 
         if (!adc_state()) {
             printf("-----------\n");
