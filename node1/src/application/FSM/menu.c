@@ -23,9 +23,9 @@ static uint8_t menu_item_count() {
     switch (menu_page) {
         case MENU_MAIN: return 3;
         case MENU_OPTIONS: return 2;
-        case MENU_CONTROL_SCHEME: return 3;
-        case MENU_GAMEMODE: return 2;
-        case MENU_MINIGAMES: return 0;
+        case MENU_CONTROL_SCHEME: return 1;
+        case MENU_GAMEMODE: return 1;
+        case MENU_MINIGAMES: return 1;
     }
     return 0;
 }
@@ -35,33 +35,23 @@ static void menu_draw() {
     oled_goto_pos(0, 4);
 
     switch (menu_page) {
-        case MENU_MAIN:
-            oled_write_string_P(PSTR("PONG MENU"), OLED_FONT_LARGE);
-            break;
-        case MENU_OPTIONS:
-            oled_write_string_P(PSTR("OPTIONS"), OLED_FONT_LARGE);
-            break;
-        case MENU_CONTROL_SCHEME:
-            oled_write_string_P(PSTR("CONTROL SCHEMES"), OLED_FONT_LARGE);
-            break;
-        case MENU_GAMEMODE:
-            oled_write_string_P(PSTR("GAME MODES"), OLED_FONT_LARGE);
-            break;
-        case MENU_MINIGAMES:
-            oled_write_string_P(PSTR("MINIGAMES"), OLED_FONT_LARGE);
-            break;
+        case MENU_MAIN: oled_write_string_P(PSTR("PONG MENU"), OLED_FONT_LARGE); break;
+        case MENU_OPTIONS: oled_write_string_P(PSTR("OPTIONS"), OLED_FONT_LARGE); break;
+        case MENU_CONTROL_SCHEME: oled_write_string_P(PSTR("CONTROL SCHEMES"), OLED_FONT_LARGE); break;
+        case MENU_GAMEMODE: oled_write_string_P(PSTR("GAME MODES"), OLED_FONT_LARGE); break;
+        case MENU_MINIGAMES: oled_write_string_P(PSTR("MINIGAMES"), OLED_FONT_LARGE); break;
     }
 
     // Draws the menu page options along with the selection cursor '>'
     for (uint8_t i = 0; i < menu_item_count(); ++i) {
 
-        oled_goto_page(i+3, 4);
+        oled_goto_page(i+2, 4);
         if (i == selection) {
             oled_write_string_P(PSTR(">"), OLED_FONT_NORMAL);
         } else {
             oled_write_string_P(PSTR(" "), OLED_FONT_NORMAL);
         }
-        oled_goto_page(i+3, 16);
+        oled_goto_page(i+2, 16);
 
         if (menu_page == MENU_MAIN) {
             switch (i) {
@@ -122,24 +112,24 @@ static void menu_select() {
                 case 0: fsm_handle_event(FSM_EVENT_START_GAME); break;
                 case 1: menu_open(MENU_OPTIONS); break;
                 case 2: menu_open(MENU_MINIGAMES); break;
-            }
+        } break;
         case MENU_OPTIONS:
             switch (selection) {
-                case 0: menu_open(MENU_GAMEMODE); break;
-                case 1: menu_open(MENU_CONTROL_SCHEME); break;
-            }
+                case 0: menu_open(MENU_CONTROL_SCHEME); break;
+                case 1: menu_open(MENU_GAMEMODE); break;
+        } break;
         case MENU_GAMEMODE:
             switch (selection) {
                 case 0: break;
-            }
+        } break;
         case MENU_CONTROL_SCHEME:
             switch (selection) {
                 case 0: break;
-            }
+        } break;
         case MENU_MINIGAMES:
             switch (selection) {
                 case 0: break;
-            }
+        } break;
     }
 }
 
@@ -166,6 +156,5 @@ void menu_system_tick() {
     if (direction == JOYSTICK_UP || input_button_pressed(INPUT_BUTTON_NAV_UP)) {menu_move_up();}
     else if (direction == JOYSTICK_DOWN || input_button_pressed(INPUT_BUTTON_NAV_DOWN)) {menu_move_down();}
     else if (direction == JOYSTICK_LEFT || input_button_pressed(INPUT_BUTTON_NAV_LEFT) || input_button_pressed(INPUT_BUTTON_L6) || input_button_pressed(INPUT_BUTTON_L7)) {menu_go_back();}
-    else if (direction == JOYSTICK_RIGHT || input_button_pressed(INPUT_BUTTON_NAV_RIGHT) || input_button_pressed(INPUT_BUTTON_NAV_CENTER) || input_button_pressed(INPUT_BUTTON_R6) || input_button_pressed(INPUT_BUTTON_JOYSTICK)) {menu_select();
-    }
+    else if (direction == JOYSTICK_RIGHT || input_button_pressed(INPUT_BUTTON_NAV_RIGHT) || input_button_pressed(INPUT_BUTTON_NAV_CENTER) || input_button_pressed(INPUT_BUTTON_R6) || input_button_pressed(INPUT_BUTTON_JOYSTICK)) {menu_select();}
 }
