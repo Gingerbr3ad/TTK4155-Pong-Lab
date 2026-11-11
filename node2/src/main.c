@@ -58,7 +58,7 @@ static void dispatch_uart_command(uart_command_t command) {
             break;
         case UART_COMMAND_SHOOT:
             printf("Triggering the solenoid\n");
-            solenoid_pulse();
+            solenoid_pulse_start();
             break;
         case UART_COMMAND_NONE:
         default:
@@ -78,7 +78,7 @@ static void dispatch_can_message(CanMsg rx) {
             position_controller_map_target((int8_t)rx.byte[0], -100, 100, POSITION_MAX_RIGHT, POSITION_MAX_LEFT);
             arm_servo_update((int8_t)rx.byte[1]);
             if (rx.byte[2]) {
-                solenoid_pulse();
+                solenoid_pulse_start();
             }
             break;
         case GAME_MESSAGE_ID:
@@ -103,6 +103,7 @@ int main(void) {
 
         if (system_tick_60Hz_take()) {
             score_system_tick();
+            solenoid_pulse_tick();
         }
     }
 }
