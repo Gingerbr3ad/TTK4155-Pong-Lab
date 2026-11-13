@@ -5,7 +5,7 @@
 #define MOTOR_EFFORT_LIMIT 1000
 #define POSITION_TOLERANCE 4
 
-#define KP |.6
+#define KP 1.6
 #define KI 0.7
 #define KD 0.12
 

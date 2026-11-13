@@ -70,6 +70,8 @@ void position_controller_start() {
     enabled = 1;
     integral = 0;
     prev_position = encoder_read();
+    spring_target = (float)encoder_read();
+    spring_velocity = 0.0;
     tension = 100;
     filtered_position_dot = 0;
     target = POSITION_CENTER;
@@ -94,6 +96,21 @@ void TC3_Handler() {
     float acceleration = 64.0f*((float)target - spring_target) - 16.0f*damping*spring_velocity;
     spring_velocity += acceleration*0.03;
     spring_target += spring_velocity*0.03;
+
+    // Clamp the spring
+    if (spring_target > POSITION_MAX_LEFT) {
+        spring_target = POSITION_MAX_LEFT;
+        if (spring_velocity > 0.0f) {
+            spring_velocity = 0.0f;
+        }
+    }
+
+    if (spring_target < POSITION_MAX_RIGHT) {
+        spring_target = POSITION_MAX_RIGHT;
+        if (spring_velocity < 0.0f) {
+            spring_velocity = 0.0f;
+        }
+    }
 
     // Get the error
     int32_t position = encoder_read();

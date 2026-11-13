@@ -90,7 +90,7 @@ void hyper_mode_receive_position(uint8_t percent) {
         target_active = 0;
         target_remaining = 0;
         spawn_countdown = TARGET_NEXT_DELAY;
-        bonus_points += 100;
+        bonus_points += 500;
     }
 }
 
@@ -109,16 +109,16 @@ void hyper_mode_draw(uint16_t score) {
     oled_write_string(text, OLED_FONT_LARGE);
 
     // Motor position bar
-    oled_goto_pos(56, 6);
+    oled_goto_pos(56, 4);
     oled_write_string_P(PSTR("|--------------------|"), OLED_FONT_SMALL);
 
     // Bonus target
     if (target_active) {
-        oled_goto_pos(48, target_percent+10);
+        oled_goto_pos(48, target_percent+4);
         oled_write_string_P(PSTR("*"), OLED_FONT_SMALL);
     }
     // Current motor position
-    oled_goto_pos(56, motor_percent+10);
+    oled_goto_pos(56, motor_percent+4);
     oled_write_string_P(PSTR("^"), OLED_FONT_SMALL);
 
     // Spring meter
