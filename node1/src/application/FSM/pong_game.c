@@ -122,7 +122,7 @@ void pong_game_system_tick() {
         joy_pos = input_joystick_position_read();
         slider_pos = input_slider_read();
         shoot_button = (input_button_pressed(INPUT_BUTTON_JOYSTICK) || input_button_pressed(INPUT_BUTTON_R6) || input_button_pressed(INPUT_BUTTON_NAV_CENTER));
-        game_buttons = (shoot_button << 0) | (input_button_pressed(INPUT_BUTTON_NAV_LEFT) << 1) | (input_button_pressed(INPUT_BUTTON_NAV_RIGHT) << 2);
+        game_buttons = (shoot_button << 0) | (input_button_down(INPUT_BUTTON_NAV_LEFT) << 1) | (input_button_down(INPUT_BUTTON_NAV_RIGHT) << 2);
 
         if(slider_pos.position!= prev_slider_pos.position || joy_pos.y != prev_joy_pos.y || game_buttons != prev_game_buttons) {
             joy_message.data[0] = slider_pos.position;
