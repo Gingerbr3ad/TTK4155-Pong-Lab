@@ -67,11 +67,7 @@ void pong_game_enter() {
 
 void pong_game_receive_score(uint32_t value) {
     if (value) {score = value;}
-    else {
-        game_over = 1;
-        game_status_message.data[0] = 0;
-        game_status_message_pending = 1;
-    }
+    else {game_over = 1;}
 }
 
 void pong_game_ui_tick() {
@@ -79,10 +75,22 @@ void pong_game_ui_tick() {
 }
 
 void pong_game_system_tick() {
-    if (game_status_message_pending) {if(!can_send(&game_status_message)) {game_status_message_pending = 0;}}
+    if (game_status_message_pending) {
+        if(!can_send(&game_status_message)) {
+            game_status_message_pending = 0;
+            if (game_status_message.data[0] == 0) {
+                fsm_handle_event(FSM_EVENT_MENU_ENTER);
+                return;
+            }
+        }
+    }
     if (game_over) {
         if (!game_over_drawn) {pong_game_over_draw(); game_over_drawn = 1; return;}
-        if (input_button_pressed(INPUT_BUTTON_L6) || input_button_pressed(INPUT_BUTTON_R6)) {fsm_handle_event(FSM_EVENT_MENU_ENTER); return;}
+        if (input_button_pressed(INPUT_BUTTON_L6)) {
+            game_status_message.data[0] = 0;
+            game_status_message_pending = 1; 
+            return;
+        }
         if (input_button_pressed(INPUT_BUTTON_JOYSTICK)) {fsm_handle_event(FSM_EVENT_START_GAME); return;}
     }
 
@@ -92,7 +100,7 @@ void pong_game_system_tick() {
     // Speed control
     if ((game_config >> 0) & 1) {
         joy_pos = input_joystick_position_read();
-        shoot_button = (input_button_pressed(INPUT_BUTTON_JOYSTICK) || input_button_pressed(INPUT_BUTTON_R6));
+        shoot_button = (input_button_pressed(INPUT_BUTTON_JOYSTICK) || input_button_pressed(INPUT_BUTTON_R6) || input_button_pressed(INPUT_BUTTON_NAV_CENTER));
         
         if(joy_pos.x != prev_joy_pos.x || joy_pos.y != prev_joy_pos.y || shoot_button != prev_shoot_button) {
             joy_message.data[0] = joy_pos.x;
@@ -106,7 +114,7 @@ void pong_game_system_tick() {
     // Position control
     if ((game_config >> 1) & 1) {
         joy_pos = input_joystick_position_read();
-        shoot_button = (input_button_pressed(INPUT_BUTTON_JOYSTICK) || input_button_pressed(INPUT_BUTTON_R6));
+        shoot_button = (input_button_pressed(INPUT_BUTTON_JOYSTICK) || input_button_pressed(INPUT_BUTTON_R6) || input_button_pressed(INPUT_BUTTON_NAV_CENTER));
         
         if(joy_pos.x != prev_joy_pos.x || joy_pos.y != prev_joy_pos.y || shoot_button != prev_shoot_button) {
             joy_message.data[0] = joy_pos.x;

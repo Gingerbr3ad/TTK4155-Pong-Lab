@@ -33,9 +33,9 @@ static void position_controller_timer_init() {
 }
 
 void position_controller_init() {
-    KP = 0.2;
-    KI = 0.3;
-    KD = 0.1;
+    KP = 0.6;
+    KI = 0.7;
+    KD = 0.12;
 
     enabled = 0;
     integral = 0;
@@ -108,9 +108,9 @@ void TC3_Handler() {
     // AI generated idea
     // Compensate for static friction
     if (output > 0.0f) {
-        output += 100;
+        output += 120;
     } else if (output < 0.0f) {
-        output -= 100;
+        output -= 120;
     }
 
     // Apply saturation and anti windup

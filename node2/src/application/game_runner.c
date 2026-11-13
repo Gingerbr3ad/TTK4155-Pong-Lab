@@ -16,8 +16,6 @@ static uint8_t normal_mode_control_bit;
 static uint8_t hyper_mode_control_bit;
 static uint8_t game_on_control_bit;
 
-static uint8_t game_init_flag;
-
 void game_config_update() {
     speed_control_bit = (game_config >> 0) & 1;
     position_control_bit = (game_config >> 1) & 1;
@@ -25,46 +23,49 @@ void game_config_update() {
     normal_mode_control_bit = (game_config >> 3) & 1;
     hyper_mode_control_bit = (game_config >> 4) & 1;
     game_on_control_bit = (game_config >> 7) & 1;
-}
 
-static void game_init() {
-    if (speed_control_bit) {
+    if (game_on_control_bit) {
+        // Start the game
         score_start();
-    } else if (position_control_bit || slider_control_bit) {
-        position_controller_start();
-        score_start();
+
+        if (position_control_bit || slider_control_bit) {
+            position_controller_start();
+        } else {
+            position_controller_stop();
+            motor_set(0);
+        }
+    } else {
+        // End the game
+        score_stop();
+        position_controller_stop();
+        motor_set(0);
+        arm_servo_update(0);
+        solenoid_set_state(0);
     }
-
-    game_init_flag = 1;
 }
 
 void game_run(CanMsg rx) {
-    if(game_on_control_bit) {
-        if (!game_init_flag) {game_init();}
+    if (!game_on_control_bit) {return;}
 
-        if (speed_control_bit) {
-            motor_set(((int8_t)rx.byte[0])*6);
+    if (speed_control_bit) {
+        motor_set(((int8_t)rx.byte[0]) * 6);
+        arm_servo_update((int8_t)rx.byte[1]);
+    } else if (position_control_bit) {
+        position_controller_map_target(-(int8_t)rx.byte[0], -100, 100, POSITION_MAX_RIGHT, POSITION_MAX_LEFT);
+        arm_servo_update((int8_t)rx.byte[1]);
+
+    } else if (slider_control_bit) {
+        position_controller_map_target(255 - (int16_t)rx.byte[0], 0, 255, POSITION_MAX_RIGHT, POSITION_MAX_LEFT);
+        if ((rx.byte[2] >> 1) & 1) {
+            arm_servo_update(-100);
+        } else if ((rx.byte[2] >> 2) & 1) {
+            arm_servo_update(100);
+        } else {
             arm_servo_update((int8_t)rx.byte[1]);
-        } else if (position_control_bit) {
-            position_controller_map_target(-(int8_t)rx.byte[0], -100, 100, POSITION_MAX_RIGHT, POSITION_MAX_LEFT);
-            arm_servo_update((int8_t)rx.byte[1]);
-        } else if (slider_control_bit) {
-            position_controller_map_target(255 - (int16_t)rx.byte[0], 0, 255, POSITION_MAX_RIGHT, POSITION_MAX_LEFT);
-            if ((rx.byte[2] >> 1) & 1) {arm_servo_update(-100);}
-            else if ((rx.byte[2] >> 2) & 1) {arm_servo_update(100);}
-            else {arm_servo_update((int8_t)rx.byte[1]);}
         }
-
-        if ((rx.byte[2] >> 0) & 1) {
-            solenoid_pulse_start();
-        }
-
-        return;        
     }
 
-    // Disable the game board by default
-    score_stop();
-    position_controller_stop();
-    motor_set(0);
-    game_init_flag = 0;
+    if (rx.byte[2] & 1) {
+        solenoid_pulse_start();
+    }
 }

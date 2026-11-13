@@ -5,6 +5,7 @@
 
 void arm_servo_init() {
     pwm_PB13_init();
+    arm_servo_update(0);
 }
 
 void arm_servo_update(int32_t position) {

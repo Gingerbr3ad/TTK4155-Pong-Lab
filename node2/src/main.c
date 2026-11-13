@@ -22,6 +22,7 @@
 void system_init() {
     SystemInit();
     WDT->WDT_MR = WDT_MR_WDDIS; // Disable Watchdog Timer
+    motor_init();
     uart_init(SystemCoreClock);
     can_init((CanInit){.brp = 41, .sjw = 0, .propag = 4, .phase1 = 5, .phase2 = 3}, 1);
     system_tick_60Hz_init();
@@ -29,7 +30,6 @@ void system_init() {
     solenoid_init();
     arm_servo_init();
     encoder_init();
-    motor_init();
     position_controller_init();
     if (!motor_calibrate()) {
         printf("Motor Calibration failed, please re-run it with 'C_MOTOR_CAL'.\n");

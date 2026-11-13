@@ -13,6 +13,7 @@
 #define CALIBRATION_STALL_MS 300
 #define CALIBRATION_TIMEOUT_MS 20000
 #define CALIBRATION_SETTLE_MS 100
+#define CALINRATION_SAFETY_OFFSET 10
 
 
 static int32_t move_to_stop(uint8_t dir) {
@@ -56,8 +57,8 @@ uint8_t motor_calibrate() {
     if (!(left = move_to_stop(0))) {return 0;}
     if (!(right = move_to_stop(1))) {return 0;}
 
-    POSITION_MAX_LEFT = left;
-    POSITION_MAX_RIGHT = right;
+    POSITION_MAX_LEFT = left - CALINRATION_SAFETY_OFFSET;
+    POSITION_MAX_RIGHT = right + CALINRATION_SAFETY_OFFSET;
     POSITION_CENTER = (left + right)/2;
 
     return 1;
