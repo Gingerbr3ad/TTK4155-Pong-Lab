@@ -105,7 +105,7 @@ void hyper_mode_draw(uint16_t score) {
     oled_goto_pos(20, 48);
     oled_write_string_P(PSTR("SCORE"), OLED_FONT_NORMAL);
     ultoa(score+bonus_points, text, 10);
-    oled_goto_pos(30, 48);
+    oled_goto_pos(30, 42);
     oled_write_string(text, OLED_FONT_LARGE);
 
     // Motor position bar

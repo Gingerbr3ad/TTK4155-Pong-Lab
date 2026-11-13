@@ -52,14 +52,14 @@ static void pong_game_draw_score() {
 
 static void pong_game_over_draw() {
     framebuffer_clear();
-    oled_goto_pos(8, 38);
+    oled_goto_pos(8, 28);
     oled_write_string_P(PSTR("GAME OVER"), OLED_FONT_LARGE);
     char text[11]; // Ten decimal digits and the terminating zero.
 
     if (game_config & (1u << 3)) {ultoa(score+hyper_mode_bonus(), text, 10);} // This converts the unsigned integer into string;
     else {ultoa(score, text, 10);}
 
-    oled_goto_pos(20, 44);
+    oled_goto_pos(20, 34);
     oled_write_string_P(PSTR("Score: "), OLED_FONT_NORMAL);
     oled_write_string(text, OLED_FONT_NORMAL);
     oled_goto_pos(48, 2);
