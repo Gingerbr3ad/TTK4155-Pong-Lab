@@ -81,7 +81,7 @@ static void dispatch_can_message(CanMsg rx) {
             game_config_update();
             break;
         case HYPER_TENSION_MESSAGE_ID:
-            game_hyper_set_tension(rx.byte[0]);
+            set_tension(rx.byte[0]);
             break;
         default: 
             break;

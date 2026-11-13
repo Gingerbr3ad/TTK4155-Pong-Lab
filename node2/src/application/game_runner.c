@@ -78,12 +78,6 @@ void game_run(CanMsg rx) {
     }
 }
 
-void game_hyper_set_tension(uint8_t tension_percent) {
-    Kd_change = -KD * (100/(float)tension_percent);
-    Ki_change = 5*(100/(float)tension_percent)-0.05;
-    Kp_change = 3*(100/(float)tension_percent)-0.03;
-}
-
 void game_hyper_system_tick() {
     if (!game_on_control_bit || !hyper_mode_control_bit) {return;}
     if (++hyper_telemetry_ticks < 5) {return;}

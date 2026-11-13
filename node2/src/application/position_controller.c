@@ -5,16 +5,14 @@
 #include "application/position_controller.h"
 #include "application/motor.h"
 
-volatile float Kp_change;
-volatile float Ki_change;
-volatile float Kd_change;
-
 static volatile int32_t target;
 static volatile uint8_t enabled;
 static volatile float prev_position;
 static float filtered_position_dot;
 static float integral;
-
+static float spring_velocity;
+static float spring_target;
+float tension;
 
 static void position_controller_timer_init() {
     PMC->PMC_PCER0 = 1u << ID_TC3;
@@ -33,13 +31,12 @@ static void position_controller_timer_init() {
 }
 
 void position_controller_init() {
-    Kp_change = 0.0;
-    Ki_change = 0.0;
-    Kd_change = 0.0;
-
     enabled = 0;
     integral = 0;
     target = 0;
+    spring_target = 0;
+    spring_velocity = 0;
+    tension = 100;
 
     prev_position = encoder_read();
 
@@ -73,12 +70,14 @@ void position_controller_start() {
     enabled = 1;
     integral = 0;
     prev_position = encoder_read();
+    tension = 100;
     filtered_position_dot = 0;
     target = POSITION_CENTER;
-    Kp_change = 0.0;
-    Ki_change = 0.0;
-    Kd_change = 0.0;
     __enable_irq();
+}
+
+void set_tension(uint8_t tension_got) {
+    tension = (float)tension_got;
 }
 
 // Calculate the controller effort on interrup to keep it as time accurate as possible
@@ -88,14 +87,22 @@ void TC3_Handler() {
         return;
     }
 
+    // Apply the spring effect to target for hyper mode
+    float damping = 0.45f + 0.55f*(tension/100.0f);
+
+    // Spring-mass-damper
+    float acceleration = 64.0f*((float)target - spring_target) - 16.0f*damping*spring_velocity;
+    spring_velocity += acceleration*0.01;
+    spring_target += spring_velocity*0.01;
+
     // Get the error
     int32_t position = encoder_read();
-    float error = (float)position - (float)target;
+    float error = (float)position - (float)spring_target;
     float position_dot = (position - prev_position) * POSITION_CONTROL_LOOP_HZ;
     prev_position = position;
 
     // Simple low pass for the derivative
-    filtered_position_dot = 0.8 * filtered_position_dot + 0.2 * position_dot;
+    filtered_position_dot = 0.8*filtered_position_dot + 0.2*position_dot;
 
     // Small deadband to avoid tiny oscilation around the setpoint
     if (error >= -POSITION_TOLERANCE && error <= POSITION_TOLERANCE) {
@@ -106,9 +113,9 @@ void TC3_Handler() {
     }
 
     // Calculate the integral effort
-    float i = ((KI+Ki_change)*error)/POSITION_CONTROL_LOOP_HZ;
+    float i = (KI*error)/POSITION_CONTROL_LOOP_HZ;
     integral += i;
-    int32_t output = (KP+Kp_change)*error + integral + (KD+Kd_change)*position_dot;
+    int32_t output = KP*error + integral + KD*position_dot;
 
     // AI generated idea
     // Compensate for static friction

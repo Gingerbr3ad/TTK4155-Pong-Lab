@@ -9,12 +9,10 @@
 #define KI 0.7
 #define KD 0.12
 
-extern volatile float Kp_change;
-extern volatile float Ki_change;
-extern volatile float Kd_change;
-
 void position_controller_init();
 void position_controller_map_target(int32_t input, int32_t in_min, int32_t in_max, int32_t min_position, int32_t max_position);
 
 void position_controller_stop();
 void position_controller_start();
+
+void set_tension(uint8_t tension);

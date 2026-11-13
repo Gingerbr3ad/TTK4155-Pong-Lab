@@ -109,8 +109,8 @@ void hyper_mode_draw(uint16_t score) {
     oled_write_string(text, OLED_FONT_LARGE);
 
     // Motor position bar
-    oled_goto_pos(56, 10);
-    oled_write_string_P(PSTR("|---------------------|"), OLED_FONT_SMALL);
+    oled_goto_pos(56, 6);
+    oled_write_string_P(PSTR("|--------------------|"), OLED_FONT_SMALL);
 
     // Bonus target
     if (target_active) {
