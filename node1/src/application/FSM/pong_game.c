@@ -59,7 +59,7 @@ static void pong_game_over_draw() {
     if (game_config & (1u << 3)) {ultoa(score+hyper_mode_bonus(), text, 10);} // This converts the unsigned integer into string;
     else {ultoa(score, text, 10);}
 
-    oled_goto_pos(32, 38);
+    oled_goto_pos(20, 44);
     oled_write_string_P(PSTR("Score: "), OLED_FONT_NORMAL);
     oled_write_string(text, OLED_FONT_NORMAL);
     oled_goto_pos(48, 2);
