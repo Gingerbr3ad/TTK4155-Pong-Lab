@@ -249,3 +249,8 @@ void oled_draw_sprite(const uint8_t *bitmap, uint8_t width, uint8_t height) {
         }
     }
 }
+
+void oled_draw_pixel(uint8_t x, uint8_t y, uint8_t on) {
+    if (on) {oled_draw_column(x, y, 1, 1);} // Draw
+    else {oled_draw_column(x, y, 0, 1);} // Clear
+}

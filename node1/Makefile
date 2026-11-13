@@ -13,6 +13,7 @@ APP_SOURCES := \
 	src/application/FSM/pong_game.c \
 	src/application/hyper/hyper_mode.c \
 	src/application/FSM/menu.c \
+	src/application/FSM/paint.c \
 	src/application/input.c
 
 DRIVER_SOURCES := \

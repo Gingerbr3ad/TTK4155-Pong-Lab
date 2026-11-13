@@ -110,15 +110,15 @@ void hyper_mode_draw(uint16_t score) {
 
     // Motor position bar
     oled_goto_pos(56, 4);
-    oled_write_string_P(PSTR("|--------------------|"), OLED_FONT_SMALL);
+    oled_write_string_P(PSTR("|---------------------|"), OLED_FONT_SMALL);
 
     // Bonus target
     if (target_active) {
-        oled_goto_pos(48, target_percent+4);
+        oled_goto_pos(48, target_percent+7);
         oled_write_string_P(PSTR("*"), OLED_FONT_SMALL);
     }
     // Current motor position
-    oled_goto_pos(56, motor_percent+4);
+    oled_goto_pos(56, motor_percent+7);
     oled_write_string_P(PSTR("^"), OLED_FONT_SMALL);
 
     // Spring meter

@@ -74,11 +74,11 @@ static void menu_draw() {
         } else if (menu_page == MENU_GAMEMODE) {
             switch (i) {
                 case 0: oled_write_string_P(PSTR("Normal"), OLED_FONT_NORMAL); break;
-                case 1: oled_write_string_P(PSTR("Hyper"), OLED_FONT_NORMAL); break;
+                case 1: oled_write_string_P(PSTR("Hyper Pong ~ TM"), OLED_FONT_NORMAL); break;
             }
         } else if (menu_page == MENU_MINIGAMES) {
             switch (i) {
-                case 0: oled_write_string_P(PSTR("WIP D:"), OLED_FONT_NORMAL); break;
+                case 0: oled_write_string_P(PSTR("Paint"), OLED_FONT_NORMAL); break;
             }
         }
     }
@@ -135,7 +135,7 @@ static void menu_select() {
         } break;
         case MENU_MINIGAMES:
             switch (selection) {
-                case 0: break;
+                case 0: fsm_handle_event(FSM_EVENT_START_PAINT); break;
         } break;
     }
 }

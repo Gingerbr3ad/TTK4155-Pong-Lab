@@ -2,6 +2,7 @@
 #include "application/FSM/bootup.h"
 #include "application/FSM/menu.h"
 #include "application/FSM/pong_game.h"
+#include "application/FSM/paint.h"
 
 static fsm_state_t current_state;
 
@@ -13,6 +14,7 @@ static void fsm_transition(fsm_state_t next_state) {
         case FSM_BOOTUP: bootup_enter(); break;
         case FSM_MENU: menu_enter(); break;
         case FSM_PLAYING: pong_game_enter(); break;
+        case FSM_PAINT: paint_enter(); break;
     }
 }
 
@@ -30,6 +32,7 @@ void fsm_update() {
         case FSM_BOOTUP: break;
         case FSM_MENU: break;
         case FSM_PLAYING: break;
+        case FSM_PAINT: break;
     }
 }
 
@@ -39,6 +42,7 @@ void fsm_handle_event(fsm_event_t event) {
         case FSM_EVENT_GAME_FINISHED: fsm_transition(FSM_MENU); break;
         case FSM_EVENT_MENU_ENTER: fsm_transition(FSM_MENU); break;
         case FSM_EVENT_START_GAME: fsm_transition(FSM_PLAYING); break;
+        case FSM_EVENT_START_PAINT: fsm_transition(FSM_PAINT); break;
     }
 }
 
@@ -48,6 +52,7 @@ void fsm_system_ui_tick() {
         case FSM_BOOTUP: bootup_ui_tick(); break;
         case FSM_MENU: break;
         case FSM_PLAYING: pong_game_ui_tick(); break;
+        case FSM_PAINT: break;
     }
 }
 
@@ -57,5 +62,7 @@ void fsm_system_tick() {
         case FSM_BOOTUP: break;
         case FSM_MENU: menu_system_tick(); break;
         case FSM_PLAYING: pong_game_system_tick(); break;
+        case FSM_PAINT: paint_system_tick(); break;
+        
     }
 }
