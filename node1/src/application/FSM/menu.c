@@ -123,8 +123,8 @@ static void menu_select() {
         } break;
         case MENU_GAMEMODE:
             switch (selection) {
-                case 0: game_config &= (1 << 3); menu_open(MENU_MAIN); break;
-                case 1: game_config |= ~(1 << 3); menu_open(MENU_MAIN); break;
+                case 0: game_config &= ~(1 << 3); menu_open(MENU_MAIN); break;
+                case 1: game_config |= (1 << 3); menu_open(MENU_MAIN); break;
         } break;
         case MENU_CONTROL_SCHEME:
             switch (selection) {

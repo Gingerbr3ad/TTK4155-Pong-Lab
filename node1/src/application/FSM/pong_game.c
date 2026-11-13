@@ -18,6 +18,8 @@ input_slider_t slider_pos;
 input_slider_t prev_slider_pos;
 uint8_t shoot_button;
 uint8_t prev_shoot_button;
+uint8_t game_buttons;
+uint8_t prev_game_buttons;
 
 can_message_t joy_message = {
     .id = JOYSTICK_MESSAGE_ID,
@@ -96,9 +98,9 @@ void pong_game_system_tick() {
             joy_message.data[0] = joy_pos.x;
             joy_message.data[1] = joy_pos.y;
             joy_message.data[2] = shoot_button;
-        }
 
-        if (!can_send(&joy_message)) {prev_joy_pos = joy_pos; prev_shoot_button = shoot_button;}
+            if (!can_send(&joy_message)) {prev_joy_pos = joy_pos; prev_shoot_button = shoot_button;}
+        }
     }
 
     // Position control
@@ -110,9 +112,9 @@ void pong_game_system_tick() {
             joy_message.data[0] = joy_pos.x;
             joy_message.data[1] = joy_pos.y;
             joy_message.data[2] = shoot_button;
+        
+            if (!can_send(&joy_message)) {prev_joy_pos = joy_pos; prev_shoot_button = shoot_button;}
         }
-
-        if (!can_send(&joy_message)) {prev_joy_pos = joy_pos; prev_shoot_button = shoot_button;}
     }
 
     // Slider + position control
@@ -120,15 +122,14 @@ void pong_game_system_tick() {
         joy_pos = input_joystick_position_read();
         slider_pos = input_slider_read();
         shoot_button = (input_button_pressed(INPUT_BUTTON_JOYSTICK) || input_button_pressed(INPUT_BUTTON_R6) || input_button_pressed(INPUT_BUTTON_NAV_CENTER));
-        
-        if(slider_pos.position!= prev_slider_pos.position || joy_pos.y != prev_joy_pos.y || shoot_button != prev_shoot_button) {
+        game_buttons = (shoot_button << 0) | (input_button_pressed(INPUT_BUTTON_NAV_LEFT) << 1) | (input_button_pressed(INPUT_BUTTON_NAV_RIGHT) << 2);
+
+        if(slider_pos.position!= prev_slider_pos.position || joy_pos.y != prev_joy_pos.y || game_buttons != prev_game_buttons) {
             joy_message.data[0] = slider_pos.position;
             joy_message.data[1] = joy_pos.y;
-            joy_message.data[2] |= (shoot_button << 0);
-            joy_message.data[2] |= (input_button_pressed(INPUT_BUTTON_NAV_LEFT) << 1);
-            joy_message.data[2] |= (input_button_pressed(INPUT_BUTTON_NAV_RIGHT) << 2);
+            joy_message.data[2] = game_buttons;
+        
+            if (!can_send(&joy_message)) {prev_slider_pos = slider_pos; prev_joy_pos = joy_pos; prev_shoot_button = shoot_button;}
         }
-
-        if (!can_send(&joy_message)) {prev_slider_pos = slider_pos; prev_joy_pos = joy_pos; prev_shoot_button = shoot_button;}
     }
 }
