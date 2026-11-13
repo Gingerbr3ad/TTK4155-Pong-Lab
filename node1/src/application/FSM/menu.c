@@ -36,7 +36,7 @@ static void menu_draw() {
     oled_goto_pos(0, 4);
 
     switch (menu_page) {
-        case MENU_MAIN: oled_write_string_P(PSTR("PONG MENU"), OLED_FONT_LARGE); break;
+        case MENU_MAIN: oled_write_string_P(PSTR("HYPER MENU"), OLED_FONT_LARGE); break;
         case MENU_OPTIONS: oled_write_string_P(PSTR("OPTIONS"), OLED_FONT_LARGE); break;
         case MENU_CONTROL_SCHEME: oled_write_string_P(PSTR("CONTROL SCHEME"), OLED_FONT_LARGE); break;
         case MENU_GAMEMODE: oled_write_string_P(PSTR("GAME MODES"), OLED_FONT_LARGE); break;
