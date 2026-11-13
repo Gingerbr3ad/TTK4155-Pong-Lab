@@ -9,9 +9,11 @@
 #define BOOTUP_TICKS (3 * SYSTEM_UI_TICK_HZ)
 
 static uint8_t elapsed_ticks;
+static uint8_t bootup_flag;
 
 void bootup_enter() {
     elapsed_ticks = 0;
+    bootup_flag = 1;
     framebuffer_clear();
 
     oled_goto_pos(4, 48);
@@ -23,6 +25,10 @@ void bootup_enter() {
 }
 
 void bootup_ui_tick() {
+    if (elapsed_ticks < BOOTUP_TICKS - 2 && bootup_flag) {
+        oled_write_string_P(PSTR("PONG"), OLED_FONT_LARGE);
+        bootup_flag = 0;
+    }
     if (elapsed_ticks < BOOTUP_TICKS) {
         ++elapsed_ticks;
     } else {fsm_handle_event(FSM_EVENT_MENU_ENTER);}
