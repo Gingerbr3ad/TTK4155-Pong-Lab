@@ -124,7 +124,9 @@ void pong_game_system_tick() {
         if(slider_pos.position!= prev_slider_pos.position || joy_pos.y != prev_joy_pos.y || shoot_button != prev_shoot_button) {
             joy_message.data[0] = slider_pos.position;
             joy_message.data[1] = joy_pos.y;
-            joy_message.data[2] = shoot_button;
+            joy_message.data[2] |= (shoot_button << 0);
+            joy_message.data[2] |= (input_button_pressed(INPUT_BUTTON_NAV_LEFT) << 1);
+            joy_message.data[2] |= (input_button_pressed(INPUT_BUTTON_NAV_RIGHT) << 2);
         }
 
         if (!can_send(&joy_message)) {prev_slider_pos = slider_pos; prev_joy_pos = joy_pos; prev_shoot_button = shoot_button;}

@@ -33,9 +33,9 @@
 /*###################################################*/
 
 /*################## ADC CHANNELS ###################*/
-#define JOYSTICK_X_CHANNEL 1
-#define JOYSTICK_Y_CHANNEL 0
-#define TOUCH_X_CHANNEL 3
+#define JOYSTICK_X_CHANNEL 3
+#define JOYSTICK_Y_CHANNEL 1
+#define TOUCH_X_CHANNEL 0
 #define TOUCH_Y_CHANNEL 2
 /*###################################################*/
 
