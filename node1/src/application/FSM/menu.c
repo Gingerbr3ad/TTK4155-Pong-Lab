@@ -56,9 +56,9 @@ static void menu_draw() {
 
         if (menu_page == MENU_MAIN) {
             switch (i) {
-                case 0: oled_write_string_P(PSTR("Play Pong(?)"), OLED_FONT_NORMAL); break;
+                case 0: oled_write_string_P(PSTR("Play Pong"), OLED_FONT_NORMAL); break;
                 case 1: oled_write_string_P(PSTR("Options"), OLED_FONT_NORMAL); break;
-                case 2: oled_write_string_P(PSTR("MINIGAMES :D"), OLED_FONT_NORMAL); break;
+                case 2: oled_write_string_P(PSTR("MINIGAMES"), OLED_FONT_NORMAL); break;
             }
         } else if (menu_page == MENU_OPTIONS) {
             switch (i) {

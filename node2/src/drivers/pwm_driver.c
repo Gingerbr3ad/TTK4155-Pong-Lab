@@ -9,12 +9,6 @@ void pwm_PB13_init() {
     PMC->PMC_PCER0 = (1u << ID_PIOB);
     PMC->PMC_PCER1 = (1u << (ID_PWM - 32));
 
-    // Hold PWM output LOW while initializing
-    PIOB->PIO_CODR = PIO_PB12;
-    PIOB->PIO_PUDR = PIO_PB12;
-    PIOB->PIO_PER  = PIO_PB12;
-    PIOB->PIO_OER  = PIO_PB12;
-
     // Disable channel before configuring it
     REG_PWM_DIS = PWM_DIS_CHID1;
 
@@ -53,6 +47,12 @@ void pwm_ch1_duty_update(int32_t duty_cycle, int32_t in_min, int32_t in_max, int
 void pwm_PB12_init() {
     PMC->PMC_PCER0 = (1u << ID_PIOB);
     PMC->PMC_PCER1 = 1u << (ID_PWM - 32);
+
+    // Hold PWM output LOW while initializing
+    PIOB->PIO_CODR = PIO_PB12;
+    PIOB->PIO_PUDR = PIO_PB12;
+    PIOB->PIO_PER  = PIO_PB12;
+    PIOB->PIO_OER  = PIO_PB12;
 
     REG_PWM_DIS = PWM_DIS_CHID0;
 

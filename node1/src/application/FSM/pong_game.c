@@ -66,6 +66,7 @@ void pong_game_enter() {
 }
 
 void pong_game_receive_score(uint32_t value) {
+    if (game_over) {return;}
     if (value) {score = value;}
     else {game_over = 1;}
 }
@@ -87,7 +88,8 @@ void pong_game_system_tick() {
     if (game_over) {
         if (!game_over_drawn) {pong_game_over_draw(); game_over_drawn = 1; return;}
         if (input_button_pressed(INPUT_BUTTON_L6)) {
-            game_status_message.data[0] = 0;
+            game_config &= ~(1u << 7); // Clear the game on bit
+            game_status_message.data[0] = game_config;
             game_status_message_pending = 1; 
             return;
         }
