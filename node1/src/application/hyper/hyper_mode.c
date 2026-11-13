@@ -7,7 +7,7 @@
 #define HYPER_TICK_HZ 94u
 #define TARGET_LIFETIME (2u * HYPER_TICK_HZ)
 #define TARGET_NEXT_DELAY (2u * HYPER_TICK_HZ)
-#define TENSION_DECAY_TICKS 38u
+#define TENSION_DECAY_TICKS 20u
 
 static uint8_t motor_percent;
 static uint8_t target_percent;
@@ -70,7 +70,7 @@ void hyper_mode_tick(touch_position_t touch) {
     update_spin_tension(touch);
     if (++decay_ticks >= TENSION_DECAY_TICKS) {
         decay_ticks = 0;
-        if (tension) {--tension;}
+        if (tension-1) {--tension;}
     }
     if (target_active) {
         if (--target_remaining == 0) {
@@ -102,15 +102,15 @@ void hyper_mode_draw(uint16_t score) {
     framebuffer_clear();
     oled_goto_pos(2, 5);
     oled_write_string_P(PSTR("HYPER PONG"), OLED_FONT_LARGE);
-    oled_goto_pos(20, 5);
+    oled_goto_pos(20, 38);
     oled_write_string_P(PSTR("SCORE"), OLED_FONT_NORMAL);
     ultoa(score+bonus_points, text, 10);
-    oled_goto_pos(30, 5);
+    oled_goto_pos(30, 38);
     oled_write_string(text, OLED_FONT_LARGE);
 
     // Motor position bar
     oled_goto_pos(56, 10);
-    oled_write_string_P(PSTR("|------------------|"), OLED_FONT_SMALL);
+    oled_write_string_P(PSTR("|---------------------|"), OLED_FONT_SMALL);
 
     // Bonus target
     if (target_active) {

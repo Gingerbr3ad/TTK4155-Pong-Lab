@@ -72,7 +72,7 @@ void position_controller_start() {
     __disable_irq();
     enabled = 1;
     integral = 0;
-    prev_position = 0;
+    prev_position = encoder_read();
     filtered_position_dot = 0;
     target = POSITION_CENTER;
     Kp_change = 0.0;

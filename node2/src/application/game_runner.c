@@ -79,9 +79,9 @@ void game_run(CanMsg rx) {
 }
 
 void game_hyper_set_tension(uint8_t tension_percent) {
-    Kd_change = -KD * ((float)tension_percent/100);
-    Ki_change = (float)tension_percent/100;
-    Kp_change = (float)tension_percent/500;
+    Kd_change = -KD * (100/(float)tension_percent);
+    Ki_change = 5*(100/(float)tension_percent)-0.05;
+    Kp_change = 3*(100/(float)tension_percent)-0.03;
 }
 
 void game_hyper_system_tick() {
@@ -92,6 +92,8 @@ void game_hyper_system_tick() {
     int32_t percent = (int32_t)(((int64_t)(encoder_read() - POSITION_MAX_RIGHT) * 100) / (POSITION_MAX_LEFT - POSITION_MAX_RIGHT));
     if (percent < 0) {percent = 0;}
     if (percent > 100) {percent = 100;}
+
+    percent = 100 - percent;
 
     hyper_motor_message.byte[0] = (uint8_t)percent;
     can_send(hyper_motor_message);
