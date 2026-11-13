@@ -49,7 +49,8 @@ static void dispatch_uart_command(uart_command_t command) {
             printf_P(PSTR("Toggled debug printing \n"));
             break;
         case UART_COMMAND_SRAM_TEST:
-            SRAM_test();
+            //SRAM_test();
+            //printf("Disabled to save program memory.");
             break;
         case UART_COMMAND_CAN_TEST:
             printf_P(PSTR("Can test start\n"));
@@ -63,7 +64,7 @@ static void dispatch_uart_command(uart_command_t command) {
         case UART_COMMAND_NONE: break;
         default: break;
     }
-    printf_P(PSTR("########################################################\n"));
+    printf("########################################################\n");
 }
 
 static void dispatch_can_message(can_message_t *msg) {

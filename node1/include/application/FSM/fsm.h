@@ -6,6 +6,7 @@ typedef enum {
     FSM_MENU,
     FSM_PLAYING,
     FSM_PAINT,
+    FSM_SNAKE,
 } fsm_state_t;
 
 // FSM Events
@@ -14,6 +15,7 @@ typedef enum {
     FSM_EVENT_START_GAME,
     FSM_EVENT_GAME_FINISHED,
     FSM_EVENT_START_PAINT,
+    FSM_EVENT_START_SNAKE,
 } fsm_event_t;
 
 void fsm_init();

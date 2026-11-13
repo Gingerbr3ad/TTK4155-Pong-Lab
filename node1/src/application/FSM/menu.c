@@ -26,7 +26,7 @@ static uint8_t menu_item_count() {
         case MENU_OPTIONS: return 2;
         case MENU_CONTROL_SCHEME: return 3;
         case MENU_GAMEMODE: return 2;
-        case MENU_MINIGAMES: return 1;
+        case MENU_MINIGAMES: return 2;
     }
     return 0;
 }
@@ -58,7 +58,7 @@ static void menu_draw() {
             switch (i) {
                 case 0: oled_write_string_P(PSTR("Play Pong"), OLED_FONT_NORMAL); break;
                 case 1: oled_write_string_P(PSTR("Options"), OLED_FONT_NORMAL); break;
-                case 2: oled_write_string_P(PSTR("MINIGAMES"), OLED_FONT_NORMAL); break;
+                case 2: oled_write_string_P(PSTR("Minigames"), OLED_FONT_NORMAL); break;
             }
         } else if (menu_page == MENU_OPTIONS) {
             switch (i) {
@@ -79,6 +79,7 @@ static void menu_draw() {
         } else if (menu_page == MENU_MINIGAMES) {
             switch (i) {
                 case 0: oled_write_string_P(PSTR("Paint"), OLED_FONT_NORMAL); break;
+                case 1: oled_write_string_P(PSTR("Snake"), OLED_FONT_NORMAL); break;
             }
         }
     }
@@ -136,6 +137,7 @@ static void menu_select() {
         case MENU_MINIGAMES:
             switch (selection) {
                 case 0: fsm_handle_event(FSM_EVENT_START_PAINT); break;
+                case 1: fsm_handle_event(FSM_EVENT_START_SNAKE); break;
         } break;
     }
 }

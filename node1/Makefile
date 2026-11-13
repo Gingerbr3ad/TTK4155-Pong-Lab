@@ -7,13 +7,13 @@ APP_SOURCES := \
 	src/application/oled/oled_utils.c \
 	src/application/oled/fonts.c \
 	src/application/oled/sprites.c \
-	src/application/oled/oled_animations.c \
 	src/application/FSM/fsm.c \
 	src/application/FSM/bootup.c \
 	src/application/FSM/pong_game.c \
 	src/application/hyper/hyper_mode.c \
 	src/application/FSM/menu.c \
 	src/application/FSM/paint.c \
+	src/application/FSM/snake.c \
 	src/application/input.c
 
 DRIVER_SOURCES := \
@@ -48,7 +48,7 @@ CFLAGS := -Os -std=c11 -ggdb # Os optimizes stronger for file size than O
 CFLAGS += -Wall -Wextra # Adds extra warnings during compilation, usefull for catching stupid errors
 CFLAGS += -mmcu=$(TARGET_CPU)
 CFLAGS += -ffunction-sections -fdata-sections # Allow the linker to discard unused functions and data
-
+CFLAGS += -mrelax
 
 # C Preprocessor flags
 CPPFLAGS := -Iinclude # Sets the inc directory as the path for all includes
@@ -59,6 +59,7 @@ CPPFLAGS += -DBAUD=9600 # Defines the baud rate used by the AVR Libc macros, thi
 LDFLAGS := -mmcu=$(TARGET_CPU)
 LDFLAGS += -Wl,-Map=$(BUILD_DIR)/main.map # Generates a map of the build files, usefull for checking memory use
 LDFLAGS += -Wl,--gc-sections
+LDFLAGS += -Os -mrelax
 
 OBJECT_FILES = $(SOURCE_FILES:%.c=$(BUILD_DIR)/%.o)
 

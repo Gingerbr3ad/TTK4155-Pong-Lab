@@ -16,4 +16,5 @@ External memory mapping:
         - Framebuffer: 1400~17FF
         - Pagebuffer: 1800~187F
         - UART buffer: 1880~18BF
-        - UART parse buffer 18C0~18FF
+        - UART parse buffer: 18C0~18FF
+        - Snake: 1900 ~ 1FE3

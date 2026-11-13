@@ -26,3 +26,8 @@ extern const uint8_t PROGMEM spring_3[64];
 #define SPRING_4_HEIGHT 64
 
 extern const uint8_t PROGMEM spring_4[64];
+
+#define SNAKE_BLOCK_WIDTH 3
+#define SNAKE_BLOCK_HEIGHT 3
+
+extern const uint8_t PROGMEM snake_block[3];
