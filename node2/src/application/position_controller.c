@@ -88,12 +88,12 @@ void TC3_Handler() {
     }
 
     // Apply the spring effect to target for hyper mode
-    float damping = 0.45f + 0.55f*(tension/100.0f);
+    float damping = 0.05f + 0.95f*(tension/100.0f);
 
     // Spring-mass-damper
     float acceleration = 64.0f*((float)target - spring_target) - 16.0f*damping*spring_velocity;
-    spring_velocity += acceleration*0.01;
-    spring_target += spring_velocity*0.01;
+    spring_velocity += acceleration*0.03;
+    spring_target += spring_velocity*0.03;
 
     // Get the error
     int32_t position = encoder_read();

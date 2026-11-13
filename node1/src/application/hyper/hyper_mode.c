@@ -7,7 +7,7 @@
 #define HYPER_TICK_HZ 94u
 #define TARGET_LIFETIME (2u * HYPER_TICK_HZ)
 #define TARGET_NEXT_DELAY (2u * HYPER_TICK_HZ)
-#define TENSION_DECAY_TICKS 20u
+#define TENSION_DECAY_TICKS 10u
 
 static uint8_t motor_percent;
 static uint8_t target_percent;
