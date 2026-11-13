@@ -103,7 +103,7 @@ void hyper_mode_draw(uint16_t score) {
     oled_goto_pos(2, 5);
     oled_write_string_P(PSTR("HYPER PONG"), OLED_FONT_LARGE);
     oled_goto_pos(20, 48);
-    oled_write_string_P(PSTR("SCORE"), OLED_FONT_NORMAL);
+    oled_write_string_P(PSTR("SCORE:"), OLED_FONT_NORMAL);
     ultoa(score+bonus_points, text, 10);
     oled_goto_pos(30, 42);
     oled_write_string(text, OLED_FONT_LARGE);

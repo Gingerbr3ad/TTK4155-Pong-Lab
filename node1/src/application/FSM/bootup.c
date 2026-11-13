@@ -16,7 +16,9 @@ void bootup_enter() {
 
     oled_goto_pos(4, 48);
     oled_draw_sprite(ntnu_logo, NTNU_LOGO_WIDTH, NTNU_LOGO_HEIGHT);
-    oled_goto_pos(44, 47);
+    oled_goto_pos(44, 43);
+    oled_write_string_P(PSTR("Hyper"), OLED_FONT_LARGE);
+    oled_goto_pos(52, 47);
     oled_write_string_P(PSTR("PONG"), OLED_FONT_LARGE);
 }
 
