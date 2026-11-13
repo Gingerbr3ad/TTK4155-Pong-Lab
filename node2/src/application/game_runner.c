@@ -51,7 +51,7 @@ void game_run(CanMsg rx) {
         } else if (slider_control_bit) {
             position_controller_map_target(255 - (int16_t)rx.byte[0], 0, 255, POSITION_MAX_RIGHT, POSITION_MAX_LEFT);
             if ((rx.byte[2] >> 1) & 1) {arm_servo_update(-100);}
-            else if ((rx.byte[2] >> 2) & 1) {arm_servo_update(-100);}
+            else if ((rx.byte[2] >> 2) & 1) {arm_servo_update(100);}
             else {arm_servo_update((int8_t)rx.byte[1]);}
         }
 
