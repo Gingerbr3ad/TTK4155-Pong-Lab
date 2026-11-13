@@ -63,7 +63,10 @@ static void pong_game_over_draw() {
     oled_write_string_P(PSTR("Score: "), OLED_FONT_NORMAL);
     oled_write_string(text, OLED_FONT_NORMAL);
     oled_goto_pos(48, 2);
-    oled_write_string_P(PSTR("Joy to Continue / L6 to Menu"), OLED_FONT_SMALL);
+    oled_write_string_P(PSTR("Continue: Joystick"), OLED_FONT_SMALL);
+    oled_goto_pos(56, 2);
+    oled_write_string_P(PSTR("Menu: L6"), OLED_FONT_SMALL);
+
 }
 
 void pong_game_enter() {
