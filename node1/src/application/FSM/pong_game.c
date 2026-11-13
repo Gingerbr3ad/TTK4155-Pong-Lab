@@ -79,7 +79,7 @@ void pong_game_system_tick() {
     if (game_status_message_pending) {
         if(!can_send(&game_status_message)) {
             game_status_message_pending = 0;
-            if (game_status_message.data[0] == 0) {
+            if (((game_status_message.data[0] >> 7) & 1) == 0) {
                 fsm_handle_event(FSM_EVENT_MENU_ENTER);
                 return;
             }
