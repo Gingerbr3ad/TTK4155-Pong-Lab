@@ -30,8 +30,8 @@ static void position_controller_timer_init() {
 }
 
 void position_controller_init() {
-    KP = 0.4;
-    KI = 0.12;
+    KP = 0.2;
+    KI = 0.3;
 
     enabled = 0;
     integral = 0;
