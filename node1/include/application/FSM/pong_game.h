@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-// Bit 0 - speed control, Bit 1 - position control, Bit 2 - position + slider, Bit 3 - Normal mode, Bit 4 - Hyper mode, Bit 5 - NC, Bit 6 - NC, Bit 7 - game on
+// Bit 0 - speed control, Bit 1 - position control, Bit 2 - position + slider, Bit 3 - Normal/Hyper mode, Bit 4 - NC, Bit 5 - NC, Bit 6 - NC, Bit 7 - game on
 extern volatile uint8_t game_config;
 
 void pong_game_enter();

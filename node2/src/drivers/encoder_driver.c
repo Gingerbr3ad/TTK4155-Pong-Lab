@@ -27,9 +27,9 @@ void encoder_init() {
     // Configure the time
     TC2->TC_WPMR = TC_WPMR_WPKEY(0x54494d);
     REG_TC2_CCR0 = TC_CCR_CLKDIS;
-    REG_TC2_IDR0 = 0xffffffffu;
+    REG_TC2_IDR0 = 0xffffffff;
     // Also disable all of the QDEC specific interrupts
-    REG_TC2_QIDR = 0xffffffffu;
+    REG_TC2_QIDR = 0xffffffff;
     // Enable quadrature decoding Enable postion measurment 4x quad Filter out ~100ns pulses
     REG_TC2_BMR = TC_BMR_QDEN | TC_BMR_POSEN | TC_BMR_EDGPHA | TC_BMR_MAXFILT(8);
     // Select external timer (required from datasheet)
@@ -44,9 +44,7 @@ void encoder_init() {
 }
 
 int32_t encoder_read() {
+    // Read the encoder value in the configured timer/counter register and return it as signed 32 bit integer
     uint32_t count = REG_TC2_CV0;
-
-    // Funky math to convert the quad CV value into a signed integer
-    if (count <= INT32_MAX) return (int32_t)count;
-    return -1 - (int32_t)(UINT32_MAX - count);
+    return (int32_t)count;
 }

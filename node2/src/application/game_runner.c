@@ -7,7 +7,7 @@
 #include "drivers/encoder_driver.h"
 #include "drivers/solenoid_driver.h"
 
-volatile uint8_t game_config = 0;
+volatile uint8_t game_config = 1u;
 
 static uint8_t speed_control_bit;
 static uint8_t position_control_bit;

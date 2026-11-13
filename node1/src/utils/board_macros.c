@@ -20,9 +20,9 @@ void system_tick_timer_init(uint8_t freq) {
 
     // Set timer frequency
     if (freq == 30) {
-        OCR3A = 40; // 30 Hz
+        OCR3A = 40; // 120/30 Hz
     } else {
-        OCR3A = 50; // 24 Hz
+        OCR3A = 50; // 96/24 Hz
     }
 
     // Enable Compare Match A interrupt

@@ -10,7 +10,7 @@ static uint8_t game_over;
 static uint8_t game_over_drawn;
 static uint8_t game_status_message_pending;
 
-volatile uint8_t game_config;
+volatile uint8_t game_config = 1u;
 
 joystick_position_t joy_pos;
 joystick_position_t prev_joy_pos;
@@ -119,7 +119,7 @@ void pong_game_system_tick() {
     if ((game_config >> 2) & 1) {
         joy_pos = input_joystick_position_read();
         slider_pos = input_slider_read();
-        shoot_button = (input_button_pressed(INPUT_BUTTON_JOYSTICK) || input_button_pressed(INPUT_BUTTON_R6));
+        shoot_button = (input_button_pressed(INPUT_BUTTON_JOYSTICK) || input_button_pressed(INPUT_BUTTON_R6) || input_button_pressed(INPUT_BUTTON_NAV_CENTER));
         
         if(slider_pos.position!= prev_slider_pos.position || joy_pos.y != prev_joy_pos.y || shoot_button != prev_shoot_button) {
             joy_message.data[0] = slider_pos.position;
