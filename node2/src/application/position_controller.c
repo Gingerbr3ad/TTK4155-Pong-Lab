@@ -5,9 +5,9 @@
 #include "application/position_controller.h"
 #include "application/motor.h"
 
-volatile float KP;
-volatile float KI; 
-volatile float KD; 
+volatile float Kp_change;
+volatile float Ki_change;
+volatile float Kd_change;
 
 static volatile int32_t target;
 static volatile uint8_t enabled;
@@ -33,9 +33,9 @@ static void position_controller_timer_init() {
 }
 
 void position_controller_init() {
-    KP = 0.6;
-    KI = 0.7;
-    KD = 0.12;
+    Kp_change = 0.0;
+    Ki_change = 0.0;
+    Kd_change = 0.0;
 
     enabled = 0;
     integral = 0;
@@ -72,7 +72,12 @@ void position_controller_start() {
     __disable_irq();
     enabled = 1;
     integral = 0;
+    prev_position = 0;
+    filtered_position_dot = 0;
     target = POSITION_CENTER;
+    Kp_change = 0.0;
+    Ki_change = 0.0;
+    Kd_change = 0.0;
     __enable_irq();
 }
 
@@ -101,9 +106,9 @@ void TC3_Handler() {
     }
 
     // Calculate the integral effort
-    float i = (KI*error)/POSITION_CONTROL_LOOP_HZ;
+    float i = ((KI+Ki_change)*error)/POSITION_CONTROL_LOOP_HZ;
     integral += i;
-    int32_t output = KP*error + integral + KD*position_dot;
+    int32_t output = (KP+Kp_change)*error + integral + (KD+Kd_change)*position_dot;
 
     // AI generated idea
     // Compensate for static friction
@@ -122,6 +127,7 @@ void TC3_Handler() {
         output =  -MOTOR_EFFORT_LIMIT;
         integral -= i;
     }
+    if ((position <= POSITION_MAX_RIGHT && output > 0) || (position >= POSITION_MAX_LEFT && output < 0)) {output = 0;}
 
     // Send the regulator effort to the motor
     motor_set((int16_t)output);

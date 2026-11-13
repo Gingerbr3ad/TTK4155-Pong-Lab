@@ -7,6 +7,8 @@
 #define JOYSTICK_MESSAGE_ID 0x100
 #define SCORE_MESSAGE_ID 0x101
 #define GAME_STATUS_MESSAGE_ID 0x102
+#define HYPER_MOTOR_MESSAGE_ID 0x103
+#define HYPER_TENSION_MESSAGE_ID 0x104
 /*###################################################*/
 
 

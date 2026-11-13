@@ -11,6 +11,7 @@ APP_SOURCES := \
 	src/application/FSM/fsm.c \
 	src/application/FSM/bootup.c \
 	src/application/FSM/pong_game.c \
+	src/application/hyper/hyper_mode.c \
 	src/application/FSM/menu.c \
 	src/application/input.c
 

@@ -79,6 +79,10 @@ static void dispatch_can_message(CanMsg rx) {
         case GAME_STATUS_MESSAGE_ID:
             game_config = (uint8_t)rx.byte[0];
             game_config_update();
+            break;
+        case HYPER_TENSION_MESSAGE_ID:
+            game_hyper_set_tension(rx.byte[0]);
+            break;
         default: 
             break;
     }
@@ -95,6 +99,7 @@ int main(void) {
 
         if (system_tick_60Hz_take()) {
             score_system_tick();
+            game_hyper_system_tick();
         }
     }
 }

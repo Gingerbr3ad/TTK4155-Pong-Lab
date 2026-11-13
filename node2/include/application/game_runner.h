@@ -8,3 +8,5 @@ extern volatile uint8_t game_config;
 
 void game_config_update();
 void game_run(CanMsg rx);
+void game_hyper_system_tick();
+void game_hyper_set_tension(uint8_t tension_percent);

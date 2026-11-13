@@ -1,6 +1,7 @@
 #include "application/FSM/pong_game.h"
 #include "application/FSM/fsm.h"
 #include "application/input.h"
+#include "application/hyper/hyper_mode.h"
 #include "application/oled/oled_utils.h"
 #include "drivers/can_driver.h"
 #include <stdlib.h>
@@ -9,6 +10,7 @@ static uint32_t score;
 static uint8_t game_over;
 static uint8_t game_over_drawn;
 static uint8_t game_status_message_pending;
+static uint8_t tension_tx_ticks;
 
 volatile uint8_t game_config = 1u;
 
@@ -33,6 +35,12 @@ can_message_t game_status_message = {
     .data = {0x00},
 };
 
+can_message_t hyper_tension_message = {
+    .id = HYPER_TENSION_MESSAGE_ID,
+    .length = 1,
+    .data = {0x00}
+};
+
 
 static void pong_game_draw_score() {
     char text[11]; // Ten decimal digits and the terminating zero.
@@ -46,9 +54,17 @@ static void pong_game_over_draw() {
     framebuffer_clear();
     oled_goto_pos(8, 8);
     oled_write_string_P(PSTR("GAME OVER"), OLED_FONT_LARGE);
+    char text[11]; // Ten decimal digits and the terminating zero.
+
+    if (game_config & (1u << 3)) {ultoa(score+hyper_mode_bonus(), text, 10);} // This converts the unsigned integer into string;
+    else {ultoa(score, text, 10);}
+
+    oled_goto_pos(32, 8);
+    oled_write_string_P(PSTR("Score: "), OLED_FONT_NORMAL);
+    oled_write_string(text, OLED_FONT_NORMAL);
     pong_game_draw_score();
     oled_goto_pos(48, 8);
-    oled_write_string_P(PSTR("SELECT or BACK"), OLED_FONT_SMALL);
+    oled_write_string_P(PSTR("Joy to Continue / R6 to Menu"), OLED_FONT_SMALL);
 }
 
 void pong_game_enter() {
@@ -58,6 +74,8 @@ void pong_game_enter() {
     game_over_drawn = 0;
     game_status_message.data[0] = game_config;
     game_status_message_pending = 1;
+    tension_tx_ticks = 0;
+    if (game_config & (1u << 3)) {hyper_mode_start(); return;}
 
     framebuffer_clear();
     oled_goto_pos(8, 8);
@@ -71,8 +89,17 @@ void pong_game_receive_score(uint32_t value) {
     else {game_over = 1;}
 }
 
+void pong_game_receive_motor_position(uint8_t percent) {
+    if ((game_config & (1u << 3)) && !game_over) {
+        hyper_mode_receive_position(percent);
+    }
+}
+
 void pong_game_ui_tick() {
-    if (!game_over) {pong_game_draw_score();}
+    if (!game_over) {
+        if ((game_config & (1u << 3))) {hyper_mode_draw(score);}
+        else {pong_game_draw_score();}
+    }
 }
 
 void pong_game_system_tick() {
@@ -96,8 +123,16 @@ void pong_game_system_tick() {
         if (input_button_pressed(INPUT_BUTTON_JOYSTICK)) {fsm_handle_event(FSM_EVENT_START_GAME); return;}
     }
 
+    if (game_config & (1u << 3)) {
+        hyper_mode_tick(input_touch_position_read());
+        if (++tension_tx_ticks >= 24) {
+            hyper_tension_message.data[0] = hyper_mode_tension();
+            if (!can_send(&hyper_tension_message)) {tension_tx_ticks = 0;}
+        }
+    }
+
     // Manually end the game
-    if (input_button_pressed(INPUT_BUTTON_R5)) {pong_game_receive_score(0); return;}
+    if (input_button_pressed(INPUT_BUTTON_R4)) {pong_game_receive_score(0); return;}
 
     // Speed control
     if ((game_config >> 0) & 1) {

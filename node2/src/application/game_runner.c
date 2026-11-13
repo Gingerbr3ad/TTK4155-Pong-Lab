@@ -15,14 +15,22 @@ static uint8_t slider_control_bit;
 static uint8_t normal_mode_control_bit;
 static uint8_t hyper_mode_control_bit;
 static uint8_t game_on_control_bit;
+static uint8_t hyper_telemetry_ticks;
+
+CanMsg hyper_motor_message = {
+    .id = HYPER_MOTOR_MESSAGE_ID,
+    .length = 1,
+    .byte = {0x00}
+};
 
 void game_config_update() {
     speed_control_bit = (game_config >> 0) & 1;
     position_control_bit = (game_config >> 1) & 1;
     slider_control_bit = (game_config >> 2) & 1;
-    normal_mode_control_bit = (game_config >> 3) & 1;
-    hyper_mode_control_bit = (game_config >> 4) & 1;
+    hyper_mode_control_bit = (game_config >> 3) & 1;
     game_on_control_bit = (game_config >> 7) & 1;
+
+    hyper_telemetry_ticks = 0;
 
     if (game_on_control_bit) {
         // Start the game
@@ -68,4 +76,23 @@ void game_run(CanMsg rx) {
     if (rx.byte[2] & 1) {
         solenoid_pulse_start();
     }
+}
+
+void game_hyper_set_tension(uint8_t tension_percent) {
+    Kd_change = -KD * ((float)tension_percent/100);
+    Ki_change = (float)tension_percent/100;
+    Kp_change = (float)tension_percent/500;
+}
+
+void game_hyper_system_tick() {
+    if (!game_on_control_bit || !hyper_mode_control_bit) {return;}
+    if (++hyper_telemetry_ticks < 5) {return;}
+    hyper_telemetry_ticks = 0;
+
+    int32_t percent = (int32_t)(((int64_t)(encoder_read() - POSITION_MAX_RIGHT) * 100) / (POSITION_MAX_LEFT - POSITION_MAX_RIGHT));
+    if (percent < 0) {percent = 0;}
+    if (percent > 100) {percent = 100;}
+
+    hyper_motor_message.byte[0] = (uint8_t)percent;
+    can_send(hyper_motor_message);
 }

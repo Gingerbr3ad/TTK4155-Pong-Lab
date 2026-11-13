@@ -77,6 +77,11 @@ static void dispatch_can_message(can_message_t *msg) {
                 pong_game_receive_score(score);
             }
             break;
+        case HYPER_MOTOR_MESSAGE_ID:
+            if (fsm_get_state() == FSM_PLAYING) {
+                pong_game_receive_motor_position(msg->data[0]);
+            }
+            break;
         default:
             break;
     }

@@ -1,7 +1,7 @@
 from PIL import Image
 from pathlib import Path
 
-file_name = "ntnu_logo"
+file_name = "spring_4"
 
 image_path = Path("scripts/sprites/", f"{file_name}.png")
 array_path = Path("scripts/sprites/", f"{file_name}.h")
