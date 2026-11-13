@@ -3,10 +3,11 @@
 
 #define POSITION_CONTROL_LOOP_HZ 100
 #define MOTOR_EFFORT_LIMIT 1000
-#define POSITION_TOLERANCE 20
+#define POSITION_TOLERANCE 4
 
 extern volatile float KP;
 extern volatile float KI;
+extern volatile float KD;
 
 void position_controller_init();
 void position_controller_map_target(int32_t input, int32_t in_min, int32_t in_max, int32_t min_position, int32_t max_position);

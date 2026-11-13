@@ -10,6 +10,7 @@ volatile float KI;
 
 static volatile int32_t target;
 static volatile uint8_t enabled;
+static volatile int32_t prev_position;
 static float integral;
 
 
@@ -32,10 +33,13 @@ static void position_controller_timer_init() {
 void position_controller_init() {
     KP = 0.2;
     KI = 0.3;
+    KD = 0.1;
 
     enabled = 0;
     integral = 0;
     target = 0;
+
+    prev_position = encoder_read();
 
     position_controller_timer_init();
 }
@@ -80,6 +84,7 @@ void TC3_Handler() {
     // Get the error
     int32_t position = encoder_read();
     float error = (float)position - (float)target;
+    int32_t position_dot = (position - prev_position) * POSITION_CONTROL_LOOP_HZ;
 
     // Small deadband to avoid tiny oscilation around the setpoint
     if (error >= -POSITION_TOLERANCE && error <= POSITION_TOLERANCE) {
@@ -92,7 +97,7 @@ void TC3_Handler() {
     // Calculate the integral effort
     float i = (KI*error)/POSITION_CONTROL_LOOP_HZ;
     integral += i;
-    int32_t output = KP*error + integral;
+    int32_t output = KP*error + integral + KD*prev_position;
 
     // Apply saturation and anti windup
     if (output > MOTOR_EFFORT_LIMIT) {
@@ -103,6 +108,14 @@ void TC3_Handler() {
         output =  -MOTOR_EFFORT_LIMIT;
         integral -= i;
     }
+    
+    // AI generated idea
+    // Compensate for static friction
+    if (output > 0.0f) {
+        output += 100;
+    } else if (output < 0.0f) {
+        output -= 100;
+}
 
     // Send the regulator effort to the motor
     motor_set((int16_t)output);
