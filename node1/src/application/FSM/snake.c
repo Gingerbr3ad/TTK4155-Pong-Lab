@@ -95,9 +95,26 @@ void snake_system_tick() {
     if (input_button_pressed(INPUT_BUTTON_L6)) {fsm_handle_event(FSM_EVENT_MENU_ENTER); return;}
     if (game_over) {if (input_button_pressed(INPUT_BUTTON_JOYSTICK) || input_button_pressed(INPUT_BUTTON_NAV_CENTER)) {snake_enter();}return;}
 
-    joystick_direction_t input = input_joystick_direction_edge();
+joystick_direction_t input = input_joystick_direction_edge();
+
+    // Read NAV buttons if no joystick direction was detected
+    if (input == JOYSTICK_NEUTRAL) {
+        if (input_button_pressed(INPUT_BUTTON_NAV_UP)) {
+            input = JOYSTICK_UP;
+        } else if (input_button_pressed(INPUT_BUTTON_NAV_DOWN)) {
+            input = JOYSTICK_DOWN;
+        } else if (input_button_pressed(INPUT_BUTTON_NAV_LEFT)) {
+            input = JOYSTICK_LEFT;
+        } else if (input_button_pressed(INPUT_BUTTON_NAV_RIGHT)) {
+            input = JOYSTICK_RIGHT;
+        }
+    }
+
+    // Update direction, preventing 180-degree turns
     if (input != JOYSTICK_NEUTRAL) {
-        if (!((direction == JOYSTICK_LEFT && input == JOYSTICK_RIGHT) || (direction == JOYSTICK_RIGHT && input == JOYSTICK_LEFT) || (direction == JOYSTICK_UP && input == JOYSTICK_DOWN) || (direction == JOYSTICK_DOWN && input == JOYSTICK_UP))) {next_direction = input;}
+        if (!((direction == JOYSTICK_LEFT && input == JOYSTICK_RIGHT) || (direction == JOYSTICK_RIGHT && input == JOYSTICK_LEFT) || (direction == JOYSTICK_UP && input == JOYSTICK_DOWN) || (direction == JOYSTICK_DOWN && input == JOYSTICK_UP))) {
+            next_direction = input;
+        }
     }
 
     if (++move_ticks < SNAKE_MOVE_TICKS) {return;}
