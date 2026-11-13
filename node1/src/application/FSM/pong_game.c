@@ -129,7 +129,7 @@ void pong_game_system_tick() {
             joy_message.data[1] = joy_pos.y;
             joy_message.data[2] = game_buttons;
         
-            if (!can_send(&joy_message)) {prev_slider_pos = slider_pos; prev_joy_pos = joy_pos; prev_shoot_button = shoot_button;}
+            if (!can_send(&joy_message)) {prev_slider_pos = slider_pos; prev_joy_pos = joy_pos; prev_game_buttons = game_buttons;}
         }
     }
 }
