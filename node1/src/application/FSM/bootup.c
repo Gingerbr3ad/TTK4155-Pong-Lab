@@ -21,11 +21,11 @@ void bootup_enter() {
     oled_goto_pos(44, 43);
     oled_write_string_P(PSTR("HYPER"), OLED_FONT_LARGE);
     oled_goto_pos(56, 47);
-    oled_write_string_P(PSTR("PONG"), OLED_FONT_LARGE);
+
 }
 
 void bootup_ui_tick() {
-    if (elapsed_ticks < BOOTUP_TICKS - 2 && bootup_flag) {
+    if (elapsed_ticks > BOOTUP_TICKS - 36 && bootup_flag) {
         oled_write_string_P(PSTR("PONG"), OLED_FONT_LARGE);
         bootup_flag = 0;
     }
